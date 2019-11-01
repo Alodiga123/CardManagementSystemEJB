@@ -42,10 +42,13 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         RequestType requestType = (RequestType) loadEntity(RequestType.class, RequestType, logger, getMethodName());
         return requestType;
     }
-
+    
     @Override
-    public RequestType saveRequestType(EJBRequest RequestType) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        return (RequestType) saveEntity(RequestType, logger, getMethodName());    
+    public RequestType saveRequestType(RequestType requestType) throws NullParameterException, GeneralException {
+        if (requestType == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (RequestType) saveEntity(requestType);
     }
     
 }
