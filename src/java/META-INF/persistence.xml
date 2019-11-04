@@ -4,12 +4,62 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>jdbc/cms</jta-data-source>
     <class>com.cms.commons.models.Account</class>
-    <class>com.cms.commons.models.User</class>
+    <class>com.cms.commons.models.EdificationType</class>
     <class>com.cms.commons.models.RequestType</class>
-    
-    
-    
-    
+    <class>com.cms.commons.models.StreetType</class>
+    <class>com.cms.commons.models.KinShipApplicant</class>
+    <class>com.cms.commons.models.PersonClassification</class>
+    <class>com.cms.commons.models.CardType</class>
+    <class>com.cms.commons.models.ResponsibleNetworkReporting</class>
+    <class>com.cms.commons.models.Profession</class>
+    <class>com.cms.commons.models.PhonePerson</class>
+    <class>com.cms.commons.models.EconomicActivity</class>
+    <class>com.cms.commons.models.State</class>
+    <class>com.cms.commons.models.AllowedChannels</class>
+    <class>com.cms.commons.models.Person</class>
+    <class>com.cms.commons.models.CardRequest</class>
+    <class>com.cms.commons.models.NaturalPerson</class>
+    <class>com.cms.commons.models.PhoneFamilyReferences</class>
+    <class>com.cms.commons.models.CivilStatus</class>
+    <class>com.cms.commons.models.City</class>
+    <class>com.cms.commons.models.SourceFunds</class>
+    <class>com.cms.commons.models.Country</class>
+    <class>com.cms.commons.models.FamilyReferences</class>
+    <class>com.cms.commons.models.Segment</class>
+    <class>com.cms.commons.models.Address</class>
+    <class>com.cms.commons.models.Program</class>
+    <class>com.cms.commons.models.StorageMedio</class>
+    <class>com.cms.commons.models.IdentificationType</class>
+    <class>com.cms.commons.models.IssuerType</class>
+    <class>com.cms.commons.models.KindCard</class>
+    <class>com.cms.commons.models.Currency</class>
+    <class>com.cms.commons.models.CommerceCategory</class>
+    <class>com.cms.commons.models.PhoneType</class>
+    <class>com.cms.commons.models.CardRequestNaturalPerson</class>
+    <class>com.cms.commons.models.ProductHasCommerceCategory</class>
+    <class>com.cms.commons.models.LegalRepresentatives</class>
+    <class>com.cms.commons.models.LegalPerson</class>
+    <class>com.cms.commons.models.PersonType</class>
+    <class>com.cms.commons.models.ProjectAnnualVolume</class>
+    <class>com.cms.commons.models.ProductType</class>
+    <class>com.cms.commons.models.PersonHasAddress</class>
+    <class>com.cms.commons.models.ApplicantNaturalPerson</class>
+    <class>com.cms.commons.models.LegalPersonHasLegalRepresentatives</class>
+    <class>com.cms.commons.models.Issuer</class>
+    <class>com.cms.commons.models.CardIssuanceType</class>
+    <class>com.cms.commons.models.BinSponsor</class>
+    <class>com.cms.commons.models.Product</class>
+    <class>com.cms.commons.models.AverageCargeUsage</class>
+    <class>com.cms.commons.models.LevelProduct</class>
+    <class>com.cms.commons.models.StatusRequest</class>
+    <class>com.cms.commons.models.ProductUse</class>
+    <class>com.cms.commons.models.ProgramType</class>
+    <class>com.cms.commons.models.Channel</class>
+    <class>com.cms.commons.models.ZipZone</class>
+    <class>com.cms.commons.models.User</class>
+    <class>com.cms.commons.models.ApplicantType</class>
+    <class>com.cms.commons.models.CardStatus</class>
+    <class>com.cms.commons.models.Request</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
