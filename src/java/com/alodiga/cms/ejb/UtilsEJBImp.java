@@ -10,6 +10,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.Country;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.util.EjbConstants;
 import java.util.List;
@@ -50,5 +51,24 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (RequestType) saveEntity(requestType);
     }
+    
+    @Override
+    public List<Country> getCountries(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Country> countrys = (List<Country>) listEntities(Country.class, request, logger, getMethodName());
+        return countrys;
+    }
+    
+    @Override
+    public Country saveCountry(Country country) throws NullParameterException, GeneralException {
+        if (country == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (Country) saveEntity(country);
+    }
+    
+    
+
+ 
+    
     
 }

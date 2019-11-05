@@ -6,7 +6,9 @@
     <class>com.cms.commons.models.Account</class>
     <class>com.cms.commons.models.User</class>
     <class>com.cms.commons.models.RequestType</class>
-    
+    <class>com.cms.commons.models.Country</class>
+    <class>com.cms.commons.models.Currency</class>
+    <!--<class>com.cms.commons.models.Address</class>-->
     
     
     
