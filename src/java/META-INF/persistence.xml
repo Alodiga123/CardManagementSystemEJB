@@ -60,6 +60,9 @@
     <class>com.cms.commons.models.ApplicantType</class>
     <class>com.cms.commons.models.CardStatus</class>
     <class>com.cms.commons.models.Request</class>
+    <class>com.cms.commons.models.CardRequestType</class>
+    <class>com.cms.commons.models.CollectionsRequest</class>
+    <class>com.cms.commons.models.RequestTypeHasCollectionsRequest</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
