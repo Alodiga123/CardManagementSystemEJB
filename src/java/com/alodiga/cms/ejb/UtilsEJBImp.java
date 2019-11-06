@@ -10,6 +10,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.CardRequestType;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.util.EjbConstants;
 import java.util.List;
@@ -38,8 +39,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public RequestType loadRequestType(EJBRequest RequestType) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        RequestType requestType = (RequestType) loadEntity(RequestType.class, RequestType, logger, getMethodName());
+    public RequestType loadRequestType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        RequestType requestType = (RequestType) loadEntity(RequestType.class, request, logger, getMethodName());
         return requestType;
     }
     
@@ -49,6 +50,26 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("requestType", null);
         }
         return (RequestType) saveEntity(requestType);
+    }
+
+    @Override
+    public List<CardRequestType> getCardRequestType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardRequestType> cardRequestsTypeList = (List<CardRequestType>) listEntities(CardRequestType.class, request, logger, getMethodName());
+        return cardRequestsTypeList;
+    }
+
+    @Override
+    public CardRequestType loadCardRequestType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CardRequestType cardRequestType = (CardRequestType) loadEntity(CardRequestType.class, request, logger, getMethodName());
+        return cardRequestType;
+    }
+
+    @Override
+    public CardRequestType saveCardRequestType(CardRequestType cardRequestType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (cardRequestType == null) {
+            throw new NullParameterException("cardRequestType", null);
+        }
+        return (CardRequestType) saveEntity(cardRequestType);
     }
     
 }
