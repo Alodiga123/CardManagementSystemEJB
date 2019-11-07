@@ -13,6 +13,7 @@ import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.CardRequestType;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.RequestType;
+import com.cms.commons.models.StatusRequest;
 import com.cms.commons.util.EjbConstants;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -65,6 +66,20 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("requestType", null);
         }
         return (Country) saveEntity(country);
+    }
+    
+    @Override
+    public List<StatusRequest> getStatusRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusRequest> statusRequest = (List<StatusRequest>) listEntities(StatusRequest.class, request, logger, getMethodName());
+        return statusRequest;
+    }
+    
+    @Override
+    public StatusRequest saveStatusRequest (StatusRequest statusRequest) throws NullParameterException, GeneralException {
+        if (statusRequest == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (StatusRequest) saveEntity(statusRequest);
     }
 
     @Override
