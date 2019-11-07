@@ -68,6 +68,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (Country) saveEntity(country);
     }
     
+    //StatusRequest
     @Override
     public List<StatusRequest> getStatusRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<StatusRequest> statusRequest = (List<StatusRequest>) listEntities(StatusRequest.class, request, logger, getMethodName());
