@@ -36,7 +36,7 @@ public class AccessControlEJBImp extends AbstractDistributionEJB implements Acce
 
     private static final Logger logger = Logger.getLogger(AccessControlEJBImp.class);
 
-
+    
     public User loadUserByLogin(String login) throws RegisterNotFoundException, NullParameterException, GeneralException {
         User user = null;
         try {
