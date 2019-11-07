@@ -87,49 +87,45 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         if (country == null) {
             throw new NullParameterException("country", null);
         }
-        return (Country) saveEntity(country);    }
-    
-}
+        return (Country) saveEntity(country);    
+    }
 
-    //StatusRequest
     @Override
     public List<StatusRequest> getStatusRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<StatusRequest> statusRequest = (List<StatusRequest>) listEntities(StatusRequest.class, request, logger, getMethodName());
         return statusRequest;
     }
-    
+
     @Override
-    public StatusRequest saveStatusRequest (StatusRequest statusRequest) throws NullParameterException, GeneralException {
+    public StatusRequest saveStatusRequest(StatusRequest statusRequest) throws NullParameterException, GeneralException {
         if (statusRequest == null) {
             throw new NullParameterException("requestType", null);
         }
-        return (StatusRequest) saveEntity(statusRequest);
-    }
+        return (StatusRequest) saveEntity(statusRequest);    }
 
     @Override
     public List<CardStatus> getCardStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-         List<CardStatus> cardStatus = (List<CardStatus>) listEntities(CardStatus.class, request, logger, getMethodName());
+        List<CardStatus> cardStatus = (List<CardStatus>) listEntities(CardStatus.class, request, logger, getMethodName());
         return cardStatus;
     }
 
-    
     @Override
-    public CardStatus saveCardStatus(CardStatus cardStatus) throws RegisterNotFoundException, NullParameterException, GeneralException {
-     if (cardStatus == null) {
-            throw new NullParameterException("requestType", null);
-        }
-        return (CardStatus) saveEntity(cardStatus);
-    }   
-    
-     @Override
     public CardStatus loadCardStatus(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         CardStatus cardStatus = (CardStatus) loadEntity(CardStatus.class, request, logger, getMethodName());
         return cardStatus;
     }
 
     @Override
+    public CardStatus saveCardStatus(CardStatus cardStatus) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (cardStatus == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (CardStatus) saveEntity(cardStatus);
+    }
+
+    @Override
     public Currency saveCurrency(Currency currency) throws NullParameterException, GeneralException {
-       if (currency == null) {
+        if (currency == null) {
             throw new NullParameterException("requestType", null);
         }
         return (Currency) saveEntity(currency);
@@ -137,8 +133,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public List<Currency> getCurrency(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-       List<Currency> currency = (List<Currency>) listEntities(Currency.class, request, logger, getMethodName());
+        List<Currency> currency = (List<Currency>) listEntities(Currency.class, request, logger, getMethodName());
         return currency;
     }
-    
-}
+ }
+
