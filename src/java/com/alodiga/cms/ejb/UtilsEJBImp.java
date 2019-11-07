@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 @TransactionManagement(TransactionManagementType.BEAN)
 
 public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLocal, UtilsEJB  {
-//prueba push
+
     private static final Logger logger = Logger.getLogger(UtilsEJBImp.class);
     
     @Override
@@ -102,27 +102,37 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public List<CardStatus> getCardStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         List<CardStatus> cardStatus = (List<CardStatus>) listEntities(CardStatus.class, request, logger, getMethodName());
+        return cardStatus;
     }
 
-    @Override
-    public CardStatus loadCardStatus(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
     @Override
     public CardStatus saveCardStatus(CardStatus cardStatus) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+     if (cardStatus == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (CardStatus) saveEntity(cardStatus);
+    }   
+    
+     @Override
+    public CardStatus loadCardStatus(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CardStatus cardStatus = (CardStatus) loadEntity(CardStatus.class, request, logger, getMethodName());
+        return cardStatus;
     }
 
     @Override
     public Currency saveCurrency(Currency currency) throws NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       if (currency == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (Currency) saveEntity(currency);
     }
 
     @Override
     public List<Currency> getCurrency(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       List<Currency> currency = (List<Currency>) listEntities(Currency.class, request, logger, getMethodName());
+        return currency;
     }
     
 }
