@@ -15,6 +15,7 @@ import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.StatusRequest;
+import com.cms.commons.models.CollectionsRequest;
 import com.cms.commons.util.EjbConstants;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -32,7 +33,7 @@ import org.apache.log4j.Logger;
 @TransactionManagement(TransactionManagementType.BEAN)
 
 public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLocal, UtilsEJB  {
-//test
+    
     private static final Logger logger = Logger.getLogger(UtilsEJBImp.class);
     
     @Override
@@ -142,5 +143,29 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public Currency loadCurrency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    
+    //Collections Requests
+    @Override
+    public List<CollectionsRequest> getCollectionsRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CollectionsRequest> collectionsRequest = (List<CollectionsRequest>) listEntities(CollectionsRequest.class, request, logger, getMethodName());
+        return collectionsRequest;
+    }
+
+    @Override
+    public CollectionsRequest loadCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CollectionsRequest collectionsRequest = (CollectionsRequest) loadEntity(CardStatus.class, request, logger, getMethodName());
+        return collectionsRequest;
+    }
+
+    @Override
+    public CollectionsRequest saveCollectionRequest(CollectionsRequest collectionRequest) throws NullParameterException, GeneralException {
+         if (collectionRequest == null) {
+            throw new NullParameterException("collectionRequest", null);
+        }
+        return (CollectionsRequest) saveEntity(collectionRequest);   
+    }
+ 
+    
  }
 
