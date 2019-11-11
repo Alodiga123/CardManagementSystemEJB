@@ -1,5 +1,4 @@
 package com.alodiga.cms.ejb;
-
 import com.alodiga.cms.commons.ejb.UtilsEJB;
 import com.alodiga.cms.commons.ejb.UtilsEJBLocal;
 import com.alodiga.cms.commons.exception.EmptyListException;
@@ -137,6 +136,11 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public List<Currency> getCurrency(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Currency> currency = (List<Currency>) listEntities(Currency.class, request, logger, getMethodName());
         return currency;
+    }
+
+    @Override
+    public Currency loadCurrency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
  }
 
