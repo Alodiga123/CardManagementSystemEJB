@@ -13,6 +13,7 @@ import com.cms.commons.models.CardRequestType;
 import com.cms.commons.models.CardStatus;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
+import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.CollectionsRequest;
@@ -105,6 +106,9 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (StatusRequest) saveEntity(statusRequest);    
     }
 
+    
+    
+    //CardStatus
     @Override
     public List<CardStatus> getCardStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CardStatus> cardStatus = (List<CardStatus>) listEntities(CardStatus.class, request, logger, getMethodName());
@@ -124,7 +128,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (CardStatus) saveEntity(cardStatus);
     }
-
+ 
+    //Currency
     @Override
     public Currency saveCurrency(Currency currency) throws NullParameterException, GeneralException {
         if (currency == null) {
@@ -140,8 +145,20 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public Currency loadCurrency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Currency loadCurrency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {    
+        Currency currency = (Currency) loadEntity(Currency.class, request, logger, getMethodName());
+        return currency;
+
+    }
+    
+    //PersonClassification
+      @Override
+      
+    public PersonClassification savePersonClassification(PersonClassification personclassification) throws NullParameterException, GeneralException {
+        if (personclassification == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (PersonClassification) saveEntity(personclassification);
     }
     
     
@@ -167,4 +184,20 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
     
  }
+
+      @Override
+    public List<PersonClassification> getPersonClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonClassification> personclassification = (List<PersonClassification>) listEntities(PersonClassification.class, request, logger, getMethodName());
+        return personclassification;
+    }
+
+      @Override
+    public PersonClassification loadPersonClassification(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {    
+        PersonClassification personclassification = (PersonClassification) loadEntity(PersonClassification.class, request, logger, getMethodName());
+        return personclassification;
+
+    }
+  
+    }
+ 
 
