@@ -1,20 +1,15 @@
-# netbeans specific # 
-nbproject/private/ 
-build/ 
-nbbuild/ 
-dist/ 
-nbdist/ 
-nbproject/
-nbactions.xml 
-nb-configuration.xml 
-nbproject/genfiles\.properties
-nbproject/private/private\.properties
-nbproject/project\.properties
-
-# Class Files # 
+build/classes/CardManagmentSystemCommons\.jar 
+ 
+build/classes/META-INF/persistence\.xml 
+ 
+dist/CardManagmentSystemEJB\.jar 
+ 
+src/java/META-INF/\.LCKpersistence\.xml~ 
+ 
+build/classes/com/alodiga/cms/ejb/UtilsEJBImp\.class 
+ 
 *.class 
-
-# Package Files # 
+ 
 *.jar 
-*.war 
-*.ear
+ 
+*.xml 
