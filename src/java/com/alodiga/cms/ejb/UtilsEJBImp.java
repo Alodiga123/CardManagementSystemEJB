@@ -165,7 +165,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (CollectionsRequest) saveEntity(collectionRequest);   
     }
- 
     
  }
 
