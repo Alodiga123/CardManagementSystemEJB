@@ -16,6 +16,7 @@ import com.cms.commons.models.Currency;
 import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.StatusRequest;
+import com.cms.commons.models.CollectionsRequest;
 import com.cms.commons.util.EjbConstants;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -33,7 +34,7 @@ import org.apache.log4j.Logger;
 @TransactionManagement(TransactionManagementType.BEAN)
 
 public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLocal, UtilsEJB  {
-//test
+    
     private static final Logger logger = Logger.getLogger(UtilsEJBImp.class);
     
     @Override
@@ -159,6 +160,31 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (PersonClassification) saveEntity(personclassification);
     }
+    
+    
+    //Collections Requests
+    @Override
+    public List<CollectionsRequest> getCollectionsRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CollectionsRequest> collectionsRequest = (List<CollectionsRequest>) listEntities(CollectionsRequest.class, request, logger, getMethodName());
+        return collectionsRequest;
+    }
+
+    @Override
+    public CollectionsRequest loadCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CollectionsRequest collectionsRequest = (CollectionsRequest) loadEntity(CardStatus.class, request, logger, getMethodName());
+        return collectionsRequest;
+    }
+
+    @Override
+    public CollectionsRequest saveCollectionRequest(CollectionsRequest collectionRequest) throws NullParameterException, GeneralException {
+         if (collectionRequest == null) {
+            throw new NullParameterException("collectionRequest", null);
+        }
+        return (CollectionsRequest) saveEntity(collectionRequest);   
+    }
+ 
+    
+ }
 
       @Override
     public List<PersonClassification> getPersonClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
