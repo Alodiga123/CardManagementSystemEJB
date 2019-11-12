@@ -152,8 +152,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
     
     //PersonClassification
-      @Override
-      
+    @Override     
     public PersonClassification savePersonClassification(PersonClassification personclassification) throws NullParameterException, GeneralException {
         if (personclassification == null) {
             throw new NullParameterException("requestType", null);
@@ -161,9 +160,22 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (PersonClassification) saveEntity(personclassification);
     }
     
+    @Override
+    public PersonClassification loadPersonClassification(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {    
+        PersonClassification personclassification = (PersonClassification) loadEntity(PersonClassification.class, request, logger, getMethodName());
+        return personclassification;
+
+    }
+    
+    @Override
+    public List<PersonClassification> getPersonClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonClassification> personclassification = (List<PersonClassification>) listEntities(PersonClassification.class, request, logger, getMethodName());
+        return personclassification;
+    }
+    
     
     //Collections Requests
-    @Override
+    /*@Override
     public List<CollectionsRequest> getCollectionsRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CollectionsRequest> collectionsRequest = (List<CollectionsRequest>) listEntities(CollectionsRequest.class, request, logger, getMethodName());
         return collectionsRequest;
@@ -181,24 +193,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("collectionRequest", null);
         }
         return (CollectionsRequest) saveEntity(collectionRequest);   
-    }
- 
+    }*/
     
  }
-
-      @Override
-    public List<PersonClassification> getPersonClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<PersonClassification> personclassification = (List<PersonClassification>) listEntities(PersonClassification.class, request, logger, getMethodName());
-        return personclassification;
-    }
-
-      @Override
-    public PersonClassification loadPersonClassification(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {    
-        PersonClassification personclassification = (PersonClassification) loadEntity(PersonClassification.class, request, logger, getMethodName());
-        return personclassification;
-
-    }
-  
-    }
  
 
