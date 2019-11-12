@@ -161,11 +161,18 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
     
     @Override
+    public List<PersonClassification> getPersonClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonClassification> personclassification = (List<PersonClassification>) listEntities(PersonClassification.class, request, logger, getMethodName());
+        return personclassification;
+    }
+
+    @Override
     public PersonClassification loadPersonClassification(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {    
         PersonClassification personclassification = (PersonClassification) loadEntity(PersonClassification.class, request, logger, getMethodName());
         return personclassification;
 
     }
+     
     
     @Override
     public List<PersonClassification> getPersonClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {

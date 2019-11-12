@@ -8,3 +8,15 @@ dist/CardManagmentSystemEJB\.jar
 src/java/META-INF/\.LCKpersistence\.xml~
 
 build/classes/com/alodiga/cms/ejb/UtilsEJBImp\.class
+
+*.class
+
+*.jar
+
+*.xml
+
+nbproject/genfiles\.properties
+
+nbproject/private/private\.properties
+
+nbproject/project\.properties
