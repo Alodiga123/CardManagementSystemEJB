@@ -112,8 +112,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (StatusRequest) saveEntity(statusRequest);    
     }
 
-    
-    
     //CardStatus
     @Override
     public List<CardStatus> getCardStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -154,7 +152,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public Currency loadCurrency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {    
         Currency currency = (Currency) loadEntity(Currency.class, request, logger, getMethodName());
         return currency;
-
     }
     
     //PersonClassification
@@ -199,7 +196,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (CollectionsRequest) saveEntity(collectionRequest);   
     }   
-    //prueba
 
     //State
     @Override
@@ -208,7 +204,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     return state;
     }
 
-    
     @Override
     public State loadState(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
    State state = (State) loadEntity(State.class, request, logger, getMethodName());
