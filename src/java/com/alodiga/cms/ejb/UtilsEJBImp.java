@@ -17,6 +17,8 @@ import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.CollectionsRequest;
+import com.cms.commons.models.ProductType;
+import com.cms.commons.models.State;
 import com.cms.commons.util.EjbConstants;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -192,8 +194,50 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("collectionRequest", null);
         }
         return (CollectionsRequest) saveEntity(collectionRequest);   
-    }   
-    //prueba
+    } 
+
+    //State
+    @Override
+    public List<State> getState(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<State> state = (List<State>) listEntities(State.class, request, logger, getMethodName());
+        return state;
+    }
+
+    @Override
+    public State loadState(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       State state = (State) loadEntity(State.class, request, logger, getMethodName());
+        return state;
+    }
+
+    @Override
+    public State saveState(State state) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (state == null) {
+            throw new NullParameterException("state", null);
+        }
+        return (State) saveEntity(state);  
+    }
+    
+    
+    //ProductType
+    @Override
+    public List<ProductType> getProductTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProductType> productTypes = (List<ProductType>) listEntities(State.class, request, logger, getMethodName());
+        return productTypes;
+    }
+
+    @Override
+    public ProductType loadProductType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProductType productType = (ProductType) loadEntity(ProductType.class, request, logger, getMethodName());
+        return productType;
+    }
+
+    @Override
+    public ProductType saveProductType(ProductType productType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (productType == null) {
+            throw new NullParameterException("productType", null);
+        }
+        return (ProductType) saveEntity(productType); 
+    }
  }
  
 
