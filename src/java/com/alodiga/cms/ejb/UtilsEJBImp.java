@@ -11,6 +11,7 @@ import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.CardRequestType;
 import com.cms.commons.models.CardStatus;
+import com.cms.commons.models.CollectionsRequest;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
 import com.cms.commons.models.PersonClassification;
@@ -108,8 +109,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (StatusRequest) saveEntity(statusRequest);    
     }
 
-    
-    
     //CardStatus
     @Override
     public List<CardStatus> getCardStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -150,7 +149,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public Currency loadCurrency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {    
         Currency currency = (Currency) loadEntity(Currency.class, request, logger, getMethodName());
         return currency;
-
     }
     
     //PersonClassification
@@ -194,29 +192,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("collectionRequest", null);
         }
         return (CollectionsRequest) saveEntity(collectionRequest);   
-    } 
-
-    //State
-    @Override
-    public List<State> getState(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<State> state = (List<State>) listEntities(State.class, request, logger, getMethodName());
-        return state;
-    }
-
-    @Override
-    public State loadState(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-       State state = (State) loadEntity(State.class, request, logger, getMethodName());
-        return state;
-    }
-
-    @Override
-    public State saveState(State state) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (state == null) {
-            throw new NullParameterException("state", null);
-        }
-        return (State) saveEntity(state);  
-    }
-    
     
     //ProductType
     @Override
@@ -241,3 +216,25 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
  }
  
 
+    //State
+    @Override
+    public List<State> getState(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    List<State> state = (List<State>) listEntities(State.class, request, logger, getMethodName());
+    return state;
+    }
+
+    @Override
+    public State loadState(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+   State state = (State) loadEntity(State.class, request, logger, getMethodName());
+    return state;
+    }
+    
+   @Override
+    public State saveState(State state) throws NullParameterException, GeneralException {
+        if (state == null) {
+            throw new NullParameterException("state", null);
+        }
+        return (State) saveEntity(state);  
+    }
+ }
+  

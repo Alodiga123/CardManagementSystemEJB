@@ -29,7 +29,6 @@
     <class>com.cms.commons.models.Address</class>
     <class>com.cms.commons.models.Program</class>
     <class>com.cms.commons.models.StorageMedio</class>
-    <class>com.cms.commons.models.IdentificationType</class>
     <class>com.cms.commons.models.IssuerType</class>
     <class>com.cms.commons.models.KindCard</class>
     <class>com.cms.commons.models.Currency</class>
@@ -63,6 +62,7 @@
     <class>com.cms.commons.models.CardRequestType</class>
     <class>com.cms.commons.models.CollectionsRequest</class>
     <class>com.cms.commons.models.RequestTypeHasCollectionsRequest</class>
+    <class>com.cms.commons.models.DocumentsPersonType</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
