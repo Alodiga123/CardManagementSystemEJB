@@ -17,12 +17,9 @@ import com.cms.commons.models.Currency;
 import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.StatusRequest;
-import com.cms.commons.models.Country;
-import com.cms.commons.models.Currency;
-import com.cms.commons.models.PersonClassification;
-import com.cms.commons.models.RequestType;
+import com.cms.commons.models.CollectionsRequest;
+import com.cms.commons.models.ProductType;
 import com.cms.commons.models.State;
-import com.cms.commons.models.StatusRequest;
 import com.cms.commons.util.EjbConstants;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -195,7 +192,29 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("collectionRequest", null);
         }
         return (CollectionsRequest) saveEntity(collectionRequest);   
-    }   
+    
+    //ProductType
+    @Override
+    public List<ProductType> getProductTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProductType> productTypes = (List<ProductType>) listEntities(State.class, request, logger, getMethodName());
+        return productTypes;
+    }
+
+    @Override
+    public ProductType loadProductType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProductType productType = (ProductType) loadEntity(ProductType.class, request, logger, getMethodName());
+        return productType;
+    }
+
+    @Override
+    public ProductType saveProductType(ProductType productType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (productType == null) {
+            throw new NullParameterException("productType", null);
+        }
+        return (ProductType) saveEntity(productType); 
+    }
+ }
+ 
 
     //State
     @Override
