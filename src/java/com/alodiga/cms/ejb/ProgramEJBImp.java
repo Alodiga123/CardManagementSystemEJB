@@ -42,10 +42,8 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
     
     
     @Override
-    public Account saveProgram(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException, DisabledAccountException {
-      Account account = new Account();
-      account.setLastName("");  
-      return account;
+    public List<Program> getProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
  //Program
