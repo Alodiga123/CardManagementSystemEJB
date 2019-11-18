@@ -35,18 +35,9 @@ import org.apache.log4j.Logger;
 @Stateless(name = EjbConstants.PROGRAM_EJB, mappedName = EjbConstants.PROGRAM_EJB)
 @TransactionManagement(TransactionManagementType.BEAN)
 
-
-
 public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB , ProgramEJBLocal {    
     private static final Logger logger = Logger.getLogger(ProgramEJBImp.class);
-    
-    
-    @Override
-    public List<Program> getProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
- //Program
     @Override
     public List<Program> getProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Program> program = (List<Program>) listEntities(Program.class, request, logger, getMethodName());
@@ -62,5 +53,4 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         return (Program) saveEntity(program);
     }
 
-    
 }

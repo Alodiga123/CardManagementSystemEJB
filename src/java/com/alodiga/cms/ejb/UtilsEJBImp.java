@@ -192,6 +192,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("collectionRequest", null);
         }
         return (CollectionsRequest) saveEntity(collectionRequest);   
+    }    
     
     //ProductType
     @Override
@@ -212,9 +213,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("productType", null);
         }
         return (ProductType) saveEntity(productType); 
-    }
- }
- 
+    } 
 
     //State
     @Override
@@ -236,5 +235,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (State) saveEntity(state);  
     }
+    
  }
   
