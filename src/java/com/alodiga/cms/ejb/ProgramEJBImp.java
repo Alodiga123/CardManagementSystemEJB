@@ -39,26 +39,20 @@ import org.apache.log4j.Logger;
 
 public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB , ProgramEJBLocal {    
     private static final Logger logger = Logger.getLogger(ProgramEJBImp.class);
-    
-    
-    @Override
-    public Account saveProgram(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException, DisabledAccountException {
-      Account account = new Account();
-      account.setLastName("");  
-      return account;
-    }
 
- //Program
+    //Program
     @Override
     public List<Program> getProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Program> program = (List<Program>) listEntities(Program.class, request, logger, getMethodName());
         return program;
     }
+    
     @Override
     public Program loadProgram(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Program program = (Program) loadEntity(Program.class, request, logger, getMethodName());
         return program;
     }
+    
     @Override
     public Program saveProgram(Program program) throws RegisterNotFoundException, NullParameterException, GeneralException {
         return (Program) saveEntity(program);

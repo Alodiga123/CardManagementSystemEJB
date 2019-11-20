@@ -18,6 +18,7 @@ import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.CollectionsRequest;
+import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.State;
 import com.cms.commons.util.EjbConstants;
@@ -191,7 +192,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
          if (collectionRequest == null) {
             throw new NullParameterException("collectionRequest", null);
         }
-        return (CollectionsRequest) saveEntity(collectionRequest);   
+        return (CollectionsRequest) saveEntity(collectionRequest); 
+    }    
     
     //ProductType
     @Override
@@ -212,21 +214,19 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("productType", null);
         }
         return (ProductType) saveEntity(productType); 
-    }
- }
- 
+    } 
 
     //State
     @Override
     public List<State> getState(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-    List<State> state = (List<State>) listEntities(State.class, request, logger, getMethodName());
-    return state;
+        List<State> state = (List<State>) listEntities(State.class, request, logger, getMethodName());
+        return state;
     }
 
     @Override
     public State loadState(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-   State state = (State) loadEntity(State.class, request, logger, getMethodName());
-    return state;
+        State state = (State) loadEntity(State.class, request, logger, getMethodName());
+        return state;
     }
     
    @Override
@@ -236,5 +236,26 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (State) saveEntity(state);  
     }
+
+    @Override
+    public List<PersonType> getPersonTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonType> personTypes = (List<PersonType>) listEntities(PersonType.class, request, logger, getMethodName());
+        return personTypes;
+    }
+
+    @Override
+    public PersonType loadPersonType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PersonType personTypes = (PersonType) loadEntity(PersonType.class, request, logger, getMethodName());
+        return personTypes;
+    }
+
+    @Override
+    public PersonType savePersonType(PersonType personType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (personType == null) {
+            throw new NullParameterException("personType", null);
+        }
+        return (PersonType) saveEntity(personType);  
+    }
+    
  }
   
