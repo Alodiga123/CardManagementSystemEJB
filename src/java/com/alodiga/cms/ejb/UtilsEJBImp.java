@@ -22,6 +22,7 @@ import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
+import com.cms.commons.models.Request;
 import com.cms.commons.models.State;
 import com.cms.commons.util.EjbConstants;
 import java.util.List;
@@ -300,6 +301,26 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("documentsPersonType", null);
         }
         return (DocumentsPersonType) saveEntity(documentsPersonType);  
+    }
+
+    @Override
+    public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Request> requests = (List<Request>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
+        return requests;
+    }
+
+    @Override
+    public Request loadRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Request requests = (Request) loadEntity(Request.class, request, logger, getMethodName());
+        return requests;
+    }
+
+    @Override
+    public Request saveRequest(Request request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (request == null) {
+            throw new NullParameterException("requests", null);
+        }
+        return (Request) saveEntity(request); 
     }
 
  }
