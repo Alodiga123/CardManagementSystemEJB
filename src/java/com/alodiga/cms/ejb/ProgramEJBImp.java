@@ -59,8 +59,8 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
     }
     
     @Override
-    public List<Person> getProgramOwner(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Person> programOwnerList = new ArrayList<Person>();
+    public List<NaturalPerson> getProgramOwner(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<NaturalPerson> programOwnerList = new ArrayList<NaturalPerson>();
         StringBuilder sqlBuilder = new StringBuilder("SELECT np.firstName || ' ' || np.lastName as Name FROM naturalPerson np, person p WHERE np.personId = p.id AND p.personClassificationId = ?1");
         Query query = null;
         try {
@@ -72,8 +72,4 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         return programOwnerList;
     }
-    
-    
-    
-
 }
