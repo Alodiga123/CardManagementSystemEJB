@@ -305,7 +305,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Request> requests = (List<Request>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
+        List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
         return requests;
     }
 
