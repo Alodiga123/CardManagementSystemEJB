@@ -1,4 +1,5 @@
 package com.alodiga.cms.ejb;
+
 import com.alodiga.cms.commons.ejb.UtilsEJB;
 import com.alodiga.cms.commons.ejb.UtilsEJBLocal;
 import com.alodiga.cms.commons.exception.EmptyListException;
@@ -9,21 +10,31 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.BinSponsor;
+import com.cms.commons.models.CardIssuanceType;
 import com.cms.commons.models.CardRequestType;
 import com.cms.commons.models.CardStatus;
+import com.cms.commons.models.CardType;
 import com.cms.commons.models.CollectionsRequest;
 import com.cms.commons.models.Country;
-import com.cms.commons.models.Currency;
 import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
+import com.cms.commons.models.Network;
 import com.cms.commons.models.PersonClassification;
+import com.cms.commons.models.Product;
+import com.cms.commons.models.ProductType;
+import com.cms.commons.models.ProgramHasNetwork;
+import com.cms.commons.models.ProgramType;
 import com.cms.commons.models.RequestType;
+import com.cms.commons.models.SourceFunds;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.util.EjbConstants;
+import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
+
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -39,10 +50,10 @@ import org.apache.log4j.Logger;
 @Stateless(name = EjbConstants.UTILS_EJB, mappedName = EjbConstants.UTILS_EJB)
 @TransactionManagement(TransactionManagementType.BEAN)
 
-public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLocal, UtilsEJB  {
-    
+public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLocal, UtilsEJB {
+
     private static final Logger logger = Logger.getLogger(UtilsEJBImp.class);
-    
+
     @Override
     public List<RequestType> getRequestType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<RequestType> requestsTypeList = (List<RequestType>) listEntities(RequestType.class, request, logger, getMethodName());
@@ -54,7 +65,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         RequestType requestType = (RequestType) loadEntity(RequestType.class, request, logger, getMethodName());
         return requestType;
     }
-    
+
     @Override
     public RequestType saveRequestType(RequestType requestType) throws NullParameterException, GeneralException {
         if (requestType == null) {
@@ -94,7 +105,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         if (country == null) {
             throw new NullParameterException("country", null);
         }
-        return (Country) saveEntity(country);    
+        return (Country) saveEntity(country);
     }
 
     //Status Request
@@ -109,7 +120,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         if (statusRequest == null) {
             throw new NullParameterException("requestType", null);
         }
-        return (StatusRequest) saveEntity(statusRequest);    
+        return (StatusRequest) saveEntity(statusRequest);
     }
 
     //CardStatus
@@ -132,7 +143,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (CardStatus) saveEntity(cardStatus);
     }
- 
+
     //Currency
     @Override
     public Currency saveCurrency(Currency currency) throws NullParameterException, GeneralException {
@@ -149,20 +160,20 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public Currency loadCurrency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {    
+    public Currency loadCurrency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Currency currency = (Currency) loadEntity(Currency.class, request, logger, getMethodName());
         return currency;
     }
-    
+
     //PersonClassification
-    @Override     
+    @Override
     public PersonClassification savePersonClassification(PersonClassification personclassification) throws NullParameterException, GeneralException {
         if (personclassification == null) {
             throw new NullParameterException("requestType", null);
         }
         return (PersonClassification) saveEntity(personclassification);
     }
-    
+
     @Override
     public List<PersonClassification> getPersonClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PersonClassification> personclassification = (List<PersonClassification>) listEntities(PersonClassification.class, request, logger, getMethodName());
@@ -170,12 +181,12 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public PersonClassification loadPersonClassification(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {    
+    public PersonClassification loadPersonClassification(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         PersonClassification personclassification = (PersonClassification) loadEntity(PersonClassification.class, request, logger, getMethodName());
         return personclassification;
 
     }
-      
+
     //Collections Requests
     @Override
     public List<CollectionsRequest> getCollectionsRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -191,31 +202,245 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public CollectionsRequest saveCollectionRequest(CollectionsRequest collectionRequest) throws NullParameterException, GeneralException {
-         if (collectionRequest == null) {
+        if (collectionRequest == null) {
             throw new NullParameterException("collectionRequest", null);
         }
-        return (CollectionsRequest) saveEntity(collectionRequest);   
-    }   
+        return (CollectionsRequest) saveEntity(collectionRequest);
+    }
 
     //State
     @Override
     public List<State> getState(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-    List<State> state = (List<State>) listEntities(State.class, request, logger, getMethodName());
-    return state;
+        List<State> state = (List<State>) listEntities(State.class, request, logger, getMethodName());
+        return state;
     }
 
     @Override
     public State loadState(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-   State state = (State) loadEntity(State.class, request, logger, getMethodName());
-    return state;
+        State state = (State) loadEntity(State.class, request, logger, getMethodName());
+        return state;
     }
-    
-   @Override
+
+    @Override
     public State saveState(State state) throws NullParameterException, GeneralException {
         if (state == null) {
             throw new NullParameterException("state", null);
         }
-        return (State) saveEntity(state);  
+        return (State) saveEntity(state);
     }
- }
+    
+  //ProductType
+    @Override
+    public List<ProductType> getProductType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+       List<ProductType> productType = (List<ProductType>) listEntities(ProductType.class, request, logger, getMethodName());
+        return productType;
+    }
+
+    @Override
+    public ProductType loadProductType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProductType productType = (ProductType) loadEntity(ProductType.class, request, logger, getMethodName());
+        return productType;
+    }
+
+    @Override
+    public ProductType saveProductType(ProductType productType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (productType == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (ProductType) saveEntity(productType);
+    }
+    //ProgramType
+    @Override
+    public List<ProgramType> getProgramType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProgramType> programType = (List<ProgramType>) listEntities(ProgramType.class, request, logger, getMethodName());
+        return programType;
+    }
+
+    @Override
+    public ProgramType loadProgramType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       ProgramType programType = (ProgramType) loadEntity(ProgramType.class, request, logger, getMethodName());
+        return programType;
+    }
+
+    @Override
+    public ProgramType saveProgramType(ProgramType programType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (programType == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (ProgramType) saveEntity(programType);
+    }
+//BinSponsor
+    @Override
+    public List<BinSponsor> getBinSponsor(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+       List<BinSponsor> binSponsor = (List<BinSponsor>) listEntities(BinSponsor.class, request, logger, getMethodName());
+        return binSponsor;
+    }
+
+    @Override
+    public BinSponsor loadBinSponsore(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        BinSponsor binSponsor = (BinSponsor) loadEntity(BinSponsor.class, request, logger, getMethodName());
+        return binSponsor;
+    }
+
+    @Override
+    public BinSponsor saveBinSponsor(BinSponsor binsponsor) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (binsponsor == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (BinSponsor) saveEntity(binsponsor);
+    }
+//CardType
+    @Override
+    public List<CardType> getCardType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+       List<CardType> cardType = (List<CardType>) listEntities(CardType.class, request, logger, getMethodName());
+        return cardType;
+    }
+
+    @Override
+    public CardType loadCardType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CardType cardType = (CardType) loadEntity(CardType.class, request, logger, getMethodName());
+        return cardType;
+    }
+
+    @Override
+    public CardType saveCardType(CardType cardType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+         if (cardType == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (CardType) saveEntity(cardType);
+    }
+//SourceFunds
+    @Override
+    public List<SourceFunds> getSourceFunds(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<SourceFunds> sourceFunds = (List<SourceFunds>) listEntities(SourceFunds.class, request, logger, getMethodName());
+        return sourceFunds;
+    }
+
+
+    @Override
+    public SourceFunds loadSourceFunds(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        SourceFunds sourceFunds = (SourceFunds) loadEntity(SourceFunds.class, request, logger, getMethodName());
+        return sourceFunds;
+    }
+
+    @Override
+    public SourceFunds saveSourceFunds(SourceFunds sourceFunds) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       if (sourceFunds == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (SourceFunds) saveEntity(sourceFunds);
+    }
+    
+    
+    //CardIssuanceType
+    
+    @Override
+    public List<CardIssuanceType> getCardIssuanceType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardIssuanceType> cardIssuanceType = (List<CardIssuanceType>) listEntities(CardIssuanceType.class, request, logger, getMethodName());
+        return cardIssuanceType;
+    }
+
+    @Override
+    public CardIssuanceType loadCardIssuanceType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+      CardIssuanceType cardIssuanceType = (CardIssuanceType) loadEntity(CardIssuanceType.class, request, logger, getMethodName());
+        return cardIssuanceType;
+      }
+
+    @Override
+    public CardIssuanceType saveCardIssuanceType(CardIssuanceType cardIssuanceType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (cardIssuanceType == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (CardIssuanceType) saveEntity(cardIssuanceType);
+    }
+
+    @Override
+    public List<Network> getNetwork(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Network> network = (List<Network>) listEntities(Network.class, request, logger, getMethodName());
+        return network;
+    }
+
+    @Override
+    public Network loadNetwork(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       Network network = (Network) loadEntity(Network.class, request, logger, getMethodName());
+        return network;
+      }
+
+    @Override
+    public Network saveNetwork(Network network) throws RegisterNotFoundException, NullParameterException, GeneralException {
+         if (network == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (Network) saveEntity(network);
+    }
+
+    @Override
+    public List<ProgramHasNetwork> getProgramHasNetwork(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+      List<ProgramHasNetwork> programHasNetwork = (List<ProgramHasNetwork>) listEntities(ProgramHasNetwork.class, request, logger, getMethodName());
+        return programHasNetwork;
+    }
+
+    @Override
+    public ProgramHasNetwork loadProgramHasNetwork(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+         ProgramHasNetwork programHasNetwork = (ProgramHasNetwork) loadEntity(ProgramHasNetwork.class, request, logger, getMethodName());
+        return programHasNetwork;
+      }
+
+    @Override
+    public ProgramHasNetwork saveProgramHasNetwork(ProgramHasNetwork programHasNetwork) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       if (programHasNetwork == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (ProgramHasNetwork) saveEntity(programHasNetwork);
+    }
+
+    @Override
+    public List<Product> getProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+     List<Product> product = (List<Product>) listEntities(Product.class, request, logger, getMethodName());
+        return product;
+    }
+
+    @Override
+    public Product loadProduct(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+      Product product = (Product) loadEntity(Product.class, request, logger, getMethodName());
+        return product;
+      }
+
+    @Override
+    public Product saveProduct(Product product) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (product == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (Product) saveEntity(product);
+    }
+
+    
+
+    }
+
+    
+
+    
+
+
   
+    
+    
+
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  
+   
+
+   
+
