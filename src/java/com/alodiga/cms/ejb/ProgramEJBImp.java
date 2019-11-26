@@ -64,12 +64,13 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
     @Override
     public List<NaturalPerson> getProgramOwner(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<NaturalPerson> programOwnerList = new ArrayList<NaturalPerson>();
-        StringBuilder sqlBuilder = new StringBuilder("SELECT np.personID, CONCAT(np.firstName, ' ', np.lastName) as Name FROM naturalPerson np, person p WHERE np.personId = p.id AND p.personClassificationId = ?1");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT n FROM NaturalPerson n, Person p WHERE n.personId.id = p.id AND p.personClassificationId.id = ?1");
         Query query = null;
+        int idClassificationPerson = Constants.CLASSIFICATION_PERSON_PROGRAM_OWNER;
         try {
             query = createQuery(sqlBuilder.toString());
-            query.setParameter("1", Constants.CLASSIFICATION_PERSON_PROGRAM_OWNER);
-            programOwnerList = (List) query.setHint("toplink.refresh", "true").getResultList();
+            query.setParameter("1",idClassificationPerson);
+            programOwnerList = (List<NaturalPerson>) query.setHint("toplink.refresh", "true").getResultList();
         } catch (Exception e) {
             e.printStackTrace();            
         }
