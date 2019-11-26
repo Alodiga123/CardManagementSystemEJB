@@ -10,37 +10,39 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.Address;
 import com.cms.commons.models.BinSponsor;
 import com.cms.commons.models.CardIssuanceType;
 import com.cms.commons.models.CardRequestType;
 import com.cms.commons.models.CardStatus;
 import com.cms.commons.models.CardType;
-import com.cms.commons.models.CollectionsRequest;
-import com.cms.commons.models.Country;
-import com.cms.commons.models.PersonClassification;
-import com.cms.commons.models.RequestType;
+import com.cms.commons.models.City;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
 import com.cms.commons.models.Network;
 import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.Product;
-import com.cms.commons.models.ProductType;
 import com.cms.commons.models.ProgramHasNetwork;
 import com.cms.commons.models.ProgramType;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.SourceFunds;
 import com.cms.commons.models.CollectionsRequest;
 import com.cms.commons.models.DocumentsPersonType;
+import com.cms.commons.models.EconomicActivity;
+import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.State;
+import com.cms.commons.models.StreetType;
+import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.EjbConstants;
 import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -338,7 +340,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     
     
     //CardIssuanceType
-    
     @Override
     public List<CardIssuanceType> getCardIssuanceType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CardIssuanceType> cardIssuanceType = (List<CardIssuanceType>) listEntities(CardIssuanceType.class, request, logger, getMethodName());
@@ -417,17 +418,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("requestType", null);
         }
         return (Product) saveEntity(product);
-    }
-
-    
-
-    }
-
-    
-
-    
-
-
+    }  
 
     @Override
     public List<PersonType> getPersonTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -473,7 +464,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     
     //DocumentsPersonType
     @Override
-    public List<DocumentsPersonType> getDocumentsPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    public List<DocumentsPersonType> getDocumentsPersonTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<DocumentsPersonType> documentsPersonType = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
         return documentsPersonType;
     }
@@ -492,6 +483,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (DocumentsPersonType) saveEntity(documentsPersonType);  
     }
 
+    
+    //Request
     @Override
     public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
@@ -512,25 +505,149 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (Request) saveEntity(request); 
     }
 
- }
-  
-    
-    
+    //EconomicActivity
+    @Override
+    public List<EconomicActivity> getEconomicActivitys(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<EconomicActivity> economicActivitys = (List<EconomicActivity>) listEntities(EconomicActivity.class, request, logger, getMethodName());
+        return economicActivitys;
+    }
 
-   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-  
-   
+    @Override
+    public EconomicActivity loadEconomicActivity(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        EconomicActivity economicActivity = (EconomicActivity) loadEntity(EconomicActivity.class, request, logger, getMethodName());
+        return economicActivity;
+    }
 
-   
+    @Override
+    public EconomicActivity saveEconomicActivity(EconomicActivity economicActivity) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (economicActivity == null) {
+            throw new NullParameterException("economicActivity", null);
+        }
+        return (EconomicActivity) saveEntity(economicActivity); 
+    }
+    
+    
+    //Address
+    @Override
+    public List<Address> getAddresses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
+        return addresses;
+    }
+
+    @Override
+    public Address loadAddress(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Address address = (Address) loadEntity(Address.class, request, logger, getMethodName());
+        return address;
+    }
+
+    @Override
+    public Address saveAddress(Address address) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (address == null) {
+            throw new NullParameterException("address", null);
+        }
+        return (Address) saveEntity(address); 
+    }
+
+    //EdificationType
+    @Override
+    public List<EdificationType> getEdificationTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<EdificationType> edificationTypes = (List<EdificationType>) listEntities(EdificationType.class, request, logger, getMethodName());
+        return edificationTypes;
+    }
+
+    @Override
+    public EdificationType loadEdificationType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        EdificationType edificationType = (EdificationType) loadEntity(EdificationType.class, request, logger, getMethodName());
+        return edificationType;
+    }
+
+    @Override
+    public EdificationType saveEdificationType(EdificationType edificationType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (edificationType == null) {
+            throw new NullParameterException("edificationType", null);
+        }
+        return (EdificationType) saveEntity(edificationType); 
+    }
+
+    
+    //City
+    @Override
+    public List<City> getCitys(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<City> city = (List<City>) listEntities(City.class, request, logger, getMethodName());
+        return city;
+    }
+
+    /*@Override
+    public List<City> getCitiesByCounty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<City> cities = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(WebConstants.ID_ELEMENT)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), WebConstants.ID_ELEMENT), null);
+        }
+        cities = (List<City>) getNamedQueryResult(UtilsEJB.class, WebConstants.CITIES_BY_COUNTY, request, getMethodName(), logger, "cities");
+        return cities;
+    }*/
+    
+    @Override
+    public City loadCity(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        City city = (City) loadEntity(City.class, request, logger, getMethodName());
+        return city;
+    }
+
+    @Override
+    public City saveCity(City city) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (city == null) {
+            throw new NullParameterException("city", null);
+        }
+        return (City) saveEntity(city); 
+    }
+
+    
+    //StreetType
+    @Override
+    public List<StreetType> getStreetTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StreetType> streetTypes = (List<StreetType>) listEntities(StreetType.class, request, logger, getMethodName());
+        return streetTypes;
+    }
+
+    @Override
+    public StreetType loadStreetType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StreetType streetType = (StreetType) loadEntity(StreetType.class, request, logger, getMethodName());
+        return streetType;
+    }
+
+    @Override
+    public StreetType saveStreetType(StreetType streetType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (streetType == null) {
+            throw new NullParameterException("streetType", null);
+        }
+        return (StreetType) saveEntity(streetType); 
+    }
+
+    @Override
+    public List<ZipZone> getZipZones(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ZipZone> zipZones = (List<ZipZone>) listEntities(ZipZone.class, request, logger, getMethodName());
+        return zipZones;
+    }
+
+    @Override
+    public ZipZone loadZipZone(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ZipZone zipZone = (ZipZone) loadEntity(ZipZone.class, request, logger, getMethodName());
+        return zipZone;
+    }
+
+    @Override
+    public ZipZone saveZipZone(ZipZone zipZone) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (zipZone == null) {
+            throw new NullParameterException("zipZone", null);
+        }
+        return (ZipZone) saveEntity(zipZone); 
+    }
+
+    
+    
+    
+}
+    
+    
 
