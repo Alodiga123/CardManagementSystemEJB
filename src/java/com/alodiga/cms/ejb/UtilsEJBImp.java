@@ -32,6 +32,7 @@ import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EconomicActivity;
 import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.LegalPerson;
+import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Request;
@@ -577,16 +578,17 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return city;
     }
 
-    /*@Override
+    @Override
     public List<City> getCitiesByCounty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<City> cities = null;
         Map<String, Object> params = request.getParams();
-        if (!params.containsKey(WebConstants.ID_ELEMENT)) {
-            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), WebConstants.ID_ELEMENT), null);
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            //throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+            throw new NullParameterException("city", null);
         }
-        cities = (List<City>) getNamedQueryResult(UtilsEJB.class, WebConstants.CITIES_BY_COUNTY, request, getMethodName(), logger, "cities");
+        cities = (List<City>) getNamedQueryResult(UtilsEJB.class, EjbConstants.CITIES_BY_COUNTY, request, getMethodName(), logger, "cities");
         return cities;
-    }*/
+    }
     
     @Override
     public City loadCity(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -624,6 +626,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (StreetType) saveEntity(streetType); 
     }
 
+    
+    //ZipZone
     @Override
     public List<ZipZone> getZipZones(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ZipZone> zipZones = (List<ZipZone>) listEntities(ZipZone.class, request, logger, getMethodName());
@@ -645,7 +649,26 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     
-    
+    //LegalRepresentatives
+    @Override
+    public List<LegalRepresentatives> getLegalRepresentativeses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalRepresentatives> legalRepresentativeses = (List<LegalRepresentatives>) listEntities(LegalRepresentatives.class, request, logger, getMethodName());
+        return legalRepresentativeses;
+    }
+
+    @Override
+    public LegalRepresentatives loadLegalRepresentatives(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        LegalRepresentatives legalRepresentatives = (LegalRepresentatives) loadEntity(LegalRepresentatives.class, request, logger, getMethodName());
+        return legalRepresentatives;
+    }
+
+    @Override
+    public LegalRepresentatives saveLegalRepresentatives(LegalRepresentatives legalRepresentatives) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (legalRepresentatives == null) {
+            throw new NullParameterException("legalRepresentatives", null);
+        }
+        return (LegalRepresentatives) saveEntity(legalRepresentatives); 
+    }
     
 }
     
