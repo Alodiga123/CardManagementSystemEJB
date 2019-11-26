@@ -13,3 +13,9 @@ build/classes/com/alodiga/cms/ejb/UtilsEJBImp\.class
 *.jar 
  
 *.xml 
+
+nbproject/genfiles\.properties
+
+nbproject/private/private\.properties
+
+nbproject/project\.properties
