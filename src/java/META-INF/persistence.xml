@@ -63,6 +63,8 @@
     <class>com.cms.commons.models.CollectionsRequest</class>
     <class>com.cms.commons.models.RequestTypeHasCollectionsRequest</class>
     <class>com.cms.commons.models.DocumentsPersonType</class>
+    <class>com.cms.commons.models.Network</class>
+    <class>com.cms.commons.models.ProgramHasNetwork</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
