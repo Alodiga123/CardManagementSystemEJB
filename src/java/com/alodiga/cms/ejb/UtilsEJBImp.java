@@ -43,7 +43,7 @@ import com.cms.commons.models.State;
 import com.cms.commons.models.StreetType;
 import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.EjbConstants;
-import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
+import com.cms.commons.util.QueryConstants;
 
 import java.util.List;
 import java.util.Map;
@@ -641,15 +641,15 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return city;
     }
 
-    @Override
-    public List<City> getCitiesByCounty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    //@Override
+    public List<City> getCitiesByState(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        
         List<City> cities = null;
         Map<String, Object> params = request.getParams();
-        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
-            //throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
-            throw new NullParameterException("city", null);
-        }
-        cities = (List<City>) getNamedQueryResult(UtilsEJB.class, EjbConstants.CITIES_BY_COUNTY, request, getMethodName(), logger, "cities");
+//        if (!params.containsKey(EjbConstants.PARAM_STATE_ID)) {
+//            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATE_ID), null);
+//        }
+//        cities = (List<City>) getNamedQueryResult(UtilsEJB.class, EjbConstants.CITIES_BY_STATE, request, getMethodName(), logger, "cities");
         return cities;
     }
     
@@ -732,9 +732,21 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (LegalRepresentatives) saveEntity(legalRepresentatives); 
     }
+
+    @Override
+    public List<State> getStatesByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<State> states = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        states = (List<State>) getNamedQueryResult(UtilsEJB.class, QueryConstants.STATES_BY_COUNTRY, request, getMethodName(), logger, "states");
+        return states;
+    }  
+
+    @Override
+    public List<City> getCitiesByCounty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
-    
-    
-
-   
