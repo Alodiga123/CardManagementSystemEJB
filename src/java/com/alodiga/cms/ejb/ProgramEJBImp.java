@@ -17,6 +17,7 @@ import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.Account;
+import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.NaturalPerson;
 import com.cms.commons.models.Person;
 import com.cms.commons.models.Program;
@@ -76,4 +77,22 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         return programOwnerList;
     }
+
+    @Override
+    public List<LegalPerson> getCardManagementProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPerson> cardManagementProgramList = new ArrayList<LegalPerson>();
+        StringBuilder sqlBuilder = new StringBuilder("SELECT l FROM LegalPerson l, Person p WHERE l.personId.id = p.id AND p.personClassificationId.id = ?1");
+        Query query = null;
+        int idClassificationPerson = Constants.CLASSIFICATION_CARD_MANAGEMENT_PROGRAM;
+        try {
+            query = createQuery(sqlBuilder.toString());
+            query.setParameter("1",idClassificationPerson);
+            cardManagementProgramList = (List<LegalPerson>) query.setHint("toplink.refresh", "true").getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();            
+        }
+        return cardManagementProgramList;
+    }
+
+    
 }
