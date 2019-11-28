@@ -61,7 +61,7 @@
     <class>com.cms.commons.models.Request</class>
     <class>com.cms.commons.models.CardRequestType</class>
     <class>com.cms.commons.models.CollectionsRequest</class>
-    <class>com.cms.commons.models.RequestTypeHasCollectionsRequest</class>
+    <class>com.cms.commons.models.RequestHasCollectionsRequest</class>
     <class>com.cms.commons.models.DocumentsPersonType</class>
     <class>com.cms.commons.models.Network</class>
     <class>com.cms.commons.models.ProgramHasNetwork</class>
