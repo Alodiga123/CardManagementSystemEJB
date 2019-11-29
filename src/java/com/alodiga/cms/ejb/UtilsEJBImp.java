@@ -656,7 +656,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     //@Override
     public List<City> getCitiesByState(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        
         List<City> cities = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_STATE_ID)) {
@@ -707,6 +706,17 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     @Override
     public List<ZipZone> getZipZones(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ZipZone> zipZones = (List<ZipZone>) listEntities(ZipZone.class, request, logger, getMethodName());
+        return zipZones;
+    }
+    
+    @Override
+    public List<ZipZone> getZipZoneByCities(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ZipZone> zipZones = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CITY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CITY_ID), null);
+        }
+        zipZones = (List<ZipZone>) getNamedQueryResult(UtilsEJB.class, QueryConstants.ZIPZONE_BY_CITY, request, getMethodName(), logger, "zipZones");
         return zipZones;
     }
 
@@ -788,4 +798,5 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
     }
+
 }
