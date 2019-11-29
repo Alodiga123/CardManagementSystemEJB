@@ -13,9 +13,12 @@ import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.Address;
 import com.cms.commons.models.BinSponsor;
 import com.cms.commons.models.CardIssuanceType;
+import com.cms.commons.models.CardRequestNaturalPerson;
+import com.cms.commons.models.CardRequestType;
 import com.cms.commons.models.CardStatus;
 import com.cms.commons.models.CardType;
 import com.cms.commons.models.City;
+import com.cms.commons.models.CivilStatus;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
@@ -225,6 +228,17 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<State> state = (List<State>) listEntities(State.class, request, logger, getMethodName());
         return state;
     }
+    
+    @Override
+    public List<State> getStatesByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<State> states = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        states = (List<State>) getNamedQueryResult(UtilsEJB.class, QueryConstants.STATES_BY_COUNTRY, request, getMethodName(), logger, "states");
+        return states;
+    }  
 
     @Override
     public State loadState(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -622,13 +636,12 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     //@Override
     public List<City> getCitiesByState(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        
         List<City> cities = null;
         Map<String, Object> params = request.getParams();
-//        if (!params.containsKey(EjbConstants.PARAM_STATE_ID)) {
-//            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATE_ID), null);
-//        }
-//        cities = (List<City>) getNamedQueryResult(UtilsEJB.class, EjbConstants.CITIES_BY_STATE, request, getMethodName(), logger, "cities");
+        if (!params.containsKey(EjbConstants.PARAM_STATE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATE_ID), null);
+        }
+        cities = (List<City>) getNamedQueryResult(UtilsEJB.class, QueryConstants.CITIES_BY_STATE, request, getMethodName(), logger, "cities");
         return cities;
     }
     
@@ -675,6 +688,17 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<ZipZone> zipZones = (List<ZipZone>) listEntities(ZipZone.class, request, logger, getMethodName());
         return zipZones;
     }
+    
+    @Override
+    public List<ZipZone> getZipZoneByCities(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ZipZone> zipZones = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CITY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CITY_ID), null);
+        }
+        zipZones = (List<ZipZone>) getNamedQueryResult(UtilsEJB.class, QueryConstants.ZIPZONE_BY_CITY, request, getMethodName(), logger, "zipZones");
+        return zipZones;
+    }
 
     @Override
     public ZipZone loadZipZone(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -712,20 +736,47 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (LegalRepresentatives) saveEntity(legalRepresentatives); 
     }
 
+    
+
+    //CivilEstatus
     @Override
-    public List<State> getStatesByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<State> states = null;
-        Map<String, Object> params = request.getParams();
-        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
-            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
-        }
-        states = (List<State>) getNamedQueryResult(UtilsEJB.class, QueryConstants.STATES_BY_COUNTRY, request, getMethodName(), logger, "states");
-        return states;
-    }  
+    public List<CivilStatus> getCivilStatuses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CivilStatus> civilStatuses = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
+        return civilStatuses;
+    }
 
     @Override
-    public List<City> getCitiesByCounty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public CivilStatus loadCivilStatus(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CivilStatus civilStatuses = (CivilStatus) loadEntity(CivilStatus.class, request, logger, getMethodName());
+        return civilStatuses;
     }
-    
+
+    @Override
+    public CivilStatus saveCivilStatus(CivilStatus civilStatus) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (civilStatus == null) {
+            throw new NullParameterException("civilStatus", null);
+        }
+        return (CivilStatus) saveEntity(civilStatus);
+    }
+
+    @Override
+    public List<CardRequestNaturalPerson> getCardRequestNaturalPersons(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardRequestNaturalPerson> cardRequestNaturalPersons = (List<CardRequestNaturalPerson>) listEntities(CardRequestNaturalPerson.class, request, logger, getMethodName());
+        return cardRequestNaturalPersons;
+    }
+
+    @Override
+    public CardRequestNaturalPerson loadCardRequestNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CardRequestNaturalPerson cardRequestNaturalPerson = (CardRequestNaturalPerson) loadEntity(CardRequestNaturalPerson.class, request, logger, getMethodName());
+        return cardRequestNaturalPerson;
+    }
+
+    @Override
+    public CardRequestNaturalPerson saveCardRequestNaturalPerson(CardRequestNaturalPerson cardRequestNaturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (cardRequestNaturalPerson == null) {
+            throw new NullParameterException("cardRequestNaturalPerson", null);
+        }
+        return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
+    }
+
 }
