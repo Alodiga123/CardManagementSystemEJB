@@ -88,26 +88,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public List<CardRequestType> getCardRequestType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CardRequestType> cardRequestsTypeList = (List<CardRequestType>) listEntities(CardRequestType.class, request, logger, getMethodName());
-        return cardRequestsTypeList;
-    }
-
-    @Override
-    public CardRequestType loadCardRequestType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        CardRequestType cardRequestType = (CardRequestType) loadEntity(CardRequestType.class, request, logger, getMethodName());
-        return cardRequestType;
-    }
-
-    @Override
-    public CardRequestType saveCardRequestType(CardRequestType cardRequestType) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (cardRequestType == null) {
-            throw new NullParameterException("cardRequestType", null);
-        }
-        return (CardRequestType) saveEntity(cardRequestType);
-    }
-
-    @Override
     public List<Country> getCountries(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Country> countryList = (List<Country>) listEntities(Country.class, request, logger, getMethodName());
         return countryList;
