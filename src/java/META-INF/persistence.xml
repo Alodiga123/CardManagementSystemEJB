@@ -65,6 +65,7 @@
     <class>com.cms.commons.models.DocumentsPersonType</class>
     <class>com.cms.commons.models.Network</class>
     <class>com.cms.commons.models.ProgramHasNetwork</class>
+     <class>com.cms.commons.models.OriginApplication</class> 
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>

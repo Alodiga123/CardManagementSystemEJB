@@ -38,7 +38,9 @@ import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.Person;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.PersonType;
+import com.cms.commons.models.PhoneType;
 import com.cms.commons.models.ProductType;
+import com.cms.commons.models.Profession;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.State;
@@ -92,6 +94,12 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<Country> countryList = (List<Country>) listEntities(Country.class, request, logger, getMethodName());
         return countryList;
     }
+    
+     @Override
+    public Country loadCountry(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Country country = (Country) loadEntity(Country.class, request, logger, getMethodName());
+        return country;
+    }
 
     @Override
     public Country saveCountry(Country country) throws NullParameterException, GeneralException {
@@ -106,6 +114,13 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public List<StatusRequest> getStatusRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<StatusRequest> statusRequest = (List<StatusRequest>) listEntities(StatusRequest.class, request, logger, getMethodName());
         return statusRequest;
+    }
+    
+    @Override
+    public StatusRequest loadStatusRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusRequest statusRequest = (StatusRequest) loadEntity(StatusRequest.class, request, logger, getMethodName());
+        return statusRequest;
+
     }
 
     @Override
@@ -295,8 +310,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (BinSponsor) saveEntity(binsponsor);
     }
-//CardType
 
+    //CardType
     @Override
     public List<CardType> getCardTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CardType> cardType = (List<CardType>) listEntities(CardType.class, request, logger, getMethodName());
@@ -316,8 +331,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (CardType) saveEntity(cardType);
     }
-//SourceFunds
 
+    //SourceFunds
     @Override
     public List<SourceFunds> getSourceFunds(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<SourceFunds> sourceFunds = (List<SourceFunds>) listEntities(SourceFunds.class, request, logger, getMethodName());
@@ -437,6 +452,20 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("personType", null);
         }
         return (PersonType) saveEntity(personType);
+    }
+    
+     @Override
+    public List<PersonType> getPersonTypesByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonType> personTypes = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_ORIGIN_APPLICATION_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_ORIGIN_APPLICATION_ID), null);
+        }
+        personTypes = (List<PersonType>) getNamedQueryResult(UtilsEJB.class, QueryConstants.PERSON_TYPES_BY_COUNTRY, request, getMethodName(), logger, "states");
+        return personTypes;
     }
 
     //LegalPerson
@@ -779,4 +808,51 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
     }
 
+
+    @Override
+    public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CivilStatus> civilStatus = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
+        return civilStatus;
+    }
+
+    @Override
+    public List<Profession> getProfession(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Profession> profession = (List<Profession>) listEntities(Profession.class, request, logger, getMethodName());
+        return profession;
+    }
+
+    @Override
+    public Profession loadProfession(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Profession profession = (Profession) loadEntity(Profession.class, request, logger, getMethodName());
+        return profession;
+    }
+
+    @Override
+    public Profession saveProfession(Profession profession) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (profession == null) {
+            throw new NullParameterException("profession", null);
+        }
+        return (Profession) saveEntity(profession);
+    }
+
+    @Override
+    public List<PhoneType> getPhoneType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PhoneType> phoneType = (List<PhoneType>) listEntities(PhoneType.class, request, logger, getMethodName());
+        return phoneType;
+    }
+
+    @Override
+    public PhoneType loadPhoneType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PhoneType phoneType = (PhoneType) loadEntity(PhoneType.class, request, logger, getMethodName());
+        return phoneType;
+    }
+
+    @Override
+    public PhoneType savePhoneType(PhoneType phoneType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (phoneType == null) {
+            throw new NullParameterException("phoneType", null);
+        }
+        return (PhoneType) saveEntity(phoneType);
+    }
+    
 }
