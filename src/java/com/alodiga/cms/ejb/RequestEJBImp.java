@@ -38,6 +38,7 @@ import com.cms.commons.models.Profession;
 import com.cms.commons.models.Program;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.Request;
+import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.StreetType;
@@ -48,6 +49,7 @@ import com.cms.commons.util.EJBServiceLocator;
 import com.cms.commons.util.QueryConstants;
 import static com.sun.xml.ws.security.addressing.impl.policy.Constants.logger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -105,6 +107,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
                                          throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
  
         PersonType personTypeApp = new PersonType();
+        int numberSequence = 0;
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
         programEJB = (ProgramEJB) EJBServiceLocator.getInstance().get(EjbConstants.PROGRAM_EJB);
         requestEJB = (RequestEJB) EJBServiceLocator.getInstance().get(EjbConstants.REQUEST_EJB);  
@@ -119,17 +122,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         request1 = new EJBRequest();
         request1.setParam(countryId);
         Country country = utilsEJB.loadCountry(request1);
-        
-        //Crea el person y lo guarda en BD
-        Person applicant = new Person();
-        applicant.setCountryId(country);
-        applicant.setEmail(email);
-        applicant.setPersonClassificationId(personClassification);
-        applicant.setPersonTypeId(personTypeApp);
-        applicant = utilsEJB.savePerson(applicant);
-        
-        //2. Solicitud de tarjeta         
-        //tipo de la persona que hace la solicitud
+         //tipo de la persona que hace la solicitud
         request1 = new EJBRequest();
         params = new HashMap();
         params.put(Constants.COUNTRY_KEY, countryId);
@@ -141,6 +134,16 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
                 personTypeApp = p;
             }
         }
+        
+        //Crea el person y lo guarda en BD
+        Person applicant = new Person();
+        applicant.setCountryId(country);
+        applicant.setEmail(email);
+        applicant.setPersonClassificationId(personClassification);
+        applicant.setPersonTypeId(personTypeApp);
+        applicant = utilsEJB.savePerson(applicant);
+        
+        //2. Solicitud de tarjeta         
         //programa asociado a la solicitud
         request1 = new EJBRequest();
         request1.setParam(Constants.PROGRAM_WALLET_APP_ID);
@@ -158,8 +161,33 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         request1.setParam(Constants.STATUS_REQUEST_IN_PROCESS);
         StatusRequest statusRequest = utilsEJB.loadStatusRequest(request1);
         
+        //Obtiene el numero de secuencia para documento Request
+        request1 = new EJBRequest();
+        request1.setParam(Constants.SEQUENCES_REQUEST);
+        List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
+        for (Sequences s : sequence) {
+            if (s.getCurrentValue() > 1) {
+                numberSequence = s.getCurrentValue();
+            } else {
+                numberSequence = s.getInitialValue();
+            }
+            s.setCurrentValue(s.getCurrentValue()+1);
+            Sequences sequenceBD =  utilsEJB.saveSequences(s);
+        }   
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        String prefixNumberRequest = "APP-";
+        String suffixNumberRequest = "-";
+        suffixNumberRequest = suffixNumberRequest.concat(String.valueOf(year));
+        String numberRequest = prefixNumberRequest;
+        numberRequest = numberRequest.concat(String.valueOf(numberSequence));
+        numberRequest = numberRequest.concat(suffixNumberRequest);
+        
         //Crea el request y lo guarda en BD
         Request request = new Request();
+        request.setRequestNumber(numberRequest);//APP-1-2019
+        Date dateRequest = new Date();
+        request.setRequestDate(dateRequest);
         request.setCountryId(country);
         request.setPersonId(applicant);
         request.setPersonTypeId(personTypeApp);
@@ -167,8 +195,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         request.setProductTypeId(productType);
         request.setRequestTypeId(requestType);
         request.setStatusRequestId(statusRequest);
-        request = requestEJB.saveRequest(request); 
-
+        request = requestEJB.saveRequest(request);        
+        
         //3. Datos basicos del solicitante
         //tipo de documento del solicitante
         request1 = new EJBRequest();
