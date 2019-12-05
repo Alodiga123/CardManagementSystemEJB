@@ -51,6 +51,7 @@ import com.cms.commons.models.StreetType;
 import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
+import java.util.Calendar;
 
 import java.util.List;
 import java.util.Map;
@@ -908,6 +909,29 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         sequence = (List<Sequences>) getNamedQueryResult(UtilsEJB.class, QueryConstants.SEQUENCES_BY_DOCUMENT_TYPE, request, getMethodName(), logger, "sequence");
         return sequence;
+    }
+
+    @Override
+    public String generateNumberSequence(List<Sequences> sequence) throws GeneralException, RegisterNotFoundException, NullParameterException {
+        int numberSequence = 0;
+        for (Sequences s : sequence) {
+            if (s.getCurrentValue() > 1) {
+                numberSequence = s.getCurrentValue();
+            } else {
+                numberSequence = s.getInitialValue();
+            }
+            s.setCurrentValue(s.getCurrentValue()+1);
+            Sequences sequenceBD =  saveSequences(s);
+        }   
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        String prefixNumberSequence = "APP-";
+        String suffixNumberSequence = "-";
+        suffixNumberSequence = suffixNumberSequence.concat(String.valueOf(year));
+        String numberSequenceDoc = prefixNumberSequence;
+        numberSequenceDoc = numberSequenceDoc.concat(String.valueOf(numberSequence));
+        numberSequenceDoc = numberSequenceDoc.concat(suffixNumberSequence);
+        return numberSequenceDoc;
     }
     
     
