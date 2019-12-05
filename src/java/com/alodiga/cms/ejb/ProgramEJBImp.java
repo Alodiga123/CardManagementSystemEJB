@@ -59,6 +59,9 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
     
     @Override
     public Program saveProgram(Program program) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (program == null) {
+            throw new NullParameterException("program", null);
+        }
         return (Program) saveEntity(program);
     }
     
