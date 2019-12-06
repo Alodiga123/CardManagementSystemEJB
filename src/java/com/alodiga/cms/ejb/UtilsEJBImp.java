@@ -879,7 +879,9 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public List<Sequences> getSequences(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Sequences> sequences = (List<Sequences>) listEntities(Sequences.class, request, logger, getMethodName());
+        return sequences;
+
     }
 
     @Override
@@ -889,8 +891,11 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public Sequences saveSequences(Sequences sequences) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Sequences saveSequences(Sequences sequence) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (sequence == null) {
+            throw new NullParameterException("sequence", null);
+        }
+        return (Sequences) saveEntity(sequence);
     }
 
     @Override
