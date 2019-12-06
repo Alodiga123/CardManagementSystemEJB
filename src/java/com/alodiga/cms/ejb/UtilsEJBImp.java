@@ -51,6 +51,7 @@ import com.cms.commons.models.StreetType;
 import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
+import java.util.Calendar;
 
 import java.util.List;
 import java.util.Map;
@@ -795,9 +796,9 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     //CivilEstatus
     @Override
-    public List<CivilStatus> getCivilStatuses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CivilStatus> civilStatuses = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
-        return civilStatuses;
+    public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CivilStatus> civilStatus = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
+        return civilStatus;
     }
 
     @Override
@@ -834,13 +835,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("cardRequestNaturalPerson", null);
         }
         return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
-    }
-
-
-    @Override
-    public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CivilStatus> civilStatus = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
-        return civilStatus;
     }
 
     @Override
@@ -885,7 +879,9 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public List<Sequences> getSequences(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Sequences> sequences = (List<Sequences>) listEntities(Sequences.class, request, logger, getMethodName());
+        return sequences;
+
     }
 
     @Override
@@ -895,8 +891,11 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public Sequences saveSequences(Sequences sequences) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Sequences saveSequences(Sequences sequence) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (sequence == null) {
+            throw new NullParameterException("sequence", null);
+        }
+        return (Sequences) saveEntity(sequence);
     }
 
     @Override
@@ -908,6 +907,29 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         sequence = (List<Sequences>) getNamedQueryResult(UtilsEJB.class, QueryConstants.SEQUENCES_BY_DOCUMENT_TYPE, request, getMethodName(), logger, "sequence");
         return sequence;
+    }
+
+    @Override
+    public String generateNumberSequence(List<Sequences> sequence) throws GeneralException, RegisterNotFoundException, NullParameterException {
+        int numberSequence = 0;
+        for (Sequences s : sequence) {
+            if (s.getCurrentValue() > 1) {
+                numberSequence = s.getCurrentValue();
+            } else {
+                numberSequence = s.getInitialValue();
+            }
+            s.setCurrentValue(s.getCurrentValue()+1);
+            Sequences sequenceBD =  saveSequences(s);
+        }   
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        String prefixNumberSequence = "APP-";
+        String suffixNumberSequence = "-";
+        suffixNumberSequence = suffixNumberSequence.concat(String.valueOf(year));
+        String numberSequenceDoc = prefixNumberSequence;
+        numberSequenceDoc = numberSequenceDoc.concat(String.valueOf(numberSequence));
+        numberSequenceDoc = numberSequenceDoc.concat(suffixNumberSequence);
+        return numberSequenceDoc;
     }
     
     

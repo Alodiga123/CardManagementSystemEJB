@@ -165,23 +165,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         request1 = new EJBRequest();
         request1.setParam(Constants.SEQUENCES_REQUEST);
         List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
-        for (Sequences s : sequence) {
-            if (s.getCurrentValue() > 1) {
-                numberSequence = s.getCurrentValue();
-            } else {
-                numberSequence = s.getInitialValue();
-            }
-            s.setCurrentValue(s.getCurrentValue()+1);
-            Sequences sequenceBD =  utilsEJB.saveSequences(s);
-        }   
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        String prefixNumberRequest = "APP-";
-        String suffixNumberRequest = "-";
-        suffixNumberRequest = suffixNumberRequest.concat(String.valueOf(year));
-        String numberRequest = prefixNumberRequest;
-        numberRequest = numberRequest.concat(String.valueOf(numberSequence));
-        numberRequest = numberRequest.concat(suffixNumberRequest);
+        String numberRequest = utilsEJB.generateNumberSequence(sequence);
         
         //Crea el request y lo guarda en BD
         Request request = new Request();

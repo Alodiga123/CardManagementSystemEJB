@@ -19,6 +19,7 @@ import com.cms.commons.models.NaturalPerson;
 import com.cms.commons.models.Person;
 import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PhonePerson;
+import com.cms.commons.models.PhoneType;
 import com.cms.commons.models.Program;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.util.EjbConstants;
@@ -77,6 +78,26 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
             throw new NullParameterException("familyReferences", null);
         }
         return (FamilyReferences) saveEntity(familyReferences);
+    }
+
+    @Override
+    public List<PhoneType> getPhoneType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PhoneType> phoneType = (List<PhoneType>) listEntities(PhoneType.class, request, logger, getMethodName());
+        return phoneType;
+    }
+
+    @Override
+    public PhoneType loadPhoneType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PhoneType phoneType = (PhoneType) loadEntity(PhoneType.class, request, logger, getMethodName());
+        return phoneType;
+    }
+
+    @Override
+    public PhoneType savePhoneType(PhoneType phoneType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (phoneType == null) {
+            throw new NullParameterException("phoneType", null);
+        }
+        return (PhoneType) saveEntity(phoneType);
     }
 
     
