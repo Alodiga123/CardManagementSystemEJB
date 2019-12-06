@@ -794,10 +794,10 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     
 
     //CivilEstatus
-    @Override
-    public List<CivilStatus> getCivilStatuses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CivilStatus> civilStatuses = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
-        return civilStatuses;
+   @Override
+    public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CivilStatus> civilStatus = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
+        return civilStatus;
     }
 
     @Override
@@ -834,13 +834,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("cardRequestNaturalPerson", null);
         }
         return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
-    }
-
-
-    @Override
-    public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CivilStatus> civilStatus = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
-        return civilStatus;
     }
 
     @Override
