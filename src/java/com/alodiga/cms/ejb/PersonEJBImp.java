@@ -14,12 +14,17 @@ import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.Account;
+import com.cms.commons.models.ApplicantNaturalPerson;
+import com.cms.commons.models.CivilStatus;
 import com.cms.commons.models.FamilyReferences;
+import com.cms.commons.models.KinShipApplicant;
+import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
 import com.cms.commons.models.NaturalPerson;
 import com.cms.commons.models.Person;
 import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
+import com.cms.commons.models.Profession;
 import com.cms.commons.models.Program;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.util.EjbConstants;
@@ -100,5 +105,109 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         return (PhoneType) saveEntity(phoneType);
     }
 
+    @Override
+    public List<ApplicantNaturalPerson> getApplicantNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApplicantNaturalPerson> applicantNaturalPerson = (List<ApplicantNaturalPerson>) listEntities(ApplicantNaturalPerson.class, request, logger, getMethodName());
+        return applicantNaturalPerson;
+    }
+
+    @Override
+    public ApplicantNaturalPerson loadApplicantNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ApplicantNaturalPerson applicantNaturalPerson = (ApplicantNaturalPerson) loadEntity(ApplicantNaturalPerson.class, request, logger, getMethodName());
+        return applicantNaturalPerson;
+    }
+
+    @Override
+    public ApplicantNaturalPerson saveApplicantNaturalPerson(ApplicantNaturalPerson applicantNaturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (applicantNaturalPerson == null) {
+            throw new NullParameterException("applicantNaturalPerson", null);
+        }
+        return (ApplicantNaturalPerson) saveEntity(applicantNaturalPerson);
+    }
+    
+    //KinShipApplicant
+    @Override
+    public List<KinShipApplicant> getKinShipApplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<KinShipApplicant> kinShipApplicant = (List<KinShipApplicant>) listEntities(KinShipApplicant.class, request, logger, getMethodName());
+        return kinShipApplicant;
+    }
+
+    @Override
+    public KinShipApplicant loadKinShipApplicant(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        KinShipApplicant kinShipApplicant = (KinShipApplicant) loadEntity(KinShipApplicant.class, request, logger, getMethodName());
+        return kinShipApplicant;
+
+    }
+
+    @Override
+    public KinShipApplicant saveKinShipApplicant(KinShipApplicant kinShipApplicant) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (kinShipApplicant == null) {
+            throw new NullParameterException("kinShipApplicant", null);
+        }
+        return (KinShipApplicant) saveEntity(kinShipApplicant);
+    }
+
+    //CivilStatus
+    @Override
+    public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CivilStatus> civilStatus = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
+        return civilStatus;
+    }
+
+    @Override
+    public CivilStatus loadCivilStatus(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CivilStatus civilStatuses = (CivilStatus) loadEntity(CivilStatus.class, request, logger, getMethodName());
+        return civilStatuses;
+    }
+
+    @Override
+    public CivilStatus saveCivilStatus(CivilStatus civilStatus) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (civilStatus == null) {
+            throw new NullParameterException("civilStatus", null);
+        }
+        return (CivilStatus) saveEntity(civilStatus);
+    }
+
+    //Profession
+    @Override
+    public List<Profession> getProfession(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Profession> profession = (List<Profession>) listEntities(Profession.class, request, logger, getMethodName());
+        return profession;
+    }
+
+    @Override
+    public Profession loadProfession(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Profession profession = (Profession) loadEntity(Profession.class, request, logger, getMethodName());
+        return profession;
+    }
+
+    @Override
+    public Profession saveProfession(Profession profession) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (profession == null) {
+            throw new NullParameterException("profession", null);
+        }
+        return (Profession) saveEntity(profession);
+    }
+
+    //LegalPersonHasLegalRepresentatives
+    @Override
+    public List<LegalPersonHasLegalRepresentatives> getLegalPersonHasLegalRepresentativeses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPersonHasLegalRepresentatives> legalPersonHasLegalRepresentatives = (List<LegalPersonHasLegalRepresentatives>) listEntities(LegalPersonHasLegalRepresentatives.class, request, logger, getMethodName());
+        return legalPersonHasLegalRepresentatives;
+    }
+
+    @Override
+    public LegalPersonHasLegalRepresentatives loadLegalPersonHasLegalRepresentatives(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        LegalPersonHasLegalRepresentatives legalPersonHasLegalRepresentatives = (LegalPersonHasLegalRepresentatives) loadEntity(LegalPersonHasLegalRepresentatives.class, request, logger, getMethodName());
+        return legalPersonHasLegalRepresentatives;
+    }
+
+    @Override
+    public LegalPersonHasLegalRepresentatives saveLegalPersonHasLegalRepresentatives(LegalPersonHasLegalRepresentatives legalPersonHasLegalRepresentatives) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (legalPersonHasLegalRepresentatives == null) {
+            throw new NullParameterException("legalPersonHasLegalRepresentatives", null);
+        }
+        return (LegalPersonHasLegalRepresentatives) saveEntity(legalPersonHasLegalRepresentatives);
+    }
     
 }
