@@ -49,6 +49,7 @@ import org.apache.log4j.Logger;
 public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB , PersonEJBLocal{
      private static final Logger logger = Logger.getLogger(ProgramEJBImp.class);
      
+    //test
     @Override
     public List<PhonePerson> getPhonePerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PhonePerson> phonePerson = (List<PhonePerson>) listEntities(PhonePerson.class, request, logger, getMethodName());
