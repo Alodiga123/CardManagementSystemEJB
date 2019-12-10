@@ -33,6 +33,7 @@ import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EconomicActivity;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.EdificationType;
+import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
 import com.cms.commons.models.Person;
@@ -51,6 +52,7 @@ import com.cms.commons.models.StreetType;
 import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
+import java.util.Calendar;
 
 import java.util.List;
 import java.util.Map;
@@ -770,7 +772,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (ZipZone) saveEntity(zipZone); 
     }
 
-    
     //LegalRepresentatives
     @Override
     public List<LegalRepresentatives> getLegalRepresentativeses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -791,29 +792,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (LegalRepresentatives) saveEntity(legalRepresentatives); 
     }
-    
-
-    //CivilEstatus
-    @Override
-    public List<CivilStatus> getCivilStatuses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CivilStatus> civilStatuses = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
-        return civilStatuses;
-    }
-
-    @Override
-    public CivilStatus loadCivilStatus(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        CivilStatus civilStatuses = (CivilStatus) loadEntity(CivilStatus.class, request, logger, getMethodName());
-        return civilStatuses;
-    }
-
-    @Override
-    public CivilStatus saveCivilStatus(CivilStatus civilStatus) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (civilStatus == null) {
-            throw new NullParameterException("civilStatus", null);
-        }
-        return (CivilStatus) saveEntity(civilStatus);
-    }
-
     
     //CardRequestNaturalPerson
     @Override
@@ -836,56 +814,12 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
     }
 
-
-    @Override
-    public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CivilStatus> civilStatus = (List<CivilStatus>) listEntities(CivilStatus.class, request, logger, getMethodName());
-        return civilStatus;
-    }
-
-    @Override
-    public List<Profession> getProfession(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Profession> profession = (List<Profession>) listEntities(Profession.class, request, logger, getMethodName());
-        return profession;
-    }
-
-    @Override
-    public Profession loadProfession(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Profession profession = (Profession) loadEntity(Profession.class, request, logger, getMethodName());
-        return profession;
-    }
-
-    @Override
-    public Profession saveProfession(Profession profession) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (profession == null) {
-            throw new NullParameterException("profession", null);
-        }
-        return (Profession) saveEntity(profession);
-    }
-
-    @Override
-    public List<PhoneType> getPhoneType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<PhoneType> phoneType = (List<PhoneType>) listEntities(PhoneType.class, request, logger, getMethodName());
-        return phoneType;
-    }
-
-    @Override
-    public PhoneType loadPhoneType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        PhoneType phoneType = (PhoneType) loadEntity(PhoneType.class, request, logger, getMethodName());
-        return phoneType;
-    }
-
-    @Override
-    public PhoneType savePhoneType(PhoneType phoneType) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (phoneType == null) {
-            throw new NullParameterException("phoneType", null);
-        }
-        return (PhoneType) saveEntity(phoneType);
-    }
-
+    //
     @Override
     public List<Sequences> getSequences(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Sequences> sequences = (List<Sequences>) listEntities(Sequences.class, request, logger, getMethodName());
+        return sequences;
+
     }
 
     @Override
@@ -895,8 +829,11 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public Sequences saveSequences(Sequences sequences) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Sequences saveSequences(Sequences sequence) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (sequence == null) {
+            throw new NullParameterException("sequence", null);
+        }
+        return (Sequences) saveEntity(sequence);
     }
 
     @Override
@@ -909,29 +846,29 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         sequence = (List<Sequences>) getNamedQueryResult(UtilsEJB.class, QueryConstants.SEQUENCES_BY_DOCUMENT_TYPE, request, getMethodName(), logger, "sequence");
         return sequence;
     }
-    
-    
-    //LegalPersonHasLegalRepresentatives
-    @Override
-    public List<LegalPersonHasLegalRepresentatives> getLegalPersonHasLegalRepresentativeses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<LegalPersonHasLegalRepresentatives> legalPersonHasLegalRepresentatives = (List<LegalPersonHasLegalRepresentatives>) listEntities(LegalPersonHasLegalRepresentatives.class, request, logger, getMethodName());
-        return legalPersonHasLegalRepresentatives;
-    }
 
     @Override
-    public LegalPersonHasLegalRepresentatives loadLegalPersonHasLegalRepresentatives(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        LegalPersonHasLegalRepresentatives legalPersonHasLegalRepresentatives = (LegalPersonHasLegalRepresentatives) loadEntity(LegalPersonHasLegalRepresentatives.class, request, logger, getMethodName());
-        return legalPersonHasLegalRepresentatives;
+    public String generateNumberSequence(List<Sequences> sequence) throws GeneralException, RegisterNotFoundException, NullParameterException {
+        int numberSequence = 0;
+        for (Sequences s : sequence) {
+            if (s.getCurrentValue() > 1) {
+                numberSequence = s.getCurrentValue();
+            } else {
+                numberSequence = s.getInitialValue();
+            }
+            s.setCurrentValue(s.getCurrentValue()+1);
+            Sequences sequenceBD =  saveSequences(s);
+        }   
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        String prefixNumberSequence = "APP-";
+        String suffixNumberSequence = "-";
+        suffixNumberSequence = suffixNumberSequence.concat(String.valueOf(year));
+        String numberSequenceDoc = prefixNumberSequence;
+        numberSequenceDoc = numberSequenceDoc.concat(String.valueOf(numberSequence));
+        numberSequenceDoc = numberSequenceDoc.concat(suffixNumberSequence);
+        return numberSequenceDoc;
     }
-
-    @Override
-    public LegalPersonHasLegalRepresentatives saveLegalPersonHasLegalRepresentatives(LegalPersonHasLegalRepresentatives legalPersonHasLegalRepresentatives) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (legalPersonHasLegalRepresentatives == null) {
-            throw new NullParameterException("legalPersonHasLegalRepresentatives", null);
-        }
-        return (LegalPersonHasLegalRepresentatives) saveEntity(legalPersonHasLegalRepresentatives);
-    }
-
     
     //PersonHasAddress
     @Override
