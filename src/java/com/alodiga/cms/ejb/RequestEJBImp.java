@@ -199,10 +199,6 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             request1.setParam(professionId);
             Profession profession = personEJB.loadProfession(request1);
-            //Solicitante Principal
-            request1 = new EJBRequest();
-            request1.setParam(Constants.APPLICANT_MAIN_ID);
-            ApplicantNaturalPerson applicantMain = personEJB.loadApplicantNaturalPerson(request1);
 
             //Guarda en BD el applicantNaturalPerson
             ApplicantNaturalPerson applicantNatural = new ApplicantNaturalPerson();
@@ -219,7 +215,6 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantNatural.setCivilStatusId(civilStatus);
             applicantNatural.setProfessionId(profession);
             applicantNatural.setDocumentsPersonTypeId(documentPersonType);
-            applicantNatural.setApplicantParentId(applicantMain);
             applicantNatural = personEJB.saveApplicantNaturalPerson(applicantNatural);
             idApplicantNaturalPerson = applicantNatural.getId();
 
