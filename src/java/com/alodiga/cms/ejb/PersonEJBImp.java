@@ -4,6 +4,7 @@ import com.alodiga.cms.commons.ejb.PersonEJB;
 import com.alodiga.cms.commons.ejb.PersonEJBLocal;
 import com.alodiga.cms.commons.ejb.ProgramEJB;
 import com.alodiga.cms.commons.ejb.ProgramEJBLocal;
+import com.alodiga.cms.commons.ejb.UtilsEJB;
 import com.alodiga.cms.commons.exception.DisabledAccountException;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
@@ -30,6 +31,7 @@ import com.cms.commons.models.Program;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.Constants;
+import com.cms.commons.util.QueryConstants;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -247,6 +249,50 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
             throw new NullParameterException("cardRequestNaturalPerson", null);
         }
         return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
+    }
+
+    @Override
+    public List<NaturalPerson> getNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public NaturalPerson loadNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public List<Person> getPersons(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Person> person = (List<Person>) listEntities(Person.class, request, logger, getMethodName());
+        return person;
+    }
+
+    @Override
+    public Person loadPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Person person = (Person) loadEntity(Person.class, request, logger, getMethodName());
+        return person;
+    }
+    
+    @Override
+    public Person loadLastPerson(EJBRequest request) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+        EJBRequest request1 = new EJBRequest();
+        request1.setParam(EjbConstants.PARAM_PERSON_ID);
+        Person lastPerson = (Person) getNamedQueryResult(UtilsEJB.class, QueryConstants.LAST_PERSON, request1, getMethodName(), logger, "lastPerson");
+        return lastPerson;
+    }
+
+    @Override
+    public Person savePerson(Person person) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (person == null) {
+            throw new NullParameterException("person", null);
+        }
+        return (Person) saveEntity(person);
+
     }
     
 }

@@ -130,7 +130,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             params = new HashMap();
             params.put(Constants.COUNTRY_KEY, countryId);
-            params.put(Constants.ORIGIN_APPLICATION_ID, Constants.ORIGIN_APPLICATION_ID);
+            params.put(Constants.ORIGIN_APPLICATION_KEY, Constants.ORIGIN_APPLICATION_ID);
             request1.setParams(params);
             List<PersonType> personTypes = utilsEJB.getPersonTypesByCountry(request1);
             for (PersonType p: personTypes) {
@@ -145,7 +145,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicant.setEmail(email);
             applicant.setPersonClassificationId(personClassification);
             applicant.setPersonTypeId(personTypeApp);
-            applicant = utilsEJB.savePerson(applicant);
+            applicant = personEJB.savePerson(applicant);
 
             //2. Solicitud de tarjeta         
             //programa asociado a la solicitud
@@ -340,7 +340,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             cardComplementaryPerson.setEmail(email);
             cardComplementaryPerson.setPersonClassificationId(personClassification);
             cardComplementaryPerson.setPersonTypeId(personTypeApp);
-            cardComplementaryPerson = utilsEJB.savePerson(cardComplementaryPerson);
+            cardComplementaryPerson = personEJB.savePerson(cardComplementaryPerson);
 
             //3. Datos basicos de persona asociada a tarjeta complementaria
             //tipo de documento
