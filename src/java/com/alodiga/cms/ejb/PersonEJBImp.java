@@ -15,6 +15,7 @@ import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.Account;
 import com.cms.commons.models.ApplicantNaturalPerson;
+import com.cms.commons.models.CardRequestNaturalPerson;
 import com.cms.commons.models.CivilStatus;
 import com.cms.commons.models.FamilyReferences;
 import com.cms.commons.models.KinShipApplicant;
@@ -49,6 +50,7 @@ import org.apache.log4j.Logger;
 public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB , PersonEJBLocal{
      private static final Logger logger = Logger.getLogger(ProgramEJBImp.class);
      
+    //PhonePerson
     @Override
     public List<PhonePerson> getPhonePerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PhonePerson> phonePerson = (List<PhonePerson>) listEntities(PhonePerson.class, request, logger, getMethodName());
@@ -69,6 +71,19 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         return (PhonePerson) saveEntity(phonePerson);
     }
 
+    //PersonHasAddress
+    @Override
+    public List<PersonHasAddress> getPersonHasAddresses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonHasAddress> personHasAddress = (List<PersonHasAddress>) listEntities(PersonHasAddress.class, request, logger, getMethodName());
+        return personHasAddress;
+    }
+
+    @Override
+    public PersonHasAddress loadPersonHasAddress(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PersonHasAddress personHasAddress = (PersonHasAddress) loadEntity(PersonHasAddress.class, request, logger, getMethodName());
+        return personHasAddress;
+    }
+
     @Override
     public PersonHasAddress savePersonHasAddress(PersonHasAddress personHasAddress) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (personHasAddress == null) {
@@ -77,6 +92,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         return (PersonHasAddress) saveEntity(personHasAddress);
     }
 
+    //FamilyReferences
     @Override
     public FamilyReferences saveFamilyReferences(FamilyReferences familyReferences) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (familyReferences == null) {
@@ -85,6 +101,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         return (FamilyReferences) saveEntity(familyReferences);
     }
 
+    //PhoneType
     @Override
     public List<PhoneType> getPhoneType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PhoneType> phoneType = (List<PhoneType>) listEntities(PhoneType.class, request, logger, getMethodName());
@@ -105,6 +122,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         return (PhoneType) saveEntity(phoneType);
     }
 
+    //ApplicantNaturalPerson
     @Override
     public List<ApplicantNaturalPerson> getApplicantNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ApplicantNaturalPerson> applicantNaturalPerson = (List<ApplicantNaturalPerson>) listEntities(ApplicantNaturalPerson.class, request, logger, getMethodName());
@@ -208,6 +226,27 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
             throw new NullParameterException("legalPersonHasLegalRepresentatives", null);
         }
         return (LegalPersonHasLegalRepresentatives) saveEntity(legalPersonHasLegalRepresentatives);
+    }
+    
+    //CardRequestNaturalPerson
+    @Override
+    public List<CardRequestNaturalPerson> getCardRequestNaturalPersons(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardRequestNaturalPerson> cardRequestNaturalPersons = (List<CardRequestNaturalPerson>) listEntities(CardRequestNaturalPerson.class, request, logger, getMethodName());
+        return cardRequestNaturalPersons;
+    }
+
+    @Override
+    public CardRequestNaturalPerson loadCardRequestNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CardRequestNaturalPerson cardRequestNaturalPerson = (CardRequestNaturalPerson) loadEntity(CardRequestNaturalPerson.class, request, logger, getMethodName());
+        return cardRequestNaturalPerson;
+    }
+
+    @Override
+    public CardRequestNaturalPerson saveCardRequestNaturalPerson(CardRequestNaturalPerson cardRequestNaturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (cardRequestNaturalPerson == null) {
+            throw new NullParameterException("cardRequestNaturalPerson", null);
+        }
+        return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
     }
     
 }
