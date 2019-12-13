@@ -167,7 +167,9 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
 
             //Obtiene el numero de secuencia para documento Request
             request1 = new EJBRequest();
-            request1.setParam(Constants.SEQUENCES_REQUEST);
+            params = new HashMap();
+            params.put(Constants.DOCUMENT_TYPE_KEY, Constants.DOCUMENT_TYPE_REQUEST);
+            request1.setParams(params);
             List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
             String numberRequest = utilsEJB.generateNumberSequence(sequence);
 
