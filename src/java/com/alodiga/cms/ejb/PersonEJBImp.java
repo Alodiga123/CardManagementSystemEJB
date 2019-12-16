@@ -18,12 +18,14 @@ import com.cms.commons.models.Account;
 import com.cms.commons.models.ApplicantNaturalPerson;
 import com.cms.commons.models.CardRequestNaturalPerson;
 import com.cms.commons.models.CivilStatus;
+import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.FamilyReferences;
 import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
 import com.cms.commons.models.NaturalPerson;
 import com.cms.commons.models.Person;
 import com.cms.commons.models.PersonHasAddress;
+import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
 import com.cms.commons.models.Profession;
@@ -229,6 +231,47 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (LegalPersonHasLegalRepresentatives) saveEntity(legalPersonHasLegalRepresentatives);
     }
+
+    @Override
+    public List<PersonType> getPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonType> personTypeList = (List<PersonType>) listEntities(PersonType.class, request, logger, getMethodName());
+        return personTypeList;
+    }
+
+    @Override
+    public PersonType loadPersonType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PersonType personType = (PersonType) loadEntity(PersonType.class, request, logger, getMethodName());
+        return personType;
+
+    }
+
+    @Override
+    public PersonType savePersonType(PersonType personType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (personType == null) {
+            throw new NullParameterException("personType", null);
+        }
+        return (PersonType) saveEntity(personType);
+     }
+
+    @Override
+    public List<DocumentsPersonType> getDocumentsPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<DocumentsPersonType> documentsPersonTypeList = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
+        return documentsPersonTypeList;
+    }
+
+    @Override
+    public DocumentsPersonType loadDocumentsPersonType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        DocumentsPersonType documentsPersonType = (DocumentsPersonType) loadEntity(DocumentsPersonType.class, request, logger, getMethodName());
+        return documentsPersonType;
+    }
+
+    @Override
+     public DocumentsPersonType saveDocumentsPersonType(DocumentsPersonType documentsPersonType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (documentsPersonType == null) {
+            throw new NullParameterException("documentsPersonType", null);
+        }
+        return (DocumentsPersonType) saveEntity(documentsPersonType);
+     }
     
     //CardRequestNaturalPerson
     @Override
