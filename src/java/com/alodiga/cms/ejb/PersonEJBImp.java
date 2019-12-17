@@ -232,6 +232,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         return (LegalPersonHasLegalRepresentatives) saveEntity(legalPersonHasLegalRepresentatives);
     }
 
+    //PersonType
     @Override
     public List<PersonType> getPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PersonType> personTypeList = (List<PersonType>) listEntities(PersonType.class, request, logger, getMethodName());
@@ -252,7 +253,8 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (PersonType) saveEntity(personType);
      }
-
+    
+    //DocumentsPersonType
     @Override
     public List<DocumentsPersonType> getDocumentsPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<DocumentsPersonType> documentsPersonTypeList = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
