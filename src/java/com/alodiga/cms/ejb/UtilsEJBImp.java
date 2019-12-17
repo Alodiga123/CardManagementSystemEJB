@@ -13,11 +13,9 @@ import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.Address;
 import com.cms.commons.models.BinSponsor;
 import com.cms.commons.models.CardIssuanceType;
-import com.cms.commons.models.CardRequestNaturalPerson;
 import com.cms.commons.models.CardStatus;
 import com.cms.commons.models.CardType;
 import com.cms.commons.models.City;
-import com.cms.commons.models.CivilStatus;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
@@ -33,18 +31,12 @@ import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EconomicActivity;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.EdificationType;
-import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.LegalPerson;
-import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
-import com.cms.commons.models.Person;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.OriginApplication;
 import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
-import com.cms.commons.models.PhoneType;
-import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.ProductType;
-import com.cms.commons.models.Profession;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
@@ -55,7 +47,6 @@ import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.Calendar;
-
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -843,10 +834,9 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public OriginApplication loadOriginApplication(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
-    @Override
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
+    @Override
+    public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }    
 }
