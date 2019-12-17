@@ -13,11 +13,9 @@ import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.Address;
 import com.cms.commons.models.BinSponsor;
 import com.cms.commons.models.CardIssuanceType;
-import com.cms.commons.models.CardRequestNaturalPerson;
 import com.cms.commons.models.CardStatus;
 import com.cms.commons.models.CardType;
 import com.cms.commons.models.City;
-import com.cms.commons.models.CivilStatus;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
@@ -33,28 +31,22 @@ import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EconomicActivity;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.EdificationType;
-import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.LegalPerson;
-import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
-import com.cms.commons.models.Person;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.OriginApplication;
 import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
-import com.cms.commons.models.PhoneType;
-import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.ProductType;
-import com.cms.commons.models.Profession;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StreetType;
 import com.cms.commons.models.ZipZone;
+import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.Calendar;
-
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -501,6 +493,18 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<DocumentsPersonType> documentsPersonType = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
         return documentsPersonType;
     }
+    
+    @Override
+    public List<DocumentsPersonType> getDocumentsPersonByCity(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<DocumentsPersonType> documentsPersonType = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        documentsPersonType = (List<DocumentsPersonType>) getNamedQueryResult(UtilsEJB.class, QueryConstants.DOCUMENTS_BY_COUNTRY, request, getMethodName(), logger, "documentsPersonType");
+        System.out.println("Lista de Documentos por país"+documentsPersonType);
+        return documentsPersonType;
+    }
 
     @Override
     public DocumentsPersonType loadDocumentsPersonType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -606,6 +610,10 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (ResponsibleNetworkReporting) saveEntity(responsibleNetworkReporting);
     }
+
+    
+
+    
     //Address
     @Override
     public Address loadAddress(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -785,20 +793,32 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public String generateNumberSequence(List<Sequences> sequence) throws GeneralException, RegisterNotFoundException, NullParameterException {
+    public String generateNumberSequence(List<Sequences> sequence, int originApplication) throws GeneralException, RegisterNotFoundException, NullParameterException {
         int numberSequence = 0;
+        String prefixNumberSequence = "";
         for (Sequences s : sequence) {
-            if (s.getCurrentValue() > 1) {
-                numberSequence = s.getCurrentValue();
-            } else {
-                numberSequence = s.getInitialValue();
+            if (s.getOriginApplicationId().getId() == originApplication) {
+                if (s.getCurrentValue() > 1) {
+                    numberSequence = s.getCurrentValue();
+                } else {
+                    numberSequence = s.getInitialValue();
+                }
+                s.setCurrentValue(s.getCurrentValue()+1);
+                saveSequences(s);
             }
-            s.setCurrentValue(s.getCurrentValue()+1);
-            Sequences sequenceBD =  saveSequences(s);
         }   
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
-        String prefixNumberSequence = "APP-";
+        switch (originApplication) {
+            case Constants.ORIGIN_APPLICATION_CMS_ID:
+                prefixNumberSequence = "CMS-";
+                break;
+            case Constants.ORIGIN_APPLICATION_WALLET_ID:
+                prefixNumberSequence = "APP-";
+                break;
+            default:
+                break;
+        }
         String suffixNumberSequence = "-";
         suffixNumberSequence = suffixNumberSequence.concat(String.valueOf(year));
         String numberSequenceDoc = prefixNumberSequence;
@@ -819,9 +839,10 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
     @Override
     public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        
+    
 }
