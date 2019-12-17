@@ -130,7 +130,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             params = new HashMap();
             params.put(Constants.COUNTRY_KEY, countryId);
-            params.put(Constants.ORIGIN_APPLICATION_ID, Constants.ORIGIN_APPLICATION_ID);
+            params.put(Constants.ORIGIN_APPLICATION_KEY, Constants.ORIGIN_APPLICATION_ID);
             request1.setParams(params);
             List<PersonType> personTypes = utilsEJB.getPersonTypesByCountry(request1);
             for (PersonType p: personTypes) {
@@ -167,7 +167,9 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
 
             //Obtiene el numero de secuencia para documento Request
             request1 = new EJBRequest();
-            request1.setParam(Constants.SEQUENCES_REQUEST);
+            params = new HashMap();
+            params.put(Constants.DOCUMENT_TYPE_KEY, Constants.DOCUMENT_TYPE_REQUEST);
+            request1.setParams(params);
             List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
             String numberRequest = utilsEJB.generateNumberSequence(sequence);
 
