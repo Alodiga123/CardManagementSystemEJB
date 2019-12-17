@@ -28,6 +28,7 @@ import com.cms.commons.models.Person;
 import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.FamilyReferences;
+import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
@@ -99,7 +100,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }
 
     @Override
-    public Request saveRequestPersonData(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
+    public Long saveRequestPersonData(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
                                          String firstNames, String lastNames, String marriedLastName, String gender, String placeBirth, Date dateBirth, int familyResponsabilities,  
                                          int civilStatusId, int professionId, String roomPhone, String cellPhone, int countryAddress, int state, int city, int zipZone, int edificationType, String nameEdification,
                                          String tower, int floor, int streetType, String nameStreet, String Urbanization, String firstNamesFamilyOne, String lastNamesFamilyOne, String cellPhoneFamilyOne,
@@ -108,219 +109,370 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
  
         PersonType personTypeApp = new PersonType();
         int numberSequence = 0;
+        Long idApplicantNaturalPerson = 0L;
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
         programEJB = (ProgramEJB) EJBServiceLocator.getInstance().get(EjbConstants.PROGRAM_EJB);
-        requestEJB = (RequestEJB) EJBServiceLocator.getInstance().get(EjbConstants.REQUEST_EJB);  
+        requestEJB = (RequestEJB) EJBServiceLocator.getInstance().get(EjbConstants.REQUEST_EJB); 
+        personEJB = (PersonEJB) EJBServiceLocator.getInstance().get(EjbConstants.PERSON_EJB); 
         
-        //1. Persona que hace la solicitud
-        //Clasificacion de la persona (Solicitante)
-        EJBRequest request1 = new EJBRequest();
-        Map params = new HashMap();
-        request1.setParam(Constants.PERSON_CLASSIFICATION_APPLICANT);
-        PersonClassification personClassification = utilsEJB.loadPersonClassification(request1);
-        //país de la persona que hace la solicitud
-        request1 = new EJBRequest();
-        request1.setParam(countryId);
-        Country country = utilsEJB.loadCountry(request1);
-         //tipo de la persona que hace la solicitud
-        request1 = new EJBRequest();
-        params = new HashMap();
-        params.put(Constants.COUNTRY_KEY, countryId);
-        params.put(Constants.ORIGIN_APPLICATION_ID, Constants.ORIGIN_APPLICATION_ID);
-        request1.setParams(params);
-        List<PersonType> personTypes = utilsEJB.getPersonTypesByCountry(request1);
-        for (PersonType p: personTypes) {
-            if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_ID) {
-                personTypeApp = p;
+        try {
+            //1. Persona que hace la solicitud
+            //Clasificacion de la persona (Solicitante)
+            EJBRequest request1 = new EJBRequest();
+            Map params = new HashMap();
+            request1.setParam(Constants.PERSON_CLASSIFICATION_APPLICANT);
+            PersonClassification personClassification = utilsEJB.loadPersonClassification(request1);
+            //pais de la persona que hace la solicitud
+            request1 = new EJBRequest();
+            request1.setParam(countryId);
+            Country country = utilsEJB.loadCountry(request1);
+            //tipo de la persona que hace la solicitud
+            request1 = new EJBRequest();
+            params = new HashMap();
+            params.put(Constants.COUNTRY_KEY, countryId);
+            params.put(Constants.ORIGIN_APPLICATION_ID, Constants.ORIGIN_APPLICATION_ID);
+            request1.setParams(params);
+            List<PersonType> personTypes = utilsEJB.getPersonTypesByCountry(request1);
+            for (PersonType p: personTypes) {
+                if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_ID) {
+                    personTypeApp = p;
+                }
             }
-        }
+
+            //Crea el person y lo guarda en BD
+            Person applicant = new Person();
+            applicant.setCountryId(country);
+            applicant.setEmail(email);
+            applicant.setPersonClassificationId(personClassification);
+            applicant.setPersonTypeId(personTypeApp);
+            applicant = personEJB.savePerson(applicant);
+
+            //2. Solicitud de tarjeta         
+            //programa asociado a la solicitud
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PROGRAM_WALLET_APP_ID);
+            Program program = programEJB.loadProgram(request1);
+            //tipo de solicitud
+            request1 = new EJBRequest();
+            request1.setParam(Constants.REQUEST_TYPE_WALLET_APP_ID);
+            RequestType requestType = utilsEJB.loadRequestType(request1);
+            //tipo de producto de la solicitud
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PRODUCT_TYPE_WALLET_APP_ID);
+            ProductType productType = utilsEJB.loadProductType(request1);
+            //colocar estatus de solicitud "EN PROCESO"
+            request1 = new EJBRequest();
+            request1.setParam(Constants.STATUS_REQUEST_IN_PROCESS);
+            StatusRequest statusRequest = utilsEJB.loadStatusRequest(request1);
+
+            //Obtiene el numero de secuencia para documento Request
+            request1 = new EJBRequest();
+            request1.setParam(Constants.SEQUENCES_REQUEST);
+            List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
+            String numberRequest = utilsEJB.generateNumberSequence(sequence);
+
+            //Crea el request y lo guarda en BD
+            Request request = new Request();
+            request.setRequestNumber(numberRequest);//APP-1-2019
+            Date dateRequest = new Date();
+            request.setRequestDate(dateRequest);
+            request.setCountryId(country);
+            request.setPersonId(applicant);
+            request.setPersonTypeId(personTypeApp);
+            request.setProgramId(program);
+            request.setProductTypeId(productType);
+            request.setRequestTypeId(requestType);
+            request.setStatusRequestId(statusRequest);
+            request = requestEJB.saveRequest(request);        
+
+            //3. Datos basicos del solicitante
+            //tipo de documento del solicitante
+            request1 = new EJBRequest();
+            params = new HashMap();
+            request1.setParam(documentPersonTypeId);
+            DocumentsPersonType documentPersonType = utilsEJB.loadDocumentsPersonType(request1);
+            //estado civil del solicitante
+            request1 = new EJBRequest();
+            request1.setParam(civilStatusId);
+            CivilStatus civilStatus = personEJB.loadCivilStatus(request1);
+            //profesion del solicitante
+            request1 = new EJBRequest();
+            request1.setParam(professionId);
+            Profession profession = personEJB.loadProfession(request1);
+
+            //Guarda en BD el applicantNaturalPerson
+            ApplicantNaturalPerson applicantNatural = new ApplicantNaturalPerson();
+            applicantNatural.setPersonId(applicant);
+            applicantNatural.setIdentificationNumber(identificationNumber);
+            applicantNatural.setDueDateDocumentIdentification(dueDateIdentification);
+            applicantNatural.setFirstNames(firstNames);
+            applicantNatural.setLastNames(lastNames);
+            applicantNatural.setMarriedLastName(marriedLastName);
+            applicantNatural.setGender(gender); //pasar por parámetro M ó F
+            applicantNatural.setPlaceBirth(placeBirth);
+            applicantNatural.setDateBirth(dateBirth);
+            applicantNatural.setFamilyResponsibilities(familyResponsabilities);
+            applicantNatural.setCivilStatusId(civilStatus);
+            applicantNatural.setProfessionId(profession);
+            applicantNatural.setDocumentsPersonTypeId(documentPersonType);
+            applicantNatural = personEJB.saveApplicantNaturalPerson(applicantNatural);
+            idApplicantNaturalPerson = applicantNatural.getId();
+
+            //4. Telefonos del solicitante
+            //Guarda el telf. Celular en BD
+            PhonePerson cellPhoneApplicant = new PhonePerson();
+            cellPhoneApplicant.setNumberPhone(cellPhone);
+            cellPhoneApplicant.setPersonId(applicant);
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PHONE_TYPE_MOBILE);
+            PhoneType mobilePhoneType = personEJB.loadPhoneType(request1);
+            cellPhoneApplicant.setPhoneTypeId(mobilePhoneType);
+            cellPhoneApplicant = personEJB.savePhonePerson(cellPhoneApplicant);
+            //Guarda el telf. Habitacion en BD
+            PhonePerson roomPhoneApplicant = new PhonePerson();
+            roomPhoneApplicant.setNumberPhone(roomPhone);
+            roomPhoneApplicant.setPersonId(applicant);
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PHONE_TYPE_ROOM);
+            PhoneType roomPhoneType = personEJB.loadPhoneType(request1);
+            roomPhoneApplicant.setPhoneTypeId(roomPhoneType);
+            roomPhoneApplicant = personEJB.savePhonePerson(roomPhoneApplicant);
+
+            //5. Direccion del solicitante
+            Address addressApplicant = new Address();
+            //pais
+            request1 = new EJBRequest();
+            request1.setParam(countryAddress);
+            Country countryAddressApplicant = utilsEJB.loadCountry(request1);
+            //estado
+            request1 = new EJBRequest();
+            request1.setParam(state);
+            State stateAddress = utilsEJB.loadState(request1);
+            //ciudad
+            request1 = new EJBRequest();
+            request1.setParam(city);
+            City cityAddress = utilsEJB.loadCity(request1);
+            //zona postal
+            request1 = new EJBRequest();
+            request1.setParam(zipZone);
+            ZipZone zipZoneAddress = utilsEJB.loadZipZone(request1);
+            //tipos de edificacion
+            request1 = new EJBRequest();
+            request1.setParam(edificationType);
+            EdificationType edificationTypeAddress = utilsEJB.loadEdificationType(request1);
+            //tipos de calle
+            request1 = new EJBRequest();
+            request1.setParam(streetType);
+            StreetType streetTypeAddress = utilsEJB.loadStreetType(request1);
+
+            //Guarda la direccion en BD
+            addressApplicant.setCityId(cityAddress);
+            addressApplicant.setCountryId(countryAddressApplicant);
+            addressApplicant.setEdificationTypeId(edificationTypeAddress);
+            addressApplicant.setFloor(floor);
+            addressApplicant.setNameEdification(nameEdification);
+            addressApplicant.setNameStreet(nameStreet);
+            addressApplicant.setStreetTypeId(streetTypeAddress);
+            addressApplicant.setTower(tower);
+            addressApplicant.setUrbanization(Urbanization);
+            addressApplicant.setZipZoneId(zipZoneAddress);
+            addressApplicant = utilsEJB.saveAddress(addressApplicant);
+            PersonHasAddress personHasAddress = new PersonHasAddress();
+            personHasAddress.setAddressId(addressApplicant);
+            personHasAddress.setPersonId(applicant);
+            personHasAddress = personEJB.savePersonHasAddress(personHasAddress);
+
+            //4. Referencias Familiares
+            FamilyReferences familyReferencesOne = new FamilyReferences();
+            familyReferencesOne.setApplicantNaturalPersonId(applicantNatural);
+            familyReferencesOne.setCellPhone(cellPhoneFamilyOne);
+            familyReferencesOne.setCity(cityFamilyOne);
+            familyReferencesOne.setLocalPhone(roomPhoneFamilyOne);
+            familyReferencesOne.setFirstNames(firstNamesFamilyOne);
+            familyReferencesOne.setLastNames(lastNamesFamilyOne);
+            familyReferencesOne = personEJB.saveFamilyReferences(familyReferencesOne);
+
+            FamilyReferences familyReferencesTwo = new FamilyReferences();
+            familyReferencesTwo.setApplicantNaturalPersonId(applicantNatural);
+            familyReferencesTwo.setCellPhone(cellPhoneFamilyTwo);
+            familyReferencesTwo.setCity(cityFamilyTwo);
+            familyReferencesTwo.setLocalPhone(roomPhoneFamilyTwo);
+            familyReferencesTwo.setFirstNames(firstNamesFamilyTwo);
+            familyReferencesTwo.setLastNames(lastNamesFamilyTwo);
+            familyReferencesTwo = personEJB.saveFamilyReferences(familyReferencesTwo);
         
-        //Crea el person y lo guarda en BD
-        Person applicant = new Person();
-        applicant.setCountryId(country);
-        applicant.setEmail(email);
-        applicant.setPersonClassificationId(personClassification);
-        applicant.setPersonTypeId(personTypeApp);
-        applicant = utilsEJB.savePerson(applicant);
+        } catch (Exception e) {
+            e.printStackTrace(); 
+        } 
         
-        //2. Solicitud de tarjeta         
-        //programa asociado a la solicitud
-        request1 = new EJBRequest();
-        request1.setParam(Constants.PROGRAM_WALLET_APP_ID);
-        Program program = programEJB.loadProgram(request1);
-        //tipo de solicitud
-        request1 = new EJBRequest();
-        request1.setParam(Constants.REQUEST_TYPE_WALLET_APP_ID);
-        RequestType requestType = utilsEJB.loadRequestType(request1);
-        //tipo de producto de la solicitud
-        request1 = new EJBRequest();
-        request1.setParam(Constants.PRODUCT_TYPE_WALLET_APP_ID);
-        ProductType productType = utilsEJB.loadProductType(request1);
-        //colocar estatus de solicitud "EN PROCESO"
-        request1 = new EJBRequest();
-        request1.setParam(Constants.STATUS_REQUEST_IN_PROCESS);
-        StatusRequest statusRequest = utilsEJB.loadStatusRequest(request1);
+        return idApplicantNaturalPerson;
+    }
+    
+    @Override
+    public ApplicantNaturalPerson saveCardComplementary(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
+                                                        String firstNames, String lastNames, String marriedLastName, String gender, String placeBirth, Date dateBirth, int civilStatusId,  
+                                                        int professionId, String roomPhone, String cellPhone, int countryAddress, int state, int city, int zipZone, int edificationType, String nameEdification,
+                                                        String tower, int floor, int streetType, String nameStreet, String Urbanization, Long applicantId, int kinShipApplicantId)
+                                                        throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+    
+        utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
+        personEJB = (PersonEJB) EJBServiceLocator.getInstance().get(EjbConstants.PERSON_EJB); 
+        requestEJB = (RequestEJB) EJBServiceLocator.getInstance().get(EjbConstants.REQUEST_EJB);
+        ApplicantNaturalPerson applicantCardComplementary = new ApplicantNaturalPerson();
         
-        //Obtiene el numero de secuencia para documento Request
-        request1 = new EJBRequest();
-        request1.setParam(Constants.SEQUENCES_REQUEST);
-        List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
-        for (Sequences s : sequence) {
-            if (s.getCurrentValue() > 1) {
-                numberSequence = s.getCurrentValue();
-            } else {
-                numberSequence = s.getInitialValue();
-            }
-            s.setCurrentValue(s.getCurrentValue()+1);
-            Sequences sequenceBD =  utilsEJB.saveSequences(s);
+        try {            
+            //1. Persona (tarjeta Complementaria)
+            //Clasificacion de la persona
+            EJBRequest request1 = new EJBRequest();
+            Map params = new HashMap();
+            request1.setParam(Constants.PERSON_CLASSIFICATION_CARD_COMPLEMENTARY);
+            PersonClassification personClassification = utilsEJB.loadPersonClassification(request1);
+            //pais de la persona
+            request1 = new EJBRequest();
+            request1.setParam(countryId);
+            Country country = utilsEJB.loadCountry(request1);
+            //tipo de persona que hace la solicitud
+            PersonType personTypeApp = personTypeWallet(countryId);
+
+            //Crea el person y lo guarda en BD
+            Person cardComplementaryPerson = new Person();
+            cardComplementaryPerson.setCountryId(country);
+            cardComplementaryPerson.setEmail(email);
+            cardComplementaryPerson.setPersonClassificationId(personClassification);
+            cardComplementaryPerson.setPersonTypeId(personTypeApp);
+            cardComplementaryPerson = personEJB.savePerson(cardComplementaryPerson);
+
+            //3. Datos basicos de persona asociada a tarjeta complementaria
+            //tipo de documento
+            request1 = new EJBRequest();
+            params = new HashMap();
+            request1.setParam(documentPersonTypeId);
+            DocumentsPersonType documentPersonType = utilsEJB.loadDocumentsPersonType(request1);
+            //estado civil del solicitante
+            request1 = new EJBRequest();
+            request1.setParam(civilStatusId);
+            CivilStatus civilStatus = personEJB.loadCivilStatus(request1);
+            //profesion del solicitante
+            request1 = new EJBRequest();
+            request1.setParam(professionId);
+            Profession profession = personEJB.loadProfession(request1);
+            //Solicitante Principal
+            request1 = new EJBRequest();
+            request1.setParam(applicantId);
+            ApplicantNaturalPerson leadApplicant = personEJB.loadApplicantNaturalPerson(request1);
+            //Parentesco con solicitante principal
+            request1 = new EJBRequest();
+            request1.setParam(kinShipApplicantId);
+            KinShipApplicant kinShipApplicant = personEJB.loadKinShipApplicant(request1);
+
+            //Solicitante de tarjeta complementaria
+            applicantCardComplementary.setApplicantParentId(leadApplicant);
+            applicantCardComplementary.setCivilStatusId(civilStatus);
+            applicantCardComplementary.setDateBirth(dateBirth);
+            applicantCardComplementary.setDocumentsPersonTypeId(documentPersonType);
+            applicantCardComplementary.setDueDateDocumentIdentification(dueDateIdentification);
+            applicantCardComplementary.setFirstNames(firstNames);
+            applicantCardComplementary.setLastNames(lastNames);
+            applicantCardComplementary.setGender(gender);
+            applicantCardComplementary.setIdentificationNumber(identificationNumber);
+            applicantCardComplementary.setKinShipApplicantId(kinShipApplicant);
+            applicantCardComplementary.setMarriedLastName(marriedLastName);
+            applicantCardComplementary.setPersonId(cardComplementaryPerson);
+            applicantCardComplementary.setPlaceBirth(placeBirth);
+            applicantCardComplementary.setProfessionId(profession);
+            applicantCardComplementary = personEJB.saveApplicantNaturalPerson(applicantCardComplementary);
+
+            //4. Telefonos del solicitante de tarjeta complementaria
+            //Guarda el telf. Celular en BD
+            PhonePerson cellPhoneCardComplementary = new PhonePerson();
+            cellPhoneCardComplementary.setNumberPhone(cellPhone);
+            cellPhoneCardComplementary.setPersonId(cardComplementaryPerson);
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PHONE_TYPE_MOBILE);
+            PhoneType mobilePhoneType = personEJB.loadPhoneType(request1);
+            cellPhoneCardComplementary.setPhoneTypeId(mobilePhoneType);
+            cellPhoneCardComplementary = personEJB.savePhonePerson(cellPhoneCardComplementary);
+            //Guarda el telf. Habitacion en BD
+            PhonePerson roomPhoneCardComplementary = new PhonePerson();
+            roomPhoneCardComplementary.setNumberPhone(roomPhone);
+            roomPhoneCardComplementary.setPersonId(cardComplementaryPerson);
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PHONE_TYPE_ROOM);
+            PhoneType roomPhoneType = personEJB.loadPhoneType(request1);
+            roomPhoneCardComplementary.setPhoneTypeId(roomPhoneType);
+            roomPhoneCardComplementary = personEJB.savePhonePerson(roomPhoneCardComplementary);
+
+            //5. Direccion del solicitante de tarjeta complementaria
+            Address addressCardComplementary = new Address();
+            //pais
+            request1 = new EJBRequest();
+            request1.setParam(countryAddress);
+            Country countryAddressCardComplementary = utilsEJB.loadCountry(request1);
+            //estado
+            request1 = new EJBRequest();
+            request1.setParam(state);
+            State stateAddress = utilsEJB.loadState(request1);
+            //ciudad
+            request1 = new EJBRequest();
+            request1.setParam(city);
+            City cityAddress = utilsEJB.loadCity(request1);
+            //zona postal
+            request1 = new EJBRequest();
+            request1.setParam(zipZone);
+            ZipZone zipZoneAddress = utilsEJB.loadZipZone(request1);
+            //tipos de edificacion
+            request1 = new EJBRequest();
+            request1.setParam(edificationType);
+            EdificationType edificationTypeAddress = utilsEJB.loadEdificationType(request1);
+            //tipos de calle
+            request1 = new EJBRequest();
+            request1.setParam(streetType);
+            StreetType streetTypeAddress = utilsEJB.loadStreetType(request1);
+
+            //Guarda la direccion en BD
+            addressCardComplementary.setCityId(cityAddress);
+            addressCardComplementary.setCountryId(countryAddressCardComplementary);
+            addressCardComplementary.setEdificationTypeId(edificationTypeAddress);
+            addressCardComplementary.setFloor(floor);
+            addressCardComplementary.setNameEdification(nameEdification);
+            addressCardComplementary.setNameStreet(nameStreet);
+            addressCardComplementary.setStreetTypeId(streetTypeAddress);
+            addressCardComplementary.setTower(tower);
+            addressCardComplementary.setUrbanization(Urbanization);
+            addressCardComplementary.setZipZoneId(zipZoneAddress);
+            addressCardComplementary = utilsEJB.saveAddress(addressCardComplementary);
+            PersonHasAddress personHasAddress = new PersonHasAddress();
+            personHasAddress.setAddressId(addressCardComplementary);
+            personHasAddress.setPersonId(cardComplementaryPerson);
+            personHasAddress = personEJB.savePersonHasAddress(personHasAddress);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
         }   
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        String prefixNumberRequest = "APP-";
-        String suffixNumberRequest = "-";
-        suffixNumberRequest = suffixNumberRequest.concat(String.valueOf(year));
-        String numberRequest = prefixNumberRequest;
-        numberRequest = numberRequest.concat(String.valueOf(numberSequence));
-        numberRequest = numberRequest.concat(suffixNumberRequest);
         
-        //Crea el request y lo guarda en BD
-        Request request = new Request();
-        request.setRequestNumber(numberRequest);//APP-1-2019
-        Date dateRequest = new Date();
-        request.setRequestDate(dateRequest);
-        request.setCountryId(country);
-        request.setPersonId(applicant);
-        request.setPersonTypeId(personTypeApp);
-        request.setProgramId(program);
-        request.setProductTypeId(productType);
-        request.setRequestTypeId(requestType);
-        request.setStatusRequestId(statusRequest);
-        request = requestEJB.saveRequest(request);        
-        
-        //3. Datos basicos del solicitante
-        //tipo de documento del solicitante
-        request1 = new EJBRequest();
-        params = new HashMap();
-        request1.setParam(documentPersonTypeId);
-        DocumentsPersonType documentPersonType = utilsEJB.loadDocumentsPersonType(request1);
-        //estado civil del solicitante
-        request1 = new EJBRequest();
-        request1.setParam(civilStatusId);
-        CivilStatus civilStatus = utilsEJB.loadCivilStatus(request1);
-        //profesion del solicitante
-        request1 = new EJBRequest();
-        request1.setParam(professionId);
-        Profession profession = utilsEJB.loadProfession(request1);
-        
-        //Guarda en BD el applicantNaturalPerson
-        ApplicantNaturalPerson applicantNatural = new ApplicantNaturalPerson();
-        applicantNatural.setPersonId(applicant);
-        applicantNatural.setIdentificationNumber(identificationNumber);
-        applicantNatural.setDueDateDocumentIdentification(dueDateIdentification);
-        applicantNatural.setFirstNames(firstNames);
-        applicantNatural.setLastNames(lastNames);
-        applicantNatural.setMarriedLastName(marriedLastName);
-        applicantNatural.setGender(gender); //pasar por parámetro M ó F
-        applicantNatural.setPlaceBirth(placeBirth);
-        applicantNatural.setDateBirth(dateBirth);
-        applicantNatural.setFamilyResponsibilities(familyResponsabilities);
-        applicantNatural.setCivilStatusId(civilStatus);
-        applicantNatural.setProfessionId(profession);
-        applicantNatural.setDocumentsPersonTypeId(documentPersonType);
-        applicantNatural = requestEJB.saveApplicantNatural(applicantNatural);
-        
-        //4. Telefonos del solicitante
-        //Guarda el telf. Celular en BD
-        PhonePerson cellPhoneApplicant = new PhonePerson();
-        cellPhoneApplicant.setNumberPhone(cellPhone);
-        cellPhoneApplicant.setPersonId(applicant);
-        request1 = new EJBRequest();
-        request1.setParam(Constants.PHONE_TYPE_MOBILE);
-        PhoneType mobilePhoneType = utilsEJB.loadPhoneType(request1);
-        cellPhoneApplicant.setPhoneTypeId(mobilePhoneType);
-        cellPhoneApplicant = personEJB.savePhonePerson(cellPhoneApplicant);
-        //Guarda el telf. Habitacion en BD
-        PhonePerson roomPhoneApplicant = new PhonePerson();
-        roomPhoneApplicant.setNumberPhone(roomPhone);
-        roomPhoneApplicant.setPersonId(applicant);
-        request1 = new EJBRequest();
-        request1.setParam(Constants.PHONE_TYPE_ROOM);
-        PhoneType roomPhoneType = utilsEJB.loadPhoneType(request1);
-        roomPhoneApplicant.setPhoneTypeId(roomPhoneType);
-        roomPhoneApplicant = personEJB.savePhonePerson(roomPhoneApplicant);
-           
-        //5. Direccion del solicitante
-        Address addressApplicant = new Address();
-        //pais
-        request1 = new EJBRequest();
-        request1.setParam(countryAddress);
-        Country countryAddressApplicant = utilsEJB.loadCountry(request1);
-        //estado
-        request1 = new EJBRequest();
-        request1.setParam(state);
-        State stateAddress = utilsEJB.loadState(request1);
-        //ciudad
-        request1 = new EJBRequest();
-        request1.setParam(city);
-        City cityAddress = utilsEJB.loadCity(request1);
-        //zona postal
-        request1 = new EJBRequest();
-        request1.setParam(zipZone);
-        ZipZone zipZoneAddress = utilsEJB.loadZipZone(request1);
-        //tipos de edificacion
-        request1 = new EJBRequest();
-        request1.setParam(edificationType);
-        EdificationType edificationTypeAddress = utilsEJB.loadEdificationType(request1);
-        //tipos de calle
-        request1 = new EJBRequest();
-        request1.setParam(streetType);
-        StreetType streetTypeAddress = utilsEJB.loadStreetType(request1);
-        
-        //Guarda la direccion en BD
-        addressApplicant.setCityId(cityAddress);
-        addressApplicant.setCountryId(countryAddressApplicant);
-        addressApplicant.setEdificationTypeId(edificationTypeAddress);
-        addressApplicant.setFloor(floor);
-        addressApplicant.setNameEdification(nameEdification);
-        addressApplicant.setNameStreet(nameStreet);
-        addressApplicant.setStreetTypeId(streetTypeAddress);
-        addressApplicant.setTower(tower);
-        addressApplicant.setUrbanization(Urbanization);
-        addressApplicant.setZipZoneId(zipZoneAddress);
-        addressApplicant = utilsEJB.saveAddress(addressApplicant);
-        PersonHasAddress personHasAddress = new PersonHasAddress();
-        personHasAddress.setAddressId(addressApplicant);
-        personHasAddress.setPersonId(applicant);
-        personHasAddress = personEJB.savePersonHasAddress(personHasAddress);
-           
-        //4. Referencias Familiares
-        FamilyReferences familyReferencesOne = new FamilyReferences();
-        familyReferencesOne.setApplicantNaturalPersonId(applicantNatural);
-        familyReferencesOne.setCellPhone(cellPhoneFamilyOne);
-        familyReferencesOne.setCity(cityFamilyOne);
-        familyReferencesOne.setLocalPhone(roomPhoneFamilyOne);
-        familyReferencesOne.setFirstNames(firstNamesFamilyOne);
-        familyReferencesOne.setLastNames(lastNamesFamilyOne);
-        familyReferencesOne = personEJB.saveFamilyReferences(familyReferencesOne);
-        
-        FamilyReferences familyReferencesTwo = new FamilyReferences();
-        familyReferencesTwo.setApplicantNaturalPersonId(applicantNatural);
-        familyReferencesTwo.setCellPhone(cellPhoneFamilyTwo);
-        familyReferencesTwo.setCity(cityFamilyTwo);
-        familyReferencesTwo.setLocalPhone(roomPhoneFamilyTwo);
-        familyReferencesTwo.setFirstNames(firstNamesFamilyTwo);
-        familyReferencesTwo.setLastNames(lastNamesFamilyTwo);
-        familyReferencesTwo = personEJB.saveFamilyReferences(familyReferencesTwo);
-        
-        return request;
+        return applicantCardComplementary;
     }
 
     @Override
-    public ApplicantNaturalPerson saveApplicantNatural(ApplicantNaturalPerson applicantNatural) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (applicantNatural == null) {
-            throw new NullParameterException("applicantNatural", null);
+    public PersonType personTypeWallet(int countryId) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+        
+        PersonType personTypeApp = new PersonType();
+        try {
+            EJBRequest request1 = new EJBRequest();
+            Map params = new HashMap();
+            params.put(Constants.COUNTRY_KEY, countryId);
+            params.put(Constants.ORIGIN_APPLICATION_ID, Constants.ORIGIN_APPLICATION_ID);
+            request1.setParams(params);
+            List<PersonType> personTypes = utilsEJB.getPersonTypesByCountry(request1);
+            for (PersonType p: personTypes) {
+                if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_ID) {
+                    personTypeApp = p;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return (ApplicantNaturalPerson) saveEntity(applicantNatural);
+        return personTypeApp;
     }
     
 }
