@@ -256,7 +256,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (PersonType) saveEntity(personType);
      }
-
+    
     //DocumentsPersonType
     @Override
     public List<DocumentsPersonType> getDocumentsPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
