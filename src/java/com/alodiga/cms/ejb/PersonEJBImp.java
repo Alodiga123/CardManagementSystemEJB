@@ -98,6 +98,18 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
 
     //FamilyReferences
     @Override
+    public List<FamilyReferences> getFamilyReferences(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<FamilyReferences> familyReferences = (List<FamilyReferences>) listEntities(FamilyReferences.class, request, logger, getMethodName());
+        return familyReferences;
+    }
+    
+    @Override
+    public FamilyReferences loadFamilyReferences(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        FamilyReferences familyReferences = (FamilyReferences) loadEntity(FamilyReferences.class, request, logger, getMethodName());
+        return familyReferences;
+    }
+    
+    @Override
     public FamilyReferences saveFamilyReferences(FamilyReferences familyReferences) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (familyReferences == null) {
             throw new NullParameterException("familyReferences", null);
@@ -168,7 +180,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (KinShipApplicant) saveEntity(kinShipApplicant);
     }
-
+    
     //CivilStatus
     @Override
     public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -189,7 +201,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (CivilStatus) saveEntity(civilStatus);
     }
-
+   
     //Profession
     @Override
     public List<Profession> getProfession(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -293,22 +305,6 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
     }
-
-    @Override
-    public List<NaturalPerson> getNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public NaturalPerson loadNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
     @Override
     public List<Person> getPersons(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Person> person = (List<Person>) listEntities(Person.class, request, logger, getMethodName());
@@ -338,4 +334,25 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
 
     }
     
+  
+    //NaturalPerson
+    @Override
+    public List<NaturalPerson> getNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<NaturalPerson> naturalPerson = (List<NaturalPerson>) listEntities(NaturalPerson.class, request, logger, getMethodName());
+        return naturalPerson;
+    }
+
+    @Override
+    public NaturalPerson loadNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        NaturalPerson naturalPerson = (NaturalPerson) loadEntity(NaturalPerson.class, request, logger, getMethodName());
+        return naturalPerson;
+    }
+
+    @Override
+    public NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (naturalPerson == null) {
+            throw new NullParameterException("naturalPerson", null);
+        }
+        return (NaturalPerson) saveEntity(naturalPerson);
+    }
 }
