@@ -509,7 +509,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
         }
         documentsPersonType = (List<DocumentsPersonType>) getNamedQueryResult(UtilsEJB.class, QueryConstants.DOCUMENTS_BY_COUNTRY, request, getMethodName(), logger, "documentsPersonType");
-        System.out.println("Lista de Documentos por país"+documentsPersonType);
         return documentsPersonType;
     }
 
@@ -617,36 +616,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (ResponsibleNetworkReporting) saveEntity(responsibleNetworkReporting);
     }
-
-    @Override
-    public List<Person> getPersons(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Person> person = (List<Person>) listEntities(Person.class, request, logger, getMethodName());
-        return person;
-    }
-
-    @Override
-    public Person loadPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Person person = (Person) loadEntity(Person.class, request, logger, getMethodName());
-        return person;
-    }
-    
-    @Override
-    public Person loadLastPerson(EJBRequest request) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
-        EJBRequest request1 = new EJBRequest();
-        request1.setParam(EjbConstants.PARAM_PERSON_ID);
-        Person lastPerson = (Person) getNamedQueryResult(UtilsEJB.class, QueryConstants.LAST_PERSON, request1, getMethodName(), logger, "lastPerson");
-        return lastPerson;
-    }
-
-    @Override
-    public Person savePerson(Person person) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (person == null) {
-            throw new NullParameterException("person", null);
-        }
-        return (Person) saveEntity(person);
-
-    }
-
     
     //Address
     @Override

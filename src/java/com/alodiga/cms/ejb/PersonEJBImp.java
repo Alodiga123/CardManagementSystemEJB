@@ -46,9 +46,11 @@ import org.apache.log4j.Logger;
 @Stateless(name = EjbConstants.PERSON_EJB, mappedName = EjbConstants.PERSON_EJB)
 @TransactionManagement(TransactionManagementType.BEAN)
 
-public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB , PersonEJBLocal{
-     private static final Logger logger = Logger.getLogger(ProgramEJBImp.class);
-     
+public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, PersonEJBLocal {
+
+    private static final Logger logger = Logger.getLogger(ProgramEJBImp.class);
+
+    //PhonePerson
     @Override
     public List<PhonePerson> getPhonePerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PhonePerson> phonePerson = (List<PhonePerson>) listEntities(PhonePerson.class, request, logger, getMethodName());
@@ -68,7 +70,8 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (PhonePerson) saveEntity(phonePerson);
     }
-
+    
+    //PersonHasAddress
     @Override
     public PersonHasAddress savePersonHasAddress(PersonHasAddress personHasAddress) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (personHasAddress == null) {
@@ -77,6 +80,19 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         return (PersonHasAddress) saveEntity(personHasAddress);
     }
 
+    //FamilyReferences
+    @Override
+    public List<FamilyReferences> getFamilyReferences(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<FamilyReferences> familyReferences = (List<FamilyReferences>) listEntities(FamilyReferences.class, request, logger, getMethodName());
+        return familyReferences;
+    }
+    
+    @Override
+    public FamilyReferences loadFamilyReferences(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        FamilyReferences familyReferences = (FamilyReferences) loadEntity(FamilyReferences.class, request, logger, getMethodName());
+        return familyReferences;
+    }
+    
     @Override
     public FamilyReferences saveFamilyReferences(FamilyReferences familyReferences) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (familyReferences == null) {
@@ -85,6 +101,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         return (FamilyReferences) saveEntity(familyReferences);
     }
 
+    //PhoneType
     @Override
     public List<PhoneType> getPhoneType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PhoneType> phoneType = (List<PhoneType>) listEntities(PhoneType.class, request, logger, getMethodName());
@@ -104,7 +121,8 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (PhoneType) saveEntity(phoneType);
     }
-
+   
+    //ApplicantNaturalPerson
     @Override
     public List<ApplicantNaturalPerson> getApplicantNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ApplicantNaturalPerson> applicantNaturalPerson = (List<ApplicantNaturalPerson>) listEntities(ApplicantNaturalPerson.class, request, logger, getMethodName());
@@ -146,7 +164,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (KinShipApplicant) saveEntity(kinShipApplicant);
     }
-
+    
     //CivilStatus
     @Override
     public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -167,7 +185,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (CivilStatus) saveEntity(civilStatus);
     }
-
+   
     //Profession
     @Override
     public List<Profession> getProfession(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -209,5 +227,47 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (LegalPersonHasLegalRepresentatives) saveEntity(legalPersonHasLegalRepresentatives);
     }
-    
+   
+    //Person
+    @Override
+    public List<Person> getPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Person> person = (List<Person>) listEntities(Person.class, request, logger, getMethodName());
+        return person;
+    }
+
+    @Override
+    public Person loadPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Person person = (Person) loadEntity(Person.class, request, logger, getMethodName());
+        return person;
+    }
+
+    @Override
+    public Person savePerson(Person person) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (person == null) {
+            throw new NullParameterException("person", null);
+        }
+        return (Person) saveEntity(person);
+
+    }
+  
+    //NaturalPerson
+    @Override
+    public List<NaturalPerson> getNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<NaturalPerson> naturalPerson = (List<NaturalPerson>) listEntities(NaturalPerson.class, request, logger, getMethodName());
+        return naturalPerson;
+    }
+
+    @Override
+    public NaturalPerson loadNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        NaturalPerson naturalPerson = (NaturalPerson) loadEntity(NaturalPerson.class, request, logger, getMethodName());
+        return naturalPerson;
+    }
+
+    @Override
+    public NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (naturalPerson == null) {
+            throw new NullParameterException("naturalPerson", null);
+        }
+        return (NaturalPerson) saveEntity(naturalPerson);
+    }
 }

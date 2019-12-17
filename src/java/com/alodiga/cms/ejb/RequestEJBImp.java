@@ -145,7 +145,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicant.setEmail(email);
             applicant.setPersonClassificationId(personClassification);
             applicant.setPersonTypeId(personTypeApp);
-            applicant = utilsEJB.savePerson(applicant);
+            applicant = personEJB.savePerson(applicant);
 
             //2. Solicitud de tarjeta         
             //programa asociado a la solicitud
@@ -340,7 +340,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             cardComplementaryPerson.setEmail(email);
             cardComplementaryPerson.setPersonClassificationId(personClassification);
             cardComplementaryPerson.setPersonTypeId(personTypeApp);
-            cardComplementaryPerson = utilsEJB.savePerson(cardComplementaryPerson);
+            cardComplementaryPerson = personEJB.savePerson(cardComplementaryPerson);
 
             //3. Datos basicos de persona asociada a tarjeta complementaria
             //tipo de documento
