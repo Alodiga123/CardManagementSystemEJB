@@ -51,6 +51,7 @@ import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StreetType;
 import com.cms.commons.models.ZipZone;
+import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.Calendar;
@@ -797,20 +798,32 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public String generateNumberSequence(List<Sequences> sequence) throws GeneralException, RegisterNotFoundException, NullParameterException {
+    public String generateNumberSequence(List<Sequences> sequence, int originApplication) throws GeneralException, RegisterNotFoundException, NullParameterException {
         int numberSequence = 0;
+        String prefixNumberSequence = "";
         for (Sequences s : sequence) {
-            if (s.getCurrentValue() > 1) {
-                numberSequence = s.getCurrentValue();
-            } else {
-                numberSequence = s.getInitialValue();
+            if (s.getOriginApplicationId().getId() == originApplication) {
+                if (s.getCurrentValue() > 1) {
+                    numberSequence = s.getCurrentValue();
+                } else {
+                    numberSequence = s.getInitialValue();
+                }
+                s.setCurrentValue(s.getCurrentValue()+1);
+                saveSequences(s);
             }
-            s.setCurrentValue(s.getCurrentValue()+1);
-            Sequences sequenceBD =  saveSequences(s);
         }   
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
-        String prefixNumberSequence = "APP-";
+        switch (originApplication) {
+            case Constants.ORIGIN_APPLICATION_CMS_ID:
+                prefixNumberSequence = "CMS-";
+                break;
+            case Constants.ORIGIN_APPLICATION_WALLET_ID:
+                prefixNumberSequence = "APP-";
+                break;
+            default:
+                break;
+        }
         String suffixNumberSequence = "-";
         suffixNumberSequence = suffixNumberSequence.concat(String.valueOf(year));
         String numberSequenceDoc = prefixNumberSequence;
