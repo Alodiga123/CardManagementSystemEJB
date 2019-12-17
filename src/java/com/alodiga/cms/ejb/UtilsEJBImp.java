@@ -38,6 +38,7 @@ import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
 import com.cms.commons.models.Person;
 import com.cms.commons.models.LegalRepresentatives;
+import com.cms.commons.models.OriginApplication;
 import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhoneType;
@@ -510,7 +511,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
         }
         documentsPersonType = (List<DocumentsPersonType>) getNamedQueryResult(UtilsEJB.class, QueryConstants.DOCUMENTS_BY_COUNTRY, request, getMethodName(), logger, "documentsPersonType");
-        System.out.println("Lista de Documentos por país"+documentsPersonType);
         return documentsPersonType;
     }
 
@@ -618,9 +618,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (ResponsibleNetworkReporting) saveEntity(responsibleNetworkReporting);
     }
-
-    
-
     
     //Address
     @Override
@@ -835,4 +832,21 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return numberSequenceDoc;
     }
 
+    //OriginApplication
+    @Override
+    public List<OriginApplication> getOriginApplication(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<OriginApplication> originApplication = (List<OriginApplication>) listEntities(OriginApplication.class, request, logger, getMethodName());
+        return originApplication;
+    }
+
+    @Override
+    public OriginApplication loadOriginApplication(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
+    @Override
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }
