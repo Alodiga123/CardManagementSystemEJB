@@ -287,8 +287,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (ProgramType) saveEntity(programType);
     }
-//BinSponsor
 
+    //BinSponsor
     @Override
     public List<BinSponsor> getBinSponsor(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<BinSponsor> binSponsor = (List<BinSponsor>) listEntities(BinSponsor.class, request, logger, getMethodName());
@@ -519,7 +519,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (DocumentsPersonType) saveEntity(documentsPersonType);
     }
-
     
     //Request
     @Override
@@ -562,15 +561,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (EconomicActivity) saveEntity(economicActivity); 
     }
-    
-    
-    //Address
-    @Override
-    public List<Address> getAddresses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
-        return addresses;
-    }
 
+    //Issuer
     @Override
     public List<Issuer> getIssuers(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Issuer> issuers = (List<Issuer>) listEntities(Issuer.class, request, logger, getMethodName());
@@ -591,6 +583,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (Issuer) saveEntity(issuer);
     }
 
+    //ResponsibleNetworkReporting
     @Override
     public List<ResponsibleNetworkReporting> getResponsibleNetworkReportings(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ResponsibleNetworkReporting> responsibleNetworkReportings = (List<ResponsibleNetworkReporting>) listEntities(ResponsibleNetworkReporting.class, request, logger, getMethodName());
@@ -611,10 +604,12 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (ResponsibleNetworkReporting) saveEntity(responsibleNetworkReporting);
     }
 
-    
-
-    
     //Address
+    @Override
+    public List<Address> getAddresses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
+        return addresses;
+    }
     @Override
     public Address loadAddress(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Address address = (Address) loadEntity(Address.class, request, logger, getMethodName());
@@ -839,7 +834,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
     @Override
     public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
