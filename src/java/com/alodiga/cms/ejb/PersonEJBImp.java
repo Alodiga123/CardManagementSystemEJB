@@ -1,11 +1,8 @@
 package com.alodiga.cms.ejb;
 
 import com.alodiga.cms.commons.ejb.PersonEJB;
-import com.alodiga.cms.commons.ejb.PersonEJBLocal;
-import com.alodiga.cms.commons.ejb.ProgramEJB;
-import com.alodiga.cms.commons.ejb.ProgramEJBLocal;
+import com.alodiga.cms.commons.ejb.PersonEJBLocal;;
 import com.alodiga.cms.commons.ejb.UtilsEJB;
-import com.alodiga.cms.commons.exception.DisabledAccountException;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
 import com.alodiga.cms.commons.exception.NullParameterException;
@@ -14,7 +11,6 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
-import com.cms.commons.models.Account;
 import com.cms.commons.models.ApplicantNaturalPerson;
 import com.cms.commons.models.CardRequestNaturalPerson;
 import com.cms.commons.models.CivilStatus;
@@ -29,18 +25,13 @@ import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
 import com.cms.commons.models.Profession;
-import com.cms.commons.models.Program;
-import com.cms.commons.models.RequestType;
 import com.cms.commons.util.EjbConstants;
-import com.cms.commons.util.Constants;
 import com.cms.commons.util.QueryConstants;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.persistence.Query;
 import org.apache.log4j.Logger;
 
 /**
@@ -97,6 +88,18 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
     }
 
     //FamilyReferences
+    @Override
+    public List<FamilyReferences> getFamilyReferences(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<FamilyReferences> familyReferences = (List<FamilyReferences>) listEntities(FamilyReferences.class, request, logger, getMethodName());
+        return familyReferences;
+    }
+    
+    @Override
+    public FamilyReferences loadFamilyReferences(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        FamilyReferences familyReferences = (FamilyReferences) loadEntity(FamilyReferences.class, request, logger, getMethodName());
+        return familyReferences;
+    }
+    
     @Override
     public FamilyReferences saveFamilyReferences(FamilyReferences familyReferences) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (familyReferences == null) {
@@ -168,7 +171,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (KinShipApplicant) saveEntity(kinShipApplicant);
     }
-
+    
     //CivilStatus
     @Override
     public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -189,7 +192,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (CivilStatus) saveEntity(civilStatus);
     }
-
+   
     //Profession
     @Override
     public List<Profession> getProfession(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -295,24 +298,10 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
     }
-
-    @Override
-    public List<NaturalPerson> getNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public NaturalPerson loadNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
+    //Person
     @Override
-    public List<Person> getPersons(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    public List<Person> getPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Person> person = (List<Person>) listEntities(Person.class, request, logger, getMethodName());
         return person;
     }
@@ -322,14 +311,6 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         Person person = (Person) loadEntity(Person.class, request, logger, getMethodName());
         return person;
     }
-    
-    @Override
-    public Person loadLastPerson(EJBRequest request) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
-        EJBRequest request1 = new EJBRequest();
-        request1.setParam(EjbConstants.PARAM_PERSON_ID);
-        Person lastPerson = (Person) getNamedQueryResult(UtilsEJB.class, QueryConstants.LAST_PERSON, request1, getMethodName(), logger, "lastPerson");
-        return lastPerson;
-    }
 
     @Override
     public Person savePerson(Person person) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -338,6 +319,26 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (Person) saveEntity(person);
 
+    }  
+  
+    //NaturalPerson
+    @Override
+    public List<NaturalPerson> getNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<NaturalPerson> naturalPerson = (List<NaturalPerson>) listEntities(NaturalPerson.class, request, logger, getMethodName());
+        return naturalPerson;
     }
-    
+
+    @Override
+    public NaturalPerson loadNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        NaturalPerson naturalPerson = (NaturalPerson) loadEntity(NaturalPerson.class, request, logger, getMethodName());
+        return naturalPerson;
+    }
+
+    @Override
+    public NaturalPerson saveNaturalPerson(NaturalPerson naturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (naturalPerson == null) {
+            throw new NullParameterException("naturalPerson", null);
+        }
+        return (NaturalPerson) saveEntity(naturalPerson);
+    }
 }
