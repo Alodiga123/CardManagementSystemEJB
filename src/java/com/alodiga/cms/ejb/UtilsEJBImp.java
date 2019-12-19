@@ -490,8 +490,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     //DocumentsPersonType
     @Override
     public List<DocumentsPersonType> getDocumentsPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<DocumentsPersonType> documentsPersonType = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
-        return documentsPersonType;
+        List<DocumentsPersonType> documentsPersonTypeList = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
+        return documentsPersonTypeList;
     }
     
     @Override
@@ -610,6 +610,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
         return addresses;
     }
+    
     @Override
     public Address loadAddress(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Address address = (Address) loadEntity(Address.class, request, logger, getMethodName());
