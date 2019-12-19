@@ -490,8 +490,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     //DocumentsPersonType
     @Override
     public List<DocumentsPersonType> getDocumentsPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<DocumentsPersonType> documentsPersonType = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
-        return documentsPersonType;
+        List<DocumentsPersonType> documentsPersonTypeList = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
+        return documentsPersonTypeList;
     }
     
     @Override
@@ -520,7 +520,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (DocumentsPersonType) saveEntity(documentsPersonType);
     }
 
-    
     //Request
     @Override
     public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -561,14 +560,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("economicActivity", null);
         }
         return (EconomicActivity) saveEntity(economicActivity); 
-    }
-    
-    
-    //Address
-    @Override
-    public List<Address> getAddresses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
-        return addresses;
     }
 
     @Override
@@ -611,10 +602,13 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (ResponsibleNetworkReporting) saveEntity(responsibleNetworkReporting);
     }
 
-    
-
-    
     //Address
+    @Override
+    public List<Address> getAddresses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
+        return addresses;
+    }
+    
     @Override
     public Address loadAddress(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Address address = (Address) loadEntity(Address.class, request, logger, getMethodName());
@@ -839,7 +833,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
     @Override
     public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
