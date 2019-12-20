@@ -519,27 +519,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (DocumentsPersonType) saveEntity(documentsPersonType);
     }
-    
-    //Request
-    @Override
-    public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
-        return requests;
-    }
-
-    @Override
-    public Request loadRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Request requests = (Request) loadEntity(Request.class, request, logger, getMethodName());
-        return requests;
-    }
-
-    @Override
-    public Request saveRequest(Request request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (request == null) {
-            throw new NullParameterException("requests", null);
-        }
-        return (Request) saveEntity(request);
-    }
 
     //EconomicActivity
     @Override
