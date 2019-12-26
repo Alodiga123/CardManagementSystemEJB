@@ -25,7 +25,6 @@
     <class>com.cms.commons.models.SourceFunds</class>
     <class>com.cms.commons.models.Country</class>
     <class>com.cms.commons.models.FamilyReferences</class>
-    <class>com.cms.commons.models.Segment</class>
     <class>com.cms.commons.models.Address</class>
     <class>com.cms.commons.models.Program</class>
     <class>com.cms.commons.models.StorageMedio</class>
@@ -68,6 +67,8 @@
     <class>com.cms.commons.models.OriginApplication</class>
     <class>com.cms.commons.models.DocumentType</class>
     <class>com.cms.commons.models.Sequences</class>
+    <class>com.cms.commons.models.SegmentMarketing</class>
+    <class>com.cms.commons.models.SegmentCommerce</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>

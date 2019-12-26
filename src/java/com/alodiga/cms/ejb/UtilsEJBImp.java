@@ -410,26 +410,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("requestType", null);
         }
         return (ProgramHasNetwork) saveEntity(programHasNetwork);
-    }
-
-    @Override
-    public List<Product> getProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Product> product = (List<Product>) listEntities(Product.class, request, logger, getMethodName());
-        return product;
-    }
-
-    @Override
-    public Product loadProduct(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Product product = (Product) loadEntity(Product.class, request, logger, getMethodName());
-        return product;
-    }
-
-    @Override
-    public Product saveProduct(Product product) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (product == null) {
-            throw new NullParameterException("requestType", null);
-        }
-        return (Product) saveEntity(product);
     }  
 
     @Override
