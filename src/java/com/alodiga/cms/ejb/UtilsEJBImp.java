@@ -34,10 +34,8 @@ import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.OriginApplication;
-import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
-import com.cms.commons.models.Request;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
@@ -67,6 +65,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     private static final Logger logger = Logger.getLogger(UtilsEJBImp.class);
 
+    //RequestType
     @Override
     public List<RequestType> getRequestType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<RequestType> requestsTypeList = (List<RequestType>) listEntities(RequestType.class, request, logger, getMethodName());
@@ -87,6 +86,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (RequestType) saveEntity(requestType);
     }
 
+    //Country
     @Override
     public List<Country> getCountries(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Country> countryList = (List<Country>) listEntities(Country.class, request, logger, getMethodName());
@@ -287,8 +287,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (ProgramType) saveEntity(programType);
     }
-//BinSponsor
 
+    //BinSponsor
     @Override
     public List<BinSponsor> getBinSponsor(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<BinSponsor> binSponsor = (List<BinSponsor>) listEntities(BinSponsor.class, request, logger, getMethodName());
@@ -372,6 +372,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (CardIssuanceType) saveEntity(cardIssuanceType);
     }
 
+    //Network
     @Override
     public List<Network> getNetworks(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Network> networks = (List<Network>) listEntities(Network.class, request, logger, getMethodName());
@@ -402,12 +403,24 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (Network) saveEntity(network);
     }
-
+    
+    //ProgramHasNetwork
     @Override
     public List<ProgramHasNetwork> getProgramHasNetwork(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ProgramHasNetwork> programHasNetwork = (List<ProgramHasNetwork>) listEntities(ProgramHasNetwork.class, request, logger, getMethodName());
         return programHasNetwork;
     }
+    
+    @Override
+    public List<ProgramHasNetwork> getProgramHasNetworkByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProgramHasNetwork> programHasNetwork = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        programHasNetwork = (List<ProgramHasNetwork>) getNamedQueryResult(UtilsEJB.class, QueryConstants.NETWORK_BY_PROGRAM, request, getMethodName(), logger, "programHasNetwork");
+        return programHasNetwork;
+    }  
 
     @Override
     public ProgramHasNetwork loadProgramHasNetwork(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -423,6 +436,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (ProgramHasNetwork) saveEntity(programHasNetwork);
     }
 
+    //Product
     @Override
     public List<Product> getProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Product> product = (List<Product>) listEntities(Product.class, request, logger, getMethodName());
@@ -443,6 +457,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (Product) saveEntity(product);
     }  
 
+    //PersonType
     @Override
     public List<PersonType> getPersonTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PersonType> personTypes = (List<PersonType>) listEntities(PersonType.class, request, logger, getMethodName());
@@ -500,9 +515,9 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     //DocumentsPersonType
     @Override
-    public List<DocumentsPersonType> getDocumentsPersonTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<DocumentsPersonType> documentsPersonType = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
-        return documentsPersonType;
+    public List<DocumentsPersonType> getDocumentsPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<DocumentsPersonType> documentsPersonTypeList = (List<DocumentsPersonType>) listEntities(DocumentsPersonType.class, request, logger, getMethodName());
+        return documentsPersonTypeList;
     }
     
     @Override
@@ -513,6 +528,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
         }
         documentsPersonType = (List<DocumentsPersonType>) getNamedQueryResult(UtilsEJB.class, QueryConstants.DOCUMENTS_BY_COUNTRY, request, getMethodName(), logger, "documentsPersonType");
+        System.out.println("Lista de Documentos por país"+documentsPersonType);
         return documentsPersonType;
     }
 
@@ -528,28 +544,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("documentsPersonType", null);
         }
         return (DocumentsPersonType) saveEntity(documentsPersonType);
-    }
-
-    
-    //Request
-    @Override
-    public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
-        return requests;
-    }
-
-    @Override
-    public Request loadRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Request requests = (Request) loadEntity(Request.class, request, logger, getMethodName());
-        return requests;
-    }
-
-    @Override
-    public Request saveRequest(Request request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (request == null) {
-            throw new NullParameterException("requests", null);
-        }
-        return (Request) saveEntity(request);
     }
 
     //EconomicActivity
@@ -572,15 +566,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (EconomicActivity) saveEntity(economicActivity); 
     }
-    
-    
-    //Address
-    @Override
-    public List<Address> getAddresses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
-        return addresses;
-    }
 
+    //Issuer
     @Override
     public List<Issuer> getIssuers(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Issuer> issuers = (List<Issuer>) listEntities(Issuer.class, request, logger, getMethodName());
@@ -601,6 +588,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (Issuer) saveEntity(issuer);
     }
 
+    //ResponsibleNetworkReporting
     @Override
     public List<ResponsibleNetworkReporting> getResponsibleNetworkReportings(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ResponsibleNetworkReporting> responsibleNetworkReportings = (List<ResponsibleNetworkReporting>) listEntities(ResponsibleNetworkReporting.class, request, logger, getMethodName());
@@ -620,8 +608,14 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (ResponsibleNetworkReporting) saveEntity(responsibleNetworkReporting);
     }
-    
+
     //Address
+    @Override
+    public List<Address> getAddresses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
+        return addresses;
+    }
+    
     @Override
     public Address loadAddress(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Address address = (Address) loadEntity(Address.class, request, logger, getMethodName());
@@ -845,9 +839,10 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public OriginApplication loadOriginApplication(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+    }
+    
 }
