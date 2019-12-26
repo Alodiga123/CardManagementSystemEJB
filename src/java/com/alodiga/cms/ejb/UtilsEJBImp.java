@@ -34,10 +34,8 @@ import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.OriginApplication;
-import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
-import com.cms.commons.models.Request;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
@@ -67,6 +65,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     private static final Logger logger = Logger.getLogger(UtilsEJBImp.class);
 
+    //RequestType
     @Override
     public List<RequestType> getRequestType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<RequestType> requestsTypeList = (List<RequestType>) listEntities(RequestType.class, request, logger, getMethodName());
@@ -87,6 +86,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (RequestType) saveEntity(requestType);
     }
 
+    //Country
     @Override
     public List<Country> getCountries(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Country> countryList = (List<Country>) listEntities(Country.class, request, logger, getMethodName());
@@ -372,6 +372,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (CardIssuanceType) saveEntity(cardIssuanceType);
     }
 
+    //Network
     @Override
     public List<Network> getNetworks(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Network> networks = (List<Network>) listEntities(Network.class, request, logger, getMethodName());
@@ -402,12 +403,24 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (Network) saveEntity(network);
     }
-
+    
+    //ProgramHasNetwork
     @Override
     public List<ProgramHasNetwork> getProgramHasNetwork(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ProgramHasNetwork> programHasNetwork = (List<ProgramHasNetwork>) listEntities(ProgramHasNetwork.class, request, logger, getMethodName());
         return programHasNetwork;
     }
+    
+    @Override
+    public List<ProgramHasNetwork> getProgramHasNetworkByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProgramHasNetwork> programHasNetwork = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        programHasNetwork = (List<ProgramHasNetwork>) getNamedQueryResult(UtilsEJB.class, QueryConstants.NETWORK_BY_PROGRAM, request, getMethodName(), logger, "programHasNetwork");
+        return programHasNetwork;
+    }  
 
     @Override
     public ProgramHasNetwork loadProgramHasNetwork(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -423,6 +436,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (ProgramHasNetwork) saveEntity(programHasNetwork);
     }
 
+    //Product
     @Override
     public List<Product> getProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Product> product = (List<Product>) listEntities(Product.class, request, logger, getMethodName());
@@ -443,6 +457,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (Product) saveEntity(product);
     }  
 
+    //PersonType
     @Override
     public List<PersonType> getPersonTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PersonType> personTypes = (List<PersonType>) listEntities(PersonType.class, request, logger, getMethodName());
