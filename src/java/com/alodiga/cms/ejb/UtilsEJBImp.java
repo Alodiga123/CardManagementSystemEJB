@@ -13,11 +13,9 @@ import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.Address;
 import com.cms.commons.models.BinSponsor;
 import com.cms.commons.models.CardIssuanceType;
-import com.cms.commons.models.CardRequestNaturalPerson;
 import com.cms.commons.models.CardStatus;
 import com.cms.commons.models.CardType;
 import com.cms.commons.models.City;
-import com.cms.commons.models.CivilStatus;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
@@ -33,27 +31,22 @@ import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EconomicActivity;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.EdificationType;
-import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.LegalPerson;
-import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
-import com.cms.commons.models.Person;
 import com.cms.commons.models.LegalRepresentatives;
+import com.cms.commons.models.OriginApplication;
 import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
-import com.cms.commons.models.PhoneType;
-import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.ProductType;
-import com.cms.commons.models.Profession;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StreetType;
 import com.cms.commons.models.ZipZone;
+import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.Calendar;
-
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -384,6 +377,17 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<Network> networks = (List<Network>) listEntities(Network.class, request, logger, getMethodName());
         return networks;
     }
+    
+    @Override
+    public List<Network> getNetworkByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Network> networks = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        networks = (List<Network>) getNamedQueryResult(UtilsEJB.class, QueryConstants.NETWORK_BY_COUNTRY, request, getMethodName(), logger, "networks");
+        return networks;
+    }  
 
     @Override
     public Network loadNetwork(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -762,28 +766,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return (LegalRepresentatives) saveEntity(legalRepresentatives); 
     }
     
-    //CardRequestNaturalPerson
-    @Override
-    public List<CardRequestNaturalPerson> getCardRequestNaturalPersons(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CardRequestNaturalPerson> cardRequestNaturalPersons = (List<CardRequestNaturalPerson>) listEntities(CardRequestNaturalPerson.class, request, logger, getMethodName());
-        return cardRequestNaturalPersons;
-    }
-
-    @Override
-    public CardRequestNaturalPerson loadCardRequestNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        CardRequestNaturalPerson cardRequestNaturalPerson = (CardRequestNaturalPerson) loadEntity(CardRequestNaturalPerson.class, request, logger, getMethodName());
-        return cardRequestNaturalPerson;
-    }
-
-    @Override
-    public CardRequestNaturalPerson saveCardRequestNaturalPerson(CardRequestNaturalPerson cardRequestNaturalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (cardRequestNaturalPerson == null) {
-            throw new NullParameterException("cardRequestNaturalPerson", null);
-        }
-        return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
-    }
-
-    //
+    //Sequences
     @Override
     public List<Sequences> getSequences(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Sequences> sequences = (List<Sequences>) listEntities(Sequences.class, request, logger, getMethodName());
@@ -817,20 +800,32 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public String generateNumberSequence(List<Sequences> sequence) throws GeneralException, RegisterNotFoundException, NullParameterException {
+    public String generateNumberSequence(List<Sequences> sequence, int originApplication) throws GeneralException, RegisterNotFoundException, NullParameterException {
         int numberSequence = 0;
+        String prefixNumberSequence = "";
         for (Sequences s : sequence) {
-            if (s.getCurrentValue() > 1) {
-                numberSequence = s.getCurrentValue();
-            } else {
-                numberSequence = s.getInitialValue();
+            if (s.getOriginApplicationId().getId() == originApplication) {
+                if (s.getCurrentValue() > 1) {
+                    numberSequence = s.getCurrentValue();
+                } else {
+                    numberSequence = s.getInitialValue();
+                }
+                s.setCurrentValue(s.getCurrentValue()+1);
+                saveSequences(s);
             }
-            s.setCurrentValue(s.getCurrentValue()+1);
-            Sequences sequenceBD =  saveSequences(s);
         }   
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
-        String prefixNumberSequence = "APP-";
+        switch (originApplication) {
+            case Constants.ORIGIN_APPLICATION_CMS_ID:
+                prefixNumberSequence = "CMS-";
+                break;
+            case Constants.ORIGIN_APPLICATION_WALLET_ID:
+                prefixNumberSequence = "APP-";
+                break;
+            default:
+                break;
+        }
         String suffixNumberSequence = "-";
         suffixNumberSequence = suffixNumberSequence.concat(String.valueOf(year));
         String numberSequenceDoc = prefixNumberSequence;
@@ -838,48 +833,21 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         numberSequenceDoc = numberSequenceDoc.concat(suffixNumberSequence);
         return numberSequenceDoc;
     }
+
+    //OriginApplication
+    @Override
+    public List<OriginApplication> getOriginApplication(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<OriginApplication> originApplication = (List<OriginApplication>) listEntities(OriginApplication.class, request, logger, getMethodName());
+        return originApplication;
+    }
+
+    @Override
+    public OriginApplication loadOriginApplication(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
-    //PersonHasAddress
     @Override
-    public List<PersonHasAddress> getPersonHasAddresses(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<PersonHasAddress> personHasAddress = (List<PersonHasAddress>) listEntities(PersonHasAddress.class, request, logger, getMethodName());
-        return personHasAddress;
-    }
-
-    @Override
-    public PersonHasAddress loadPersonHasAddress(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        PersonHasAddress personHasAddress = (PersonHasAddress) loadEntity(PersonHasAddress.class, request, logger, getMethodName());
-        return personHasAddress;
-    }
-
-    @Override
-    public PersonHasAddress savePersonHasAddress(PersonHasAddress personHasAddress) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (personHasAddress == null) {
-            throw new NullParameterException("personHasAddress", null);
-        }
-        return (PersonHasAddress) saveEntity(personHasAddress);
-    }
-
-    //PhonePerson
-    @Override
-    public List<PhonePerson> getPhonePersons(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<PhonePerson> phonePerson = (List<PhonePerson>) listEntities(PhonePerson.class, request, logger, getMethodName());
-        return phonePerson;
-    }
-
-    @Override
-    public PhonePerson loadPhonePerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        PhonePerson phonePerson = (PhonePerson) loadEntity(PhonePerson.class, request, logger, getMethodName());
-        return phonePerson;
-    }
-
-    @Override
-    public PhonePerson savePhonePerson(PhonePerson phonePerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (phonePerson == null) {
-            throw new NullParameterException("phonePerson", null);
-        }
-        return (PhonePerson) saveEntity(phonePerson);
-    }
-
-
+    public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }    
 }
