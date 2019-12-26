@@ -377,6 +377,17 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<Network> networks = (List<Network>) listEntities(Network.class, request, logger, getMethodName());
         return networks;
     }
+    
+    @Override
+    public List<Network> getNetworkByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Network> networks = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        networks = (List<Network>) getNamedQueryResult(UtilsEJB.class, QueryConstants.NETWORK_BY_COUNTRY, request, getMethodName(), logger, "networks");
+        return networks;
+    }  
 
     @Override
     public Network loadNetwork(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -498,27 +509,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("documentsPersonType", null);
         }
         return (DocumentsPersonType) saveEntity(documentsPersonType);
-    }
-    
-    //Request
-    @Override
-    public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
-        return requests;
-    }
-
-    @Override
-    public Request loadRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Request requests = (Request) loadEntity(Request.class, request, logger, getMethodName());
-        return requests;
-    }
-
-    @Override
-    public Request saveRequest(Request request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (request == null) {
-            throw new NullParameterException("requests", null);
-        }
-        return (Request) saveEntity(request);
     }
 
     //EconomicActivity

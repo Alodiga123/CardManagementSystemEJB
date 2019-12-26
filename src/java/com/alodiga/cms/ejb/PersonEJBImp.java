@@ -28,6 +28,7 @@ import com.cms.commons.models.Profession;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -106,6 +107,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
             throw new NullParameterException("familyReferences", null);
         }
         return (FamilyReferences) saveEntity(familyReferences);
+    }
+    
+     @Override
+    public List<FamilyReferences> getFamilyReferencesByApplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<FamilyReferences> familyReferencesByApplicantList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID), null);
+        }
+        familyReferencesByApplicantList = (List<FamilyReferences>) getNamedQueryResult(UtilsEJB.class, QueryConstants.FAMILY_REFERENCES_BY_APPLICANT, request, getMethodName(), logger, "familyReferencesByApplicantList");
+        return familyReferencesByApplicantList;
     }
 
     //PhoneType
@@ -341,4 +353,5 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB ,
         }
         return (NaturalPerson) saveEntity(naturalPerson);
     }
+    
 }
