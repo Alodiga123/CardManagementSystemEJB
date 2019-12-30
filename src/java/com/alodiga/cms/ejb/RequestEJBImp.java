@@ -60,7 +60,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.persistence.Query;
+//import javax.persistence.Query;cmbPersonType
 import org.apache.log4j.Logger;
 
 /**
