@@ -21,7 +21,6 @@ import com.cms.commons.models.Country;
 import com.cms.commons.models.Currency;
 import com.cms.commons.models.Network;
 import com.cms.commons.models.PersonClassification;
-import com.cms.commons.models.Product;
 import com.cms.commons.models.ProgramHasNetwork;
 import com.cms.commons.models.ProgramType;
 import com.cms.commons.models.RequestType;
@@ -191,27 +190,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         PersonClassification personclassification = (PersonClassification) loadEntity(PersonClassification.class, request, logger, getMethodName());
         return personclassification;
 
-    }
-
-    //Collections Requests
-    @Override
-    public List<CollectionsRequest> getCollectionsRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CollectionsRequest> collectionsRequest = (List<CollectionsRequest>) listEntities(CollectionsRequest.class, request, logger, getMethodName());
-        return collectionsRequest;
-    }
-
-    @Override
-    public CollectionsRequest loadCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        CollectionsRequest collectionsRequest = (CollectionsRequest) loadEntity(CollectionsRequest.class, request, logger, getMethodName());
-        return collectionsRequest;
-    }
-
-    @Override
-    public CollectionsRequest saveCollectionRequest(CollectionsRequest collectionRequest) throws NullParameterException, GeneralException {
-        if (collectionRequest == null) {
-            throw new NullParameterException("collectionRequest", null);
-        }
-        return (CollectionsRequest) saveEntity(collectionRequest);
     }
 
     //ProductType
@@ -435,27 +413,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (ProgramHasNetwork) saveEntity(programHasNetwork);
     }
-
-    //Product
-    @Override
-    public List<Product> getProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Product> product = (List<Product>) listEntities(Product.class, request, logger, getMethodName());
-        return product;
-    }
-
-    @Override
-    public Product loadProduct(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Product product = (Product) loadEntity(Product.class, request, logger, getMethodName());
-        return product;
-    }
-
-    @Override
-    public Product saveProduct(Product product) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (product == null) {
-            throw new NullParameterException("requestType", null);
-        }
-        return (Product) saveEntity(product);
-    }  
 
     //PersonType
     @Override
@@ -844,5 +801,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
     
 }
