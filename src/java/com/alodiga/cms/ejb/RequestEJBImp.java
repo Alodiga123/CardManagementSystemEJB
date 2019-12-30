@@ -10,7 +10,6 @@ import com.alodiga.cms.commons.ejb.ProgramEJB;
 import com.alodiga.cms.commons.ejb.RequestEJB;
 import com.alodiga.cms.commons.ejb.RequestEJBLocal;
 import com.alodiga.cms.commons.ejb.UtilsEJB;
-import com.alodiga.cms.commons.exception.DisabledAccountException;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
 import com.alodiga.cms.commons.exception.NullParameterException;
@@ -23,6 +22,7 @@ import com.cms.commons.models.Address;
 import com.cms.commons.models.ApplicantNaturalPerson;
 import com.cms.commons.models.City;
 import com.cms.commons.models.CivilStatus;
+import com.cms.commons.models.CollectionsRequest;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Person;
 import com.cms.commons.models.DocumentsPersonType;
@@ -39,6 +39,7 @@ import com.cms.commons.models.Profession;
 import com.cms.commons.models.Program;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.Request;
+import com.cms.commons.models.RequestHasCollectionsRequest;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StatusRequest;
@@ -48,19 +49,14 @@ import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EJBServiceLocator;
 import com.cms.commons.util.QueryConstants;
-import static com.sun.xml.ws.security.addressing.impl.policy.Constants.logger;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-//import javax.persistence.Query;cmbPersonType
 import org.apache.log4j.Logger;
 
 /**
@@ -83,6 +79,13 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
         return requests;
+    }
+    
+    @Override
+    public List<Request> getRequestsByCollections(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Request> requestsByCollectionsRequest = null;
+        requestsByCollectionsRequest = (List<Request>) getNamedQueryResult(UtilsEJB.class, QueryConstants.REQUEST_BY_COLLECTIONS, request, getMethodName(), logger, "requestsByCollectionsRequest");
+        return requestsByCollectionsRequest;
     }
 
     @Override
@@ -475,6 +478,48 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             e.printStackTrace();
         }
         return personTypeApp;
+    }  
+    
+    //Collections Requests
+    @Override
+    public List<CollectionsRequest> getCollectionsRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CollectionsRequest> collectionsRequest = (List<CollectionsRequest>) listEntities(CollectionsRequest.class, request, logger, getMethodName());
+        return collectionsRequest;
+    }
+
+    @Override
+    public CollectionsRequest loadCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CollectionsRequest collectionsRequest = (CollectionsRequest) loadEntity(CollectionsRequest.class, request, logger, getMethodName());
+        return collectionsRequest;
+    }
+
+    @Override
+    public CollectionsRequest saveCollectionRequest(CollectionsRequest collectionRequest) throws NullParameterException, GeneralException {
+        if (collectionRequest == null) {
+            throw new NullParameterException("collectionRequest", null);
+        }
+        return (CollectionsRequest) saveEntity(collectionRequest);
     }
     
+    
+    //RequestHasCollectionsRequest
+    @Override
+    public List<RequestHasCollectionsRequest> getRequestsHasCollectionsRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RequestHasCollectionsRequest> requestHasCollectionsRequest = (List<RequestHasCollectionsRequest>) listEntities(RequestHasCollectionsRequest.class, request, logger, getMethodName());
+        return requestHasCollectionsRequest;
+    }
+
+    @Override
+    public RequestHasCollectionsRequest loadRequestHasCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        RequestHasCollectionsRequest requestHasCollectionsRequest = (RequestHasCollectionsRequest) loadEntity(RequestHasCollectionsRequest.class, request, logger, getMethodName());
+        return requestHasCollectionsRequest;
+    }
+
+    @Override
+    public RequestHasCollectionsRequest saveRequestHasCollectionsRequest(RequestHasCollectionsRequest requestHasCollectionsRequest) throws NullParameterException, GeneralException {
+        if (requestHasCollectionsRequest == null) {
+            throw new NullParameterException("requestHasCollectionsRequest", null);
+        }
+        return (RequestHasCollectionsRequest) saveEntity(requestHasCollectionsRequest);
+    }
 }
