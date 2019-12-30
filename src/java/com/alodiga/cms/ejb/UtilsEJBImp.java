@@ -31,6 +31,7 @@ import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EconomicActivity;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.EdificationType;
+import com.cms.commons.models.KindCard;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.OriginApplication;
@@ -377,6 +378,17 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<Network> networks = (List<Network>) listEntities(Network.class, request, logger, getMethodName());
         return networks;
     }
+    
+    @Override
+    public List<Network> getNetworkByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Network> networks = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        networks = (List<Network>) getNamedQueryResult(UtilsEJB.class, QueryConstants.NETWORK_BY_COUNTRY, request, getMethodName(), logger, "networks");
+        return networks;
+    }  
 
     @Override
     public Network loadNetwork(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -498,27 +510,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("documentsPersonType", null);
         }
         return (DocumentsPersonType) saveEntity(documentsPersonType);
-    }
-    
-    //Request
-    @Override
-    public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
-        return requests;
-    }
-
-    @Override
-    public Request loadRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Request requests = (Request) loadEntity(Request.class, request, logger, getMethodName());
-        return requests;
-    }
-
-    @Override
-    public Request saveRequest(Request request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (request == null) {
-            throw new NullParameterException("requests", null);
-        }
-        return (Request) saveEntity(request);
     }
 
     //EconomicActivity
@@ -817,6 +808,22 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public OriginApplication saveOriginApplication(OriginApplication originApplication) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<KindCard> getKindCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<KindCard> kindCardList = (List<KindCard>) listEntities(KindCard.class, request, logger, getMethodName());
+        return kindCardList;
+    }
+
+    @Override
+    public KindCard loadKindCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public KindCard saveKindCard(KindCard kindCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

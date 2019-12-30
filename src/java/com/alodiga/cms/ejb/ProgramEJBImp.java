@@ -7,7 +7,6 @@ package com.alodiga.cms.ejb;
 
 import com.alodiga.cms.commons.ejb.ProgramEJB;
 import com.alodiga.cms.commons.ejb.ProgramEJBLocal;
-import com.alodiga.cms.commons.exception.DisabledAccountException;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
 import com.alodiga.cms.commons.exception.NullParameterException;
@@ -16,12 +15,10 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
-import com.cms.commons.models.Account;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.NaturalPerson;
-import com.cms.commons.models.Person;
 import com.cms.commons.models.Program;
-import com.cms.commons.models.RequestType;
+import com.cms.commons.models.ProgramHasNetwork;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.Constants;
 import java.util.ArrayList;
@@ -65,6 +62,8 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         return (Program) saveEntity(program);
     }
     
+    
+    //NaturalPerson
     @Override
     public List<NaturalPerson> getProgramOwner(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<NaturalPerson> programOwnerList = new ArrayList<NaturalPerson>();
@@ -80,7 +79,9 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         return programOwnerList;
     }
-
+    
+    
+    //LegalPerson
     @Override
     public List<LegalPerson> getCardManagementProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<LegalPerson> cardManagementProgramList = new ArrayList<LegalPerson>();
@@ -95,6 +96,28 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
             e.printStackTrace();            
         }
         return cardManagementProgramList;
+    }
+
+    
+    //ProgramHasNetwork
+    @Override
+    public List<ProgramHasNetwork> getProgramHasNetwork(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProgramHasNetwork> programHasNetwork = (List<ProgramHasNetwork>) listEntities(ProgramHasNetwork.class, request, logger, getMethodName());
+        return programHasNetwork;
+    }
+
+    @Override
+    public ProgramHasNetwork loadProgramHasNetwork(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProgramHasNetwork programHasNetwork = (ProgramHasNetwork) loadEntity(ProgramHasNetwork.class, request, logger, getMethodName());
+        return programHasNetwork;
+    }
+
+    @Override
+    public ProgramHasNetwork saveProgramHasNetwork(ProgramHasNetwork programHasNetwork) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (programHasNetwork == null) {
+            throw new NullParameterException("programHasNetwork", null);
+        }
+        return (ProgramHasNetwork) saveEntity(programHasNetwork);
     }
 
     
