@@ -19,6 +19,7 @@ import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
 import com.cms.commons.models.Product;
+import com.cms.commons.models.ProductHasCommerceCategory;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.ProductUse;
 import com.cms.commons.models.SegmentCommerce;
@@ -217,6 +218,27 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         commerceCategoryList = (List<CommerceCategory>) getNamedQueryResult(CommerceCategory.class, QueryConstants.COMMERCE_CATEGORY_BY_SEGMENT_COMMERCE, request, getMethodName(), logger, "commerceCategoryList");
         return commerceCategoryList;
+    }
+    
+    //ProductHasCommerceCategory
+    @Override
+    public List<ProductHasCommerceCategory> getProductHasCommerceCategory(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProductHasCommerceCategory> productHasCommerceCategoryList = (List<ProductHasCommerceCategory>) listEntities(ProductHasCommerceCategory.class, request, logger, getMethodName());
+        return productHasCommerceCategoryList;
+    }
+
+    @Override
+    public ProductHasCommerceCategory loadProductHasCommerceCategory(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProductHasCommerceCategory productHasCommerceCategory = (ProductHasCommerceCategory) loadEntity(ProductHasCommerceCategory.class, request, logger, getMethodName());
+        return productHasCommerceCategory;
+    }
+
+    @Override
+    public ProductHasCommerceCategory saveProductHasCommerceCategory(ProductHasCommerceCategory productHasCommerceCategory) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (productHasCommerceCategory == null) {
+            throw new NullParameterException("productHasCommerceCategory", null);
+        }
+        return (ProductHasCommerceCategory) saveEntity(productHasCommerceCategory);
     }
     
 }
