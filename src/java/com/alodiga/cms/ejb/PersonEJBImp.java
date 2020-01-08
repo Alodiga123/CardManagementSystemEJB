@@ -164,7 +164,18 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (ApplicantNaturalPerson) saveEntity(applicantNaturalPerson);
     }
-
+    
+    @Override
+    public List<ApplicantNaturalPerson> getCardComplementaryByApplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApplicantNaturalPerson> cardComplementaryByApplicantList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID), null);
+        }
+        cardComplementaryByApplicantList = (List<ApplicantNaturalPerson>) getNamedQueryResult(UtilsEJB.class, QueryConstants.CARD_COMPLEMNTARY_BY_APPLICANT, request, getMethodName(), logger, "cardComplementaryByApplicantList");
+        return cardComplementaryByApplicantList;
+    }
+    
     //KinShipApplicant
     @Override
     public List<KinShipApplicant> getKinShipApplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
