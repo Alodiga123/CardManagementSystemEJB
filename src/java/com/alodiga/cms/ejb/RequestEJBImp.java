@@ -482,10 +482,23 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }
     
     @Override
-    public List<CollectionsRequest> getRequestsByCollections(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CollectionsRequest> requestsByCollectionsRequest = null;
-        requestsByCollectionsRequest = (List<CollectionsRequest>) getNamedQueryResult(UtilsEJB.class, QueryConstants.REQUEST_BY_COLLECTIONS, request, getMethodName(), logger, "requestsByCollectionsRequest");
-        return requestsByCollectionsRequest;
+    public List<CollectionsRequest> getCollectionsByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CollectionsRequest> CollectionsRequestByrequestsList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_TYPE_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_TYPE_ID), null);
+        }
+        CollectionsRequestByrequestsList = (List<CollectionsRequest>) getNamedQueryResult(CollectionsRequest.class, QueryConstants.COLLECTIONS_BY_REQUEST, request, getMethodName(), logger, "CollectionsRequestByrequestsList");
+        return CollectionsRequestByrequestsList;
     }
 
     @Override

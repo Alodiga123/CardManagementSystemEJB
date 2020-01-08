@@ -10,6 +10,8 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.CommerceCategory;
+import com.cms.commons.models.LevelProduct;
 import java.util.Map;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -18,7 +20,12 @@ import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
 import com.cms.commons.models.Product;
 import com.cms.commons.models.ProductType;
+import com.cms.commons.models.ProductUse;
+import com.cms.commons.models.SegmentCommerce;
+import com.cms.commons.models.SegmentMarketing;
+import com.cms.commons.models.StorageMedio;
 import com.cms.commons.util.EjbConstants;
+import com.cms.commons.util.QueryConstants;
 import java.util.List;
 
 /**
@@ -73,6 +80,143 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
             throw new NullParameterException("productType", null);
         }
         return (ProductType) saveEntity(productType);
+    }
+    
+    //LevelProduct
+    @Override
+    public List<LevelProduct> getLevelProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LevelProduct> levelProduct = (List<LevelProduct>) listEntities(LevelProduct.class, request, logger, getMethodName());
+        return levelProduct;
+    }
+
+    @Override
+    public LevelProduct loadLevelProduct(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        LevelProduct levelProduct = (LevelProduct) loadEntity(LevelProduct.class, request, logger, getMethodName());
+        return levelProduct;
+    }
+
+    @Override
+    public LevelProduct saveLevelProduct(LevelProduct levelProduct) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (levelProduct == null) {
+            throw new NullParameterException("levelProduct", null);
+        }
+        return (LevelProduct) saveEntity(levelProduct);
+    }
+    
+    //ProductUse
+    @Override
+    public List<ProductUse> getProductUse(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProductUse> productUse = (List<ProductUse>) listEntities(ProductUse.class, request, logger, getMethodName());
+        return productUse;
+    }
+
+    @Override
+    public ProductUse loadProductUse(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProductUse productUse = (ProductUse) loadEntity(ProductUse.class, request, logger, getMethodName());
+        return productUse;
+    }
+
+    @Override
+    public ProductUse saveProductUse(ProductUse productUse) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (productUse == null) {
+            throw new NullParameterException("productUse", null);
+        }
+        return (ProductUse) saveEntity(productUse);
+    }
+    
+    //StorageMedio
+    @Override
+    public List<StorageMedio> getStorageMedio(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StorageMedio> storageMedio = (List<StorageMedio>) listEntities(StorageMedio.class, request, logger, getMethodName());
+        return storageMedio;
+    }
+
+    @Override
+    public StorageMedio loadStorageMedio(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StorageMedio storageMedio = (StorageMedio) loadEntity(StorageMedio.class, request, logger, getMethodName());
+        return storageMedio;
+    }
+
+    @Override
+    public StorageMedio saveStorageMedio(StorageMedio storageMedio) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (storageMedio == null) {
+            throw new NullParameterException("storageMedio", null);
+        }
+        return (StorageMedio) saveEntity(storageMedio);
+    }
+    
+    //SegmentMarketing
+    @Override
+    public List<SegmentMarketing> getSegmentMarketing(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<SegmentMarketing> segmentMarketing = (List<SegmentMarketing>) listEntities(SegmentMarketing.class, request, logger, getMethodName());
+        return segmentMarketing;
+    }
+
+    @Override
+    public SegmentMarketing loadSegmentMarketing(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        SegmentMarketing segmentMarketing = (SegmentMarketing) loadEntity(SegmentMarketing.class, request, logger, getMethodName());
+        return segmentMarketing;
+    }
+
+    @Override
+    public SegmentMarketing saveSegmentMarketing(SegmentMarketing segmentMarketing) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (segmentMarketing == null) {
+            throw new NullParameterException("segmentMarketing", null);
+        }
+        return (SegmentMarketing) saveEntity(segmentMarketing);
+    }
+    
+    //SegmentCommerce
+    @Override
+    public List<SegmentCommerce> getSegmentCommerce(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<SegmentCommerce> segmentCommerce = (List<SegmentCommerce>) listEntities(SegmentCommerce.class, request, logger, getMethodName());
+        return segmentCommerce;
+    }
+
+    @Override
+    public SegmentCommerce loadSegmentCommerce(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        SegmentCommerce segmentCommerce = (SegmentCommerce) loadEntity(SegmentCommerce.class, request, logger, getMethodName());
+        return segmentCommerce;
+    }
+
+    @Override
+    public SegmentCommerce saveSegmentCommerce(SegmentCommerce segmentCommerce) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (segmentCommerce == null) {
+            throw new NullParameterException("segmentCommerce", null);
+        }
+        return (SegmentCommerce) saveEntity(segmentCommerce);
+    }
+    
+    //CommerceCategory
+    @Override
+    public List<CommerceCategory> getCommerceCategory(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CommerceCategory> commerceCategory = (List<CommerceCategory>) listEntities(CommerceCategory.class, request, logger, getMethodName());
+        return commerceCategory;
+    }
+
+    @Override
+    public CommerceCategory loadCommerceCategory(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CommerceCategory commerceCategory = (CommerceCategory) loadEntity(CommerceCategory.class, request, logger, getMethodName());
+        return commerceCategory;
+    }
+
+    @Override
+    public CommerceCategory saveCommerceCategory(CommerceCategory commerceCategory) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (commerceCategory == null) {
+            throw new NullParameterException("commerceCategory", null);
+        }
+        return (CommerceCategory) saveEntity(commerceCategory);
+    }
+
+    @Override
+    public List<CommerceCategory> getCommerceCategoryBySegmentCommerce(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CommerceCategory> commerceCategoryList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_SEGMENT_COMMERCE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_SEGMENT_COMMERCE_ID), null);
+        }
+        commerceCategoryList = (List<CommerceCategory>) getNamedQueryResult(CommerceCategory.class, QueryConstants.COMMERCE_CATEGORY_BY_SEGMENT_COMMERCE, request, getMethodName(), logger, "commerceCategoryList");
+        return commerceCategoryList;
     }
     
 }
