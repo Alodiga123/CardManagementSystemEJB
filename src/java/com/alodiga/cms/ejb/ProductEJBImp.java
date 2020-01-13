@@ -240,5 +240,16 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (ProductHasCommerceCategory) saveEntity(productHasCommerceCategory);
     }
-    
+
+    @Override
+    public List<ProductHasCommerceCategory> getCommerceCategoryByProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProductHasCommerceCategory> productHasCommerceCategoryList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_ID), null);
+        }
+        productHasCommerceCategoryList = (List<ProductHasCommerceCategory>) getNamedQueryResult(CommerceCategory.class, QueryConstants.COMMERCE_CATEGORY_BY_PRODUCT, request, getMethodName(), logger, "productHasCommerceCategoryList");
+        return productHasCommerceCategoryList;
+    }
+        
 }
