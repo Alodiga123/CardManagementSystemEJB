@@ -73,7 +73,12 @@
     <class>com.cms.commons.models.ReasonRejectionRequest</class>
     <class>com.cms.commons.models.ComercialAgency</class>
     <class>com.cms.commons.models.EmployedPosition</class>
-    <class>com.cms.commons.models.Employee</class>    
+    <class>com.cms.commons.models.Employee</class>
+    <class>com.cms.commons.models.ReasonRejectionRequest</class>
+    <class>com.cms.commons.models.ReviewCollectionsRequest</class>
+    <class>com.cms.commons.models.Transaction</class>
+    <class>com.cms.commons.models.ProductHasChannel</class>
+    <class>com.cms.commons.models.ParameterProductHasChannel</class>   
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
