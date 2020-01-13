@@ -70,6 +70,10 @@
     <class>com.cms.commons.models.SegmentMarketing</class>
     <class>com.cms.commons.models.SegmentCommerce</class>
     <class>com.cms.commons.models.CollectionType</class>
+    <class>com.cms.commons.models.ReasonRejectionRequest</class>
+    <class>com.cms.commons.models.ComercialAgency</class>
+    <class>com.cms.commons.models.EmployedPosition</class>
+    <class>com.cms.commons.models.Employee</class>    
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
