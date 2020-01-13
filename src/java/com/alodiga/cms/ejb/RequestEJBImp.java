@@ -22,6 +22,7 @@ import com.cms.commons.models.Address;
 import com.cms.commons.models.ApplicantNaturalPerson;
 import com.cms.commons.models.City;
 import com.cms.commons.models.CivilStatus;
+import com.cms.commons.models.CollectionType;
 import com.cms.commons.models.CollectionsRequest;
 import com.cms.commons.models.Country;
 import com.cms.commons.models.Person;
@@ -79,13 +80,6 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     public List<Request> getRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
         return requests;
-    }
-    
-    @Override
-    public List<Request> getRequestsByCollections(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Request> requestsByCollectionsRequest = null;
-        requestsByCollectionsRequest = (List<Request>) getNamedQueryResult(UtilsEJB.class, QueryConstants.REQUEST_BY_COLLECTIONS, request, getMethodName(), logger, "requestsByCollectionsRequest");
-        return requestsByCollectionsRequest;
     }
 
     @Override
@@ -486,6 +480,26 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         List<CollectionsRequest> collectionsRequest = (List<CollectionsRequest>) listEntities(CollectionsRequest.class, request, logger, getMethodName());
         return collectionsRequest;
     }
+    
+    @Override
+    public List<CollectionsRequest> getCollectionsByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CollectionsRequest> CollectionsRequestByrequestsList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_TYPE_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_TYPE_ID), null);
+        }
+        CollectionsRequestByrequestsList = (List<CollectionsRequest>) getNamedQueryResult(CollectionsRequest.class, QueryConstants.COLLECTIONS_BY_REQUEST, request, getMethodName(), logger, "CollectionsRequestByrequestsList");
+        return CollectionsRequestByrequestsList;
+    }
 
     @Override
     public CollectionsRequest loadCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -522,4 +536,34 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (RequestHasCollectionsRequest) saveEntity(requestHasCollectionsRequest);
     }
+    
+    
+    //CollectionType
+    @Override
+    public List<CollectionType> getCollectionType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CollectionType> collectionType = (List<CollectionType>) listEntities(CollectionType.class, request, logger, getMethodName());
+        return collectionType;
+    }
+    
+    @Override
+    public List<CollectionType> getCollectionTypeByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CollectionType> collectionTypeByCountry = null;
+        collectionTypeByCountry = (List<CollectionType>) getNamedQueryResult(UtilsEJB.class, QueryConstants.COLLECTION_TYPE_BY_COUNTRY, request, getMethodName(), logger, "collectionTypeByCountry");
+        return collectionTypeByCountry;
+    }
+
+    @Override
+    public CollectionType loadCollectionType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CollectionType collectionType = (CollectionType) loadEntity(CollectionType.class, request, logger, getMethodName());
+        return collectionType;
+    }
+
+    @Override
+    public CollectionType saveCollectionType(CollectionType collectionType) throws NullParameterException, GeneralException {
+        if (collectionType == null) {
+            throw new NullParameterException("collectionType", null);
+        }
+        return (CollectionType) saveEntity(collectionType);
+    }
+    
 }
