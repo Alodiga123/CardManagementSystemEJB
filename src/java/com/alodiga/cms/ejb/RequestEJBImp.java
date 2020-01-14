@@ -41,6 +41,7 @@ import com.cms.commons.models.Program;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.RequestHasCollectionsRequest;
+import com.cms.commons.models.ReviewCollectionsRequest;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StatusRequest;
@@ -564,6 +565,28 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             throw new NullParameterException("collectionType", null);
         }
         return (CollectionType) saveEntity(collectionType);
+    }
+
+    
+    //ReviewCollectionsRequest
+    @Override
+    public List<ReviewCollectionsRequest> getReviewCollectionsRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ReviewCollectionsRequest> reviewCollectionsRequest = (List<ReviewCollectionsRequest>) listEntities(ReviewCollectionsRequest.class, request, logger, getMethodName());
+        return reviewCollectionsRequest;
+    }
+
+    @Override
+    public ReviewCollectionsRequest loadReviewCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ReviewCollectionsRequest reviewCollectionsRequest = (ReviewCollectionsRequest) loadEntity(ReviewCollectionsRequest.class, request, logger, getMethodName());
+        return reviewCollectionsRequest;
+    }
+
+    @Override
+    public ReviewCollectionsRequest saveReviewCollectionsRequest(ReviewCollectionsRequest reviewCollectionsRequest) throws NullParameterException, GeneralException {
+        if (reviewCollectionsRequest == null) {
+            throw new NullParameterException("reviewCollectionsRequest", null);
+        }
+        return (ReviewCollectionsRequest) saveEntity(reviewCollectionsRequest);
     }
     
 }
