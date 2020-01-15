@@ -574,6 +574,13 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         List<ReviewCollectionsRequest> reviewCollectionsRequest = (List<ReviewCollectionsRequest>) listEntities(ReviewCollectionsRequest.class, request, logger, getMethodName());
         return reviewCollectionsRequest;
     }
+    
+    @Override
+    public List<ReviewCollectionsRequest> getReviewCollectionsRequestByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ReviewCollectionsRequest> reviewCollectionsRequest = null;
+        reviewCollectionsRequest = (List<ReviewCollectionsRequest>) getNamedQueryResult(ReviewCollectionsRequest.class, QueryConstants.REVIEW_COLLECTIONS_REQUEST_BY_REQUEST, request, getMethodName(), logger, "reviewCollectionsRequest");
+        return reviewCollectionsRequest;
+    }
 
     @Override
     public ReviewCollectionsRequest loadReviewCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -588,5 +595,4 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (ReviewCollectionsRequest) saveEntity(reviewCollectionsRequest);
     }
-    
 }
