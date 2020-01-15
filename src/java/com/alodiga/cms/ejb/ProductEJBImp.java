@@ -25,6 +25,7 @@ import com.cms.commons.models.ProductUse;
 import com.cms.commons.models.SegmentCommerce;
 import com.cms.commons.models.SegmentMarketing;
 import com.cms.commons.models.StorageMedio;
+import com.cms.commons.models.Transaction;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.List;
@@ -250,6 +251,27 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         productHasCommerceCategoryList = (List<ProductHasCommerceCategory>) getNamedQueryResult(CommerceCategory.class, QueryConstants.COMMERCE_CATEGORY_BY_PRODUCT, request, getMethodName(), logger, "productHasCommerceCategoryList");
         return productHasCommerceCategoryList;
+    }
+    
+    //Transaction 
+    @Override
+    public List<Transaction> getTransaction(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Transaction> transactionList = (List<Transaction>) listEntities(Transaction.class, request, logger, getMethodName());
+        return transactionList;
+    }
+
+    @Override
+    public Transaction loadTransaction(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Transaction transaction = (Transaction) loadEntity(Transaction.class, request, logger, getMethodName());
+        return transaction;
+    }
+
+    @Override
+    public Transaction saveTransaction(Transaction transaction) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (transaction == null) {
+            throw new NullParameterException("transaction", null);
+        }
+        return (Transaction) saveEntity(transaction);
     }
         
 }
