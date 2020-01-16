@@ -11,6 +11,7 @@ import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.CommerceCategory;
+import com.cms.commons.models.GeneralRate;
 import com.cms.commons.models.LevelProduct;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -272,6 +273,26 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
             throw new NullParameterException("transaction", null);
         }
         return (Transaction) saveEntity(transaction);
+    }
+
+    @Override
+    public List<GeneralRate> getGeneralRate(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<GeneralRate> generalRateList = (List<GeneralRate>) listEntities(GeneralRate.class, request, logger, getMethodName());
+        return generalRateList;
+    }
+
+    @Override
+    public GeneralRate loadGeneralRate(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        GeneralRate generalRate = (GeneralRate) loadEntity(GeneralRate.class, request, logger, getMethodName());
+        return generalRate;
+    }
+
+    @Override
+    public GeneralRate saveGeneralRate(GeneralRate generalRate) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (generalRate == null) {
+            throw new NullParameterException("generalRate", null);
+        }
+        return (GeneralRate) saveEntity(generalRate);
     }
         
 }
