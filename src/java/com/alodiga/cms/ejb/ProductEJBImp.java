@@ -10,6 +10,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.Channel;
 import com.cms.commons.models.CommerceCategory;
 import com.cms.commons.models.GeneralRate;
 import com.cms.commons.models.LevelProduct;
@@ -23,6 +24,7 @@ import com.cms.commons.models.Product;
 import com.cms.commons.models.ProductHasCommerceCategory;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.ProductUse;
+import com.cms.commons.models.RateApplicationType;
 import com.cms.commons.models.SegmentCommerce;
 import com.cms.commons.models.SegmentMarketing;
 import com.cms.commons.models.StorageMedio;
@@ -293,6 +295,38 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
             throw new NullParameterException("generalRate", null);
         }
         return (GeneralRate) saveEntity(generalRate);
+    }
+
+    @Override
+    public List<Channel> getChannel(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Channel> channelList = (List<Channel>) listEntities(Channel.class, request, logger, getMethodName());
+        return channelList;
+    }
+
+    @Override
+    public Channel loadChannel(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Channel saveChannel(Channel channel) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<RateApplicationType> getRateApplicationType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateApplicationType> rateApplicationTypeList = (List<RateApplicationType>) listEntities(RateApplicationType.class, request, logger, getMethodName());
+        return rateApplicationTypeList;
+    }
+
+    @Override
+    public RateApplicationType loadRateApplicationType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public RateApplicationType saveRateApplicationType(RateApplicationType rateApplicationType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        
     }
         
 }
