@@ -595,4 +595,18 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (ReviewCollectionsRequest) saveEntity(reviewCollectionsRequest);
     }
+
+    @Override
+    public List<RequestHasCollectionsRequest> getRequestsHasCollectionsRequestByRequestByCollectionRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RequestHasCollectionsRequest> requestHasCollectionsRequestList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_REQUEST_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_COLLECTION_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COLLECTION_REQUEST_ID), null);
+        }
+        requestHasCollectionsRequestList = (List<RequestHasCollectionsRequest>) getNamedQueryResult(RequestHasCollectionsRequest.class, QueryConstants.REQUEST_HAS_COLLECTION_REQUEST_BY_REQUEST_BY_COLLECTION_REQUEST, request, getMethodName(), logger, "requestHasCollectionsRequestList");
+        return requestHasCollectionsRequestList;
+    }
 }
