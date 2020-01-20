@@ -367,5 +367,5 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (Channel) saveEntity(channel);
     }
-
+        
 }
