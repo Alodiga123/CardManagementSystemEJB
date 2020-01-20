@@ -21,6 +21,7 @@ import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
 import com.cms.commons.models.Product;
+import com.cms.commons.models.ProductHasChannelHasTransaction;
 import com.cms.commons.models.ProductHasCommerceCategory;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.ProductUse;
@@ -43,9 +44,9 @@ import java.util.List;
 @TransactionManagement(TransactionManagementType.BEAN)
 
 public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJBLocal, ProductEJB {
-    
+
     private static final Logger logger = Logger.getLogger(UtilsEJBImp.class);
-    
+
     @Override
     public List<Product> getProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Product> product = (List<Product>) listEntities(Product.class, request, logger, getMethodName());
@@ -65,7 +66,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (Product) saveEntity(product);
     }
-    
+
     //ProductType
     @Override
     public List<ProductType> getProductTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -86,7 +87,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (ProductType) saveEntity(productType);
     }
-    
+
     //LevelProduct
     @Override
     public List<LevelProduct> getLevelProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -107,7 +108,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (LevelProduct) saveEntity(levelProduct);
     }
-    
+
     //ProductUse
     @Override
     public List<ProductUse> getProductUse(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -128,7 +129,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (ProductUse) saveEntity(productUse);
     }
-    
+
     //StorageMedio
     @Override
     public List<StorageMedio> getStorageMedio(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -149,7 +150,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (StorageMedio) saveEntity(storageMedio);
     }
-    
+
     //SegmentMarketing
     @Override
     public List<SegmentMarketing> getSegmentMarketing(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -170,7 +171,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (SegmentMarketing) saveEntity(segmentMarketing);
     }
-    
+
     //SegmentCommerce
     @Override
     public List<SegmentCommerce> getSegmentCommerce(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -191,7 +192,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (SegmentCommerce) saveEntity(segmentCommerce);
     }
-    
+
     //CommerceCategory
     @Override
     public List<CommerceCategory> getCommerceCategory(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -223,7 +224,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         commerceCategoryList = (List<CommerceCategory>) getNamedQueryResult(CommerceCategory.class, QueryConstants.COMMERCE_CATEGORY_BY_SEGMENT_COMMERCE, request, getMethodName(), logger, "commerceCategoryList");
         return commerceCategoryList;
     }
-    
+
     //ProductHasCommerceCategory
     @Override
     public List<ProductHasCommerceCategory> getProductHasCommerceCategory(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -255,29 +256,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         productHasCommerceCategoryList = (List<ProductHasCommerceCategory>) getNamedQueryResult(CommerceCategory.class, QueryConstants.COMMERCE_CATEGORY_BY_PRODUCT, request, getMethodName(), logger, "productHasCommerceCategoryList");
         return productHasCommerceCategoryList;
     }
-    
-    //Transaction 
-    @Override
-    public List<Transaction> getTransaction(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<Transaction> transactionList = (List<Transaction>) listEntities(Transaction.class, request, logger, getMethodName());
-        return transactionList;
-    }
 
-    @Override
-    public Transaction loadTransaction(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Transaction transaction = (Transaction) loadEntity(Transaction.class, request, logger, getMethodName());
-        return transaction;
-    }
-
-    @Override
-    public Transaction saveTransaction(Transaction transaction) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (transaction == null) {
-            throw new NullParameterException("transaction", null);
-        }
-        return (Transaction) saveEntity(transaction);
-    }
-    
-    //GeneralRate
     @Override
     public List<GeneralRate> getGeneralRate(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<GeneralRate> generalRateList = (List<GeneralRate>) listEntities(GeneralRate.class, request, logger, getMethodName());
@@ -297,25 +276,10 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (GeneralRate) saveEntity(generalRate);
     }
-
-    @Override
-    public List<Channel> getChannel(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Channel loadChannel(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Channel saveChannel(Channel channel) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     @Override
     public List<RateApplicationType> getRateApplicationType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<RateApplicationType> rateApplicationTypeList = (List<RateApplicationType>) listEntities(RateApplicationType.class, request, logger, getMethodName());
+        return rateApplicationTypeList;
     }
 
     @Override
@@ -325,7 +289,83 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
 
     @Override
     public RateApplicationType saveRateApplicationType(RateApplicationType rateApplicationType) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.        
+    }
+        
+
+    //ProductHasChannelHasTransaction
+    @Override
+    public List<ProductHasChannelHasTransaction> getProductHasChannelHasTransaction(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProductHasChannelHasTransaction> productHasChannelHasTransaction = (List<ProductHasChannelHasTransaction>) listEntities(ProductHasChannelHasTransaction.class, request, logger, getMethodName());
+        return productHasChannelHasTransaction;
+
+    }
+
+    @Override
+    public List<ProductHasChannelHasTransaction> getProductHasChannelHasTransactionByProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProductHasChannelHasTransaction> productHasChannelHasTransaction = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_ID), null);
+        }
+        productHasChannelHasTransaction = (List<ProductHasChannelHasTransaction>) getNamedQueryResult(CommerceCategory.class, QueryConstants.PRODUCT_HAS_CHANNEL_HAS_TRANSACTION_BY_PRODUCT, request, getMethodName(), logger, "productHasChannelHasTransaction");
+        return productHasChannelHasTransaction;
+    }
+
+    @Override
+    public ProductHasChannelHasTransaction loadProductHasChannelHasTransaction(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProductHasChannelHasTransaction productHasChannelHasTransaction = (ProductHasChannelHasTransaction) loadEntity(ProductHasChannelHasTransaction.class, request, logger, getMethodName());
+        return productHasChannelHasTransaction;
+    }
+
+    @Override
+    public ProductHasChannelHasTransaction saveProductHasChannelHasTransaction(ProductHasChannelHasTransaction productHasChannelHasTransaction) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (productHasChannelHasTransaction == null) {
+            throw new NullParameterException("productHasChannelHasTransaction", null);
+        }
+        return (ProductHasChannelHasTransaction) saveEntity(productHasChannelHasTransaction);
+    }
+
+    //Transaction
+    @Override
+    public List<Transaction> getTransaction(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Transaction> transaction = (List<Transaction>) listEntities(Transaction.class, request, logger, getMethodName());
+        return transaction;
+    }
+
+    @Override
+    public Transaction loadTransaction(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Transaction transaction = (Transaction) loadEntity(Transaction.class, request, logger, getMethodName());
+        return transaction;
+    }
+
+    @Override
+    public Transaction saveTransaction(Transaction transaction) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (transaction == null) {
+            throw new NullParameterException("transaction", null);
+        }
+        return (Transaction) saveEntity(transaction);
+    }
+
+    //Channel
+    @Override
+    public List<Channel> getChannel(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Channel> channel = (List<Channel>) listEntities(Channel.class, request, logger, getMethodName());
+        return channel;
+    }
+
+    @Override
+    public Channel loadChannel(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Channel channel = (Channel) loadEntity(Channel.class, request, logger, getMethodName());
+        return channel;
+    }
+
+    @Override
+    public Channel saveChannel(Channel channel) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (channel == null) {
+            throw new NullParameterException("channel", null);
+        }
+        return (Channel) saveEntity(channel);
     }
         
 }
