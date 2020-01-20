@@ -80,6 +80,13 @@
     <class>com.cms.commons.models.ProductHasChannelHasTransaction</class>
     <class>com.cms.commons.models.GeneralRate</class>
     <class>com.cms.commons.models.RateApplicationType</class>
+    <class>com.cms.commons.models.ProgramLoyaltyType</class>
+    <class>com.cms.commons.models.LoyaltyTransactionHasCommerceCategory</class>
+    <class>com.cms.commons.models.DaysWeek</class>
+    <class>com.cms.commons.models.StatusProgramLoyalty</class>
+    <class>com.cms.commons.models.ProgramLoyalty</class>
+    <class>com.cms.commons.models.ProgramLoyaltyTransaction</class>
+    <class>com.cms.commons.models.DaysWeekHasProgramLoyalty</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
