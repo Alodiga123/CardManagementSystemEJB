@@ -77,8 +77,9 @@
     <class>com.cms.commons.models.ReasonRejectionRequest</class>
     <class>com.cms.commons.models.ReviewCollectionsRequest</class>
     <class>com.cms.commons.models.Transaction</class>
-    <class>com.cms.commons.models.ProductHasChannel</class>
-    <class>com.cms.commons.models.ParameterProductHasChannel</class>   
+    <class>com.cms.commons.models.ProductHasChannelHasTransaction</class>
+    <class>com.cms.commons.models.GeneralRate</class>
+    <class>com.cms.commons.models.RateApplicationType</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
