@@ -26,6 +26,7 @@ import com.cms.commons.models.ProductHasCommerceCategory;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.ProductUse;
 import com.cms.commons.models.RateApplicationType;
+import com.cms.commons.models.RateByProgram;
 import com.cms.commons.models.SegmentCommerce;
 import com.cms.commons.models.SegmentMarketing;
 import com.cms.commons.models.StorageMedio;
@@ -366,6 +367,65 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
             throw new NullParameterException("channel", null);
         }
         return (Channel) saveEntity(channel);
+    }
+
+    @Override
+    public List<GeneralRate> getGeneralRateByProductType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<GeneralRate> generalRateList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_TYPE_ID), null);
+        }
+        generalRateList = (List<GeneralRate>) getNamedQueryResult(GeneralRate.class, QueryConstants.GENERAL_RATE_BY_PRODUCT_TYPE, request, getMethodName(), logger, "generalRateList");
+        return generalRateList;
+    }
+
+    @Override
+    public List<RateByProgram> getRateByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByProgram> rateByProgramList = (List<RateByProgram>) listEntities(RateByProgram.class, request, logger, getMethodName());
+        return rateByProgramList;
+    }
+
+    @Override
+    public RateByProgram loadRateByProgram(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        RateByProgram rateByProgram = (RateByProgram) loadEntity(RateByProgram.class, request, logger, getMethodName());
+        return rateByProgram;
+    }
+
+    @Override
+    public RateByProgram saveRateByProgram(RateByProgram rateByProgram) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (rateByProgram == null) {
+            throw new NullParameterException("rateByProgram", null);
+        }
+        return (RateByProgram) saveEntity(rateByProgram);
+    }
+
+    @Override
+    public List<RateByProgram> getRateByProgramByTransactionByChannel(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByProgram> rateByProgramList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_TRANSACTION_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_TRANSACTION_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_CHANNEL_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CHANNEL_ID), null);
+        }
+        rateByProgramList = (List<RateByProgram>) getNamedQueryResult(RateByProgram.class, QueryConstants.RATE_BY_PROGRAM_BY_TRANSACTIONS_BY_CHANNEL, request, getMethodName(), logger, "rateByProgramList");
+        return rateByProgramList;
+    }
+
+    @Override
+    public List<RateByProgram> getRateByProgramByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByProgram> rateByProgramList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        rateByProgramList = (List<RateByProgram>) getNamedQueryResult(RateByProgram.class, QueryConstants.RATE_BY_PROGRAM_BY_PROGRAM, request, getMethodName(), logger, "rateByProgramList");
+        return rateByProgramList;
     }
         
 }
