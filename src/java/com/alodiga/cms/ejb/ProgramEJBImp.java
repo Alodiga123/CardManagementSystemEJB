@@ -15,10 +15,15 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.DaysWeek;
+import com.cms.commons.models.DaysWeekHasProgramLoyalty;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.NaturalPerson;
 import com.cms.commons.models.Program;
 import com.cms.commons.models.ProgramHasNetwork;
+import com.cms.commons.models.ProgramLoyalty;
+import com.cms.commons.models.ProgramLoyaltyType;
+import com.cms.commons.models.StatusProgramLoyalty;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.QueryConstants;
@@ -40,7 +45,8 @@ import org.apache.log4j.Logger;
 @Stateless(name = EjbConstants.PROGRAM_EJB, mappedName = EjbConstants.PROGRAM_EJB)
 @TransactionManagement(TransactionManagementType.BEAN)
 
-public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB , ProgramEJBLocal {    
+public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB, ProgramEJBLocal {
+
     private static final Logger logger = Logger.getLogger(ProgramEJBImp.class);
 
     //Program
@@ -49,13 +55,13 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         List<Program> program = (List<Program>) listEntities(Program.class, request, logger, getMethodName());
         return program;
     }
-    
+
     @Override
     public Program loadProgram(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Program program = (Program) loadEntity(Program.class, request, logger, getMethodName());
         return program;
     }
-    
+
     @Override
     public Program saveProgram(Program program) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (program == null) {
@@ -63,7 +69,7 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         return (Program) saveEntity(program);
     }
-    
+
     @Override
     public List<Program> getProgramByProgramType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Program> programList = null;
@@ -74,8 +80,7 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         programList = (List<Program>) getNamedQueryResult(Program.class, QueryConstants.PROGRAM_BY_PROGRAM_TYPE, request, getMethodName(), logger, "programList");
         return programList;
     }
-    
-      
+
     //NaturalPerson
     @Override
     public List<NaturalPerson> getProgramOwner(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -85,15 +90,14 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         int idClassificationPerson = Constants.CLASSIFICATION_PERSON_PROGRAM_OWNER;
         try {
             query = createQuery(sqlBuilder.toString());
-            query.setParameter("1",idClassificationPerson);
+            query.setParameter("1", idClassificationPerson);
             programOwnerList = (List<NaturalPerson>) query.setHint("toplink.refresh", "true").getResultList();
         } catch (Exception e) {
-            e.printStackTrace();            
+            e.printStackTrace();
         }
         return programOwnerList;
     }
-    
-    
+
     //LegalPerson
     @Override
     public List<LegalPerson> getCardManagementProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -103,15 +107,14 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         int idClassificationPerson = Constants.CLASSIFICATION_CARD_MANAGEMENT_PROGRAM;
         try {
             query = createQuery(sqlBuilder.toString());
-            query.setParameter("1",idClassificationPerson);
+            query.setParameter("1", idClassificationPerson);
             cardManagementProgramList = (List<LegalPerson>) query.setHint("toplink.refresh", "true").getResultList();
         } catch (Exception e) {
-            e.printStackTrace();            
+            e.printStackTrace();
         }
         return cardManagementProgramList;
     }
 
-    
     //ProgramHasNetwork
     @Override
     public List<ProgramHasNetwork> getProgramHasNetwork(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -132,6 +135,122 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         return (ProgramHasNetwork) saveEntity(programHasNetwork);
     }
+
+    //ProgramLoyalty
+    @Override
+    public List<ProgramLoyalty> getProgramLoyalty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProgramLoyalty> programLoyalty = (List<ProgramLoyalty>) listEntities(ProgramLoyalty.class, request, logger, getMethodName());
+        return programLoyalty;
+    }
+
+    @Override
+    public ProgramLoyalty loadProgramLoyalty(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProgramLoyalty programLoyalty = (ProgramLoyalty) loadEntity(ProgramLoyalty.class, request, logger, getMethodName());
+        return programLoyalty;
+    }
+
+    @Override
+    public ProgramLoyalty saveProgramLoyalty(ProgramLoyalty programLoyalty) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (programLoyalty == null) {
+            throw new NullParameterException("programLoyalty", null);
+        }
+        return (ProgramLoyalty) saveEntity(programLoyalty);
+    }
+
+    //ProgramLoyaltyType
+    @Override
+    public List<ProgramLoyaltyType> getProgramLoyaltyType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProgramLoyaltyType> programLoyaltyTypes = (List<ProgramLoyaltyType>) listEntities(ProgramLoyaltyType.class, request, logger, getMethodName());
+        return programLoyaltyTypes;
+    }
+
+    @Override
+    public ProgramLoyaltyType loadProgramLoyaltyType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProgramLoyaltyType programLoyaltyType = (ProgramLoyaltyType) loadEntity(ProgramLoyaltyType.class, request, logger, getMethodName());
+        return programLoyaltyType;
+    }
+
+    @Override
+    public ProgramLoyaltyType saveProgramLoyaltyType(ProgramLoyaltyType programLoyaltyType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (programLoyaltyType == null) {
+            throw new NullParameterException("programLoyaltyType", null);
+        }
+        return (ProgramLoyaltyType) saveEntity(programLoyaltyType);
+    }
+
+    //
+    @Override
+    public List<StatusProgramLoyalty> getStatusProgramLoyalty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusProgramLoyalty> statusProgramLoyalty = (List<StatusProgramLoyalty>) listEntities(StatusProgramLoyalty.class, request, logger, getMethodName());
+        return statusProgramLoyalty;
+    }
+
+    @Override
+    public StatusProgramLoyalty loadStatusProgramLoyalty(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusProgramLoyalty statusProgramLoyalty = (StatusProgramLoyalty) loadEntity(StatusProgramLoyalty.class, request, logger, getMethodName());
+        return statusProgramLoyalty;
+    }
+
+    @Override
+    public StatusProgramLoyalty saveStatusProgramLoyalty(StatusProgramLoyalty statusProgramLoyalty) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (statusProgramLoyalty == null) {
+            throw new NullParameterException("statusProgramLoyalty", null);
+        }
+        return (StatusProgramLoyalty) saveEntity(statusProgramLoyalty);
+    }
+
+    //DaysWeekHasProgramLoyalty
+    @Override
+    public List<DaysWeekHasProgramLoyalty> getDaysWeekHasProgramLoyalty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<DaysWeekHasProgramLoyalty> daysWeekHasProgramLoyalty = (List<DaysWeekHasProgramLoyalty>) listEntities(DaysWeekHasProgramLoyalty.class, request, logger, getMethodName());
+        return daysWeekHasProgramLoyalty;
+    }
+
+    @Override
+    public List<DaysWeekHasProgramLoyalty> getDaysWeekHasProgramLoyaltyByLoyalty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<DaysWeekHasProgramLoyalty> daysWeekHasProgramLoyaltyByLoyalty = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_LOYALTY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_LOYALTY_ID), null);
+        }
+        daysWeekHasProgramLoyaltyByLoyalty = (List<DaysWeekHasProgramLoyalty>) getNamedQueryResult(DaysWeekHasProgramLoyalty.class, QueryConstants.DAYS_WEEK_HAS_PROGRAM_BY_LOYALTY, request, getMethodName(), logger, "daysWeekHasProgramLoyaltyByLoyalty");
+        return daysWeekHasProgramLoyaltyByLoyalty;
+    }
     
+    @Override
+    public DaysWeekHasProgramLoyalty loadDaysWeekHasProgramLoyalty(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        DaysWeekHasProgramLoyalty daysWeekHasProgramLoyalty = (DaysWeekHasProgramLoyalty) loadEntity(DaysWeekHasProgramLoyalty.class, request, logger, getMethodName());
+        return daysWeekHasProgramLoyalty;
+    }
+
+    @Override
+    public DaysWeekHasProgramLoyalty saveDaysWeekHasProgramLoyalty(DaysWeekHasProgramLoyalty daysWeekHasProgramLoyalty) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (daysWeekHasProgramLoyalty == null) {
+            throw new NullParameterException("daysWeekHasProgramLoyalty", null);
+        }
+        return (DaysWeekHasProgramLoyalty) saveEntity(daysWeekHasProgramLoyalty);
+    }
+
     
+    //DaysWeek
+    @Override
+    public List<DaysWeek> getDaysWeek(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<DaysWeek> daysWeek = (List<DaysWeek>) listEntities(DaysWeek.class, request, logger, getMethodName());
+        return daysWeek;
+    }
+
+    @Override
+    public DaysWeek loadDaysWeek(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        DaysWeek daysWeek = (DaysWeek) loadEntity(DaysWeek.class, request, logger, getMethodName());
+        return daysWeek;
+    }
+
+    @Override
+    public DaysWeek saveDaysWeek(DaysWeek daysWeek) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (daysWeek == null) {
+            throw new NullParameterException("daysWeek", null);
+        }
+        return (DaysWeek) saveEntity(daysWeek);
+    }
+
 }
