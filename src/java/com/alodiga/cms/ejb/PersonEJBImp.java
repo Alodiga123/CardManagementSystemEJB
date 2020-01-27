@@ -17,6 +17,7 @@ import com.cms.commons.models.CivilStatus;
 import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.FamilyReferences;
 import com.cms.commons.models.Issuer;
+import com.cms.commons.models.IssuerType;
 import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
 import com.cms.commons.models.NaturalPerson;
@@ -389,5 +390,27 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (Issuer) saveEntity(issuer);
     }
+    
+    //IssuerType
+    @Override
+    public List<IssuerType> getIssuerType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<IssuerType> issuerType = (List<IssuerType>) listEntities(IssuerType.class, request, logger, getMethodName());
+        return issuerType;
+    }
 
-}
+    @Override
+    public IssuerType loadIssuerType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        IssuerType issuerType = (IssuerType) loadEntity(IssuerType.class, request, logger, getMethodName());
+        return issuerType;
+    }
+
+    @Override
+    public IssuerType saveIssuerType(IssuerType issuerType) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (issuerType == null) {
+            throw new NullParameterException("issuerType", null);
+        }
+        return (IssuerType) saveEntity(issuerType);
+    }
+
+}    
+    
