@@ -87,6 +87,8 @@
     <class>com.cms.commons.models.ProgramLoyalty</class>
     <class>com.cms.commons.models.ProgramLoyaltyTransaction</class>
     <class>com.cms.commons.models.DaysWeekHasProgramLoyalty</class>
+    <class>com.cms.commons.models.RateByProgram</class>
+    <class>com.cms.commons.models.RateByProduct</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>

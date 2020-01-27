@@ -26,6 +26,8 @@ import com.cms.commons.models.ProductHasCommerceCategory;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.ProductUse;
 import com.cms.commons.models.RateApplicationType;
+import com.cms.commons.models.RateByProduct;
+import com.cms.commons.models.RateByProgram;
 import com.cms.commons.models.SegmentCommerce;
 import com.cms.commons.models.SegmentMarketing;
 import com.cms.commons.models.StorageMedio;
@@ -51,6 +53,17 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
     public List<Product> getProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Product> product = (List<Product>) listEntities(Product.class, request, logger, getMethodName());
         return product;
+    }
+    
+    @Override
+    public List<Product> getProductByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Product> productByProgram = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        productByProgram = (List<Product>) getNamedQueryResult(Product.class, QueryConstants.PRODUCT_BY_PROGRAM, request, getMethodName(), logger, "productByProgram");
+        return productByProgram;
     }
 
     @Override
@@ -367,5 +380,99 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (Channel) saveEntity(channel);
     }
+    
+    //GeneralRateByProductType
+    @Override
+    public List<GeneralRate> getGeneralRateByProductType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<GeneralRate> generalRateList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_TYPE_ID), null);
+        }
+        generalRateList = (List<GeneralRate>) getNamedQueryResult(GeneralRate.class, QueryConstants.GENERAL_RATE_BY_PRODUCT_TYPE, request, getMethodName(), logger, "generalRateList");
+        return generalRateList;
+    }
+    
+    //RateByProgram
+    @Override
+    public List<RateByProgram> getRateByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByProgram> rateByProgramList = (List<RateByProgram>) listEntities(RateByProgram.class, request, logger, getMethodName());
+        return rateByProgramList;
+    }
+
+    @Override
+    public RateByProgram loadRateByProgram(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        RateByProgram rateByProgram = (RateByProgram) loadEntity(RateByProgram.class, request, logger, getMethodName());
+        return rateByProgram;
+    }
+
+    @Override
+    public RateByProgram saveRateByProgram(RateByProgram rateByProgram) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (rateByProgram == null) {
+            throw new NullParameterException("rateByProgram", null);
+        }
+        return (RateByProgram) saveEntity(rateByProgram);
+    }
+
+    @Override
+    public List<RateByProgram> getRateByProgramByTransactionByChannel(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByProgram> rateByProgramList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_TRANSACTION_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_TRANSACTION_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_CHANNEL_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CHANNEL_ID), null);
+        }
+        rateByProgramList = (List<RateByProgram>) getNamedQueryResult(RateByProgram.class, QueryConstants.RATE_BY_PROGRAM_BY_TRANSACTIONS_BY_CHANNEL, request, getMethodName(), logger, "rateByProgramList");
+        return rateByProgramList;
+    }
+
+    @Override
+    public List<RateByProgram> getRateByProgramByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByProgram> rateByProgramList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        rateByProgramList = (List<RateByProgram>) getNamedQueryResult(RateByProgram.class, QueryConstants.RATE_BY_PROGRAM_BY_PROGRAM, request, getMethodName(), logger, "rateByProgramList");
+        return rateByProgramList;
+    }
+    
+    //RateByProduct
+    @Override
+    public List<RateByProduct> getRateByProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByProduct> rateByProductList = (List<RateByProduct>) listEntities(RateByProduct.class, request, logger, getMethodName());
+        return rateByProductList;
+    }
+
+    @Override
+    public RateByProduct loadRateByProduct(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        RateByProduct rateByProduct = (RateByProduct) loadEntity(RateByProduct.class, request, logger, getMethodName());
+        return rateByProduct;
+    }
+
+    @Override
+    public RateByProduct saveRateByProduct(RateByProduct rateByProduct) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (rateByProduct == null) {
+            throw new NullParameterException("rateByProduct", null);
+        }
+        return (RateByProduct) saveEntity(rateByProduct);
+    }
+
+    @Override
+    public List<RateByProduct> getRateByProductByProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByProduct> rateByProductList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_ID), null);
+        }
+        rateByProductList = (List<RateByProduct>) getNamedQueryResult(RateByProduct.class, QueryConstants.RATE_BY_PRODUCT_BY_PRODUCT, request, getMethodName(), logger, "rateByProductList");
+        return rateByProductList;
+    }
+
         
 }
