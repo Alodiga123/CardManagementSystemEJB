@@ -217,7 +217,7 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         daysWeekHasProgramLoyaltyByLoyalty = (List<DaysWeekHasProgramLoyalty>) getNamedQueryResult(DaysWeekHasProgramLoyalty.class, QueryConstants.DAYS_WEEK_HAS_PROGRAM_BY_LOYALTY, request, getMethodName(), logger, "daysWeekHasProgramLoyaltyByLoyalty");
         return daysWeekHasProgramLoyaltyByLoyalty;
     }
-    
+
     @Override
     public DaysWeekHasProgramLoyalty loadDaysWeekHasProgramLoyalty(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         DaysWeekHasProgramLoyalty daysWeekHasProgramLoyalty = (DaysWeekHasProgramLoyalty) loadEntity(DaysWeekHasProgramLoyalty.class, request, logger, getMethodName());
@@ -232,7 +232,6 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         return (DaysWeekHasProgramLoyalty) saveEntity(daysWeekHasProgramLoyalty);
     }
 
-    
     //DaysWeek
     @Override
     public List<DaysWeek> getDaysWeek(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -256,22 +255,33 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
 
     @Override
     public List<ProgramLoyaltyTransaction> getProgramLoyaltyTransaction(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<ProgramLoyaltyTransaction> programLoyaltyTransaction = (List<ProgramLoyaltyTransaction>) listEntities(ProgramLoyaltyTransaction.class, request, logger, getMethodName());
+        return programLoyaltyTransaction;
     }
 
     @Override
     public List<ProgramLoyaltyTransaction> getProgramLoyaltyTransactionByLoyalty(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<ProgramLoyaltyTransaction> ProgramLoyaltyTransactionByLoyalty = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_LOYALTY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_LOYALTY_ID), null);
+        }
+        ProgramLoyaltyTransactionByLoyalty = (List<ProgramLoyaltyTransaction>) getNamedQueryResult(ProgramLoyaltyTransaction.class, QueryConstants.PROGRAM_LOYALTY_TRANSACTION_BY_LOYALTY, request, getMethodName(), logger, "ProgramLoyaltyTransactionByLoyalty");
+        return ProgramLoyaltyTransactionByLoyalty;
     }
 
     @Override
     public ProgramLoyaltyTransaction loadProgramLoyaltyTransaction(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ProgramLoyaltyTransaction programLoyaltyTransaction = (ProgramLoyaltyTransaction) loadEntity(ProgramLoyaltyTransaction.class, request, logger, getMethodName());
+        return programLoyaltyTransaction;
     }
 
     @Override
     public ProgramLoyaltyTransaction saveProgramLoyaltyTransaction(ProgramLoyaltyTransaction programLoyaltyTransaction) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (programLoyaltyTransaction == null) {
+            throw new NullParameterException("programLoyaltyTransaction", null);
+        }
+        return (ProgramLoyaltyTransaction) saveEntity(programLoyaltyTransaction);
     }
 
 }
