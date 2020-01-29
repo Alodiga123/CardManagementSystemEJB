@@ -317,5 +317,5 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         return (LoyaltyTransactionHasCommerceCategory) saveEntity(loyaltyTransactionHasCommerceCategory);
     }
-
+    
 }
