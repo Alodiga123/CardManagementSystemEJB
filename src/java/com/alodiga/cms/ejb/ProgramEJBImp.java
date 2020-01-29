@@ -18,6 +18,7 @@ import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.DaysWeek;
 import com.cms.commons.models.DaysWeekHasProgramLoyalty;
 import com.cms.commons.models.LegalPerson;
+import com.cms.commons.models.LoyaltyTransactionHasCommerceCategory;
 import com.cms.commons.models.NaturalPerson;
 import com.cms.commons.models.Program;
 import com.cms.commons.models.ProgramHasNetwork;
@@ -282,6 +283,39 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
             throw new NullParameterException("programLoyaltyTransaction", null);
         }
         return (ProgramLoyaltyTransaction) saveEntity(programLoyaltyTransaction);
+    }
+
+    
+    //LoyaltyTransactionHasCommerceCategory
+    @Override
+    public List<LoyaltyTransactionHasCommerceCategory> getLoyaltyTransactionHasCommerceCategory(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LoyaltyTransactionHasCommerceCategory> loyaltyTransactionHasCommerceCategory = (List<LoyaltyTransactionHasCommerceCategory>) listEntities(LoyaltyTransactionHasCommerceCategory.class, request, logger, getMethodName());
+        return loyaltyTransactionHasCommerceCategory;
+    }
+    
+    @Override
+    public List<LoyaltyTransactionHasCommerceCategory> getLoyaltyTransactionHasCommerceCategoryByTransaction(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LoyaltyTransactionHasCommerceCategory> loyaltyTransactionHasCommerceCategoryByTransaction = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_LOYALTY_TRANSACTION_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_LOYALTY_TRANSACTION_ID), null);
+        }
+        loyaltyTransactionHasCommerceCategoryByTransaction = (List<LoyaltyTransactionHasCommerceCategory>) getNamedQueryResult(LoyaltyTransactionHasCommerceCategory.class, QueryConstants.LOYALTY_TRANSACTION_COMMERCE_BY_TRANSACTION, request, getMethodName(), logger, "loyaltyTransactionHasCommerceCategoryByTransaction");
+        return loyaltyTransactionHasCommerceCategoryByTransaction;
+    }
+
+    @Override
+    public LoyaltyTransactionHasCommerceCategory loadLoyaltyTransactionHasCommerceCategory(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        LoyaltyTransactionHasCommerceCategory loyaltyTransactionHasCommerceCategory = (LoyaltyTransactionHasCommerceCategory) loadEntity(LoyaltyTransactionHasCommerceCategory.class, request, logger, getMethodName());
+        return loyaltyTransactionHasCommerceCategory;
+    }
+
+    @Override
+    public LoyaltyTransactionHasCommerceCategory saveLoyaltyTransactionHasCommerceCategory(LoyaltyTransactionHasCommerceCategory loyaltyTransactionHasCommerceCategory) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (loyaltyTransactionHasCommerceCategory == null) {
+            throw new NullParameterException("loyaltyTransactionHasCommerceCategory", null);
+        }
+        return (LoyaltyTransactionHasCommerceCategory) saveEntity(loyaltyTransactionHasCommerceCategory);
     }
 
 }
