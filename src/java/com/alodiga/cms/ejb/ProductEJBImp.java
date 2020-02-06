@@ -32,9 +32,13 @@ import com.cms.commons.models.SegmentCommerce;
 import com.cms.commons.models.SegmentMarketing;
 import com.cms.commons.models.StorageMedio;
 import com.cms.commons.models.Transaction;
+import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import javax.persistence.Query;
 
 /**
  *
@@ -75,11 +79,11 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
     @Override
     public Product saveProduct(Product product) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (product == null) {
-            throw new NullParameterException("requestType", null);
+            throw new NullParameterException("product", null);
         }
         return (Product) saveEntity(product);
     }
-
+    
     //ProductType
     @Override
     public List<ProductType> getProductTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -206,7 +210,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         return (SegmentCommerce) saveEntity(segmentCommerce);
     }
 
-    //CommerceCategory
+    //CommerceCapublic ProductHasCommerceCategory getProductHasCommerceCategoryBD(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException;tegory
     @Override
     public List<CommerceCategory> getCommerceCategory(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CommerceCategory> commerceCategory = (List<CommerceCategory>) listEntities(CommerceCategory.class, request, logger, getMethodName());
@@ -472,6 +476,33 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         rateByProductList = (List<RateByProduct>) getNamedQueryResult(RateByProduct.class, QueryConstants.RATE_BY_PRODUCT_BY_PRODUCT, request, getMethodName(), logger, "rateByProductList");
         return rateByProductList;
+    }
+
+    @Override
+    public ProductHasCommerceCategory getProductHasCommerceCategoryBD(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        int productId = 0;
+        int commerceCategoryId = 0;
+        ProductHasCommerceCategory productHasCommerceCategory = new ProductHasCommerceCategory();
+        StringBuilder sqlBuilder = new StringBuilder("SELECT p FROM ProductHasCommerceCategory p WHERE p.commerceCategoryId.id = ?1 AND p.productId.id = ?2");
+        Query query = null;
+        Map<String, Object> params = request.getParams();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            if (entry.getKey().equals("commerceCategoryId")) {
+               commerceCategoryId = Integer.parseInt(entry.getValue().toString());
+            } 
+            if (entry.getKey().equals("productId")) {
+               productId = Integer.parseInt(entry.getValue().toString());
+            } 
+        }  
+        try {
+            query = createQuery(sqlBuilder.toString());
+            query.setParameter("1",commerceCategoryId);
+            query.setParameter("2",productId);
+            productHasCommerceCategory = (ProductHasCommerceCategory) query.setHint("toplink.refresh", "true").getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return productHasCommerceCategory;
     }
 
         
