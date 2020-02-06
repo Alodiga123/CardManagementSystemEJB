@@ -9,7 +9,6 @@
     <class>com.cms.commons.models.StreetType</class>
     <class>com.cms.commons.models.KinShipApplicant</class>
     <class>com.cms.commons.models.PersonClassification</class>
-    <class>com.cms.commons.models.CardType</class>
     <class>com.cms.commons.models.ResponsibleNetworkReporting</class>
     <class>com.cms.commons.models.Profession</class>
     <class>com.cms.commons.models.PhonePerson</class>
