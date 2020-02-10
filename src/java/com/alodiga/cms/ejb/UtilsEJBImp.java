@@ -14,7 +14,6 @@ import com.cms.commons.models.Address;
 import com.cms.commons.models.BinSponsor;
 import com.cms.commons.models.CardIssuanceType;
 import com.cms.commons.models.CardStatus;
-import com.cms.commons.models.CardType;
 import com.cms.commons.models.City;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.Country;
@@ -286,27 +285,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("requestType", null);
         }
         return (BinSponsor) saveEntity(binsponsor);
-    }
-
-    //CardType
-    @Override
-    public List<CardType> getCardTypes(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CardType> cardType = (List<CardType>) listEntities(CardType.class, request, logger, getMethodName());
-        return cardType;
-    }
-
-    @Override
-    public CardType loadCardType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        CardType cardType = (CardType) loadEntity(CardType.class, request, logger, getMethodName());
-        return cardType;
-    }
-
-    @Override
-    public CardType saveCardType(CardType cardType) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (cardType == null) {
-            throw new NullParameterException("requestType", null);
-        }
-        return (CardType) saveEntity(cardType);
     }
 
     //SourceFunds
