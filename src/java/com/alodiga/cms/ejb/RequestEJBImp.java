@@ -65,6 +65,7 @@ import org.apache.log4j.Logger;
  *
  * @author jose
  */
+//
 
 @Interceptors({DistributionLoggerInterceptor.class, DistributionContextInterceptor.class})
 @Stateless(name = EjbConstants.REQUEST_EJB, mappedName = EjbConstants.REQUEST_EJB)
