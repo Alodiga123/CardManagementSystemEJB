@@ -41,7 +41,7 @@ import com.cms.commons.models.Program;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.RequestHasCollectionsRequest;
-import com.cms.commons.models.ReviewCollectionsRequest;
+import com.cms.commons.models.ReviewRequest;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StatusRequest;
@@ -568,32 +568,32 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }
 
     
-    //ReviewCollectionsRequest
+    //ReviewRequest
     @Override
-    public List<ReviewCollectionsRequest> getReviewCollectionsRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<ReviewCollectionsRequest> reviewCollectionsRequest = (List<ReviewCollectionsRequest>) listEntities(ReviewCollectionsRequest.class, request, logger, getMethodName());
-        return reviewCollectionsRequest;
+    public List<ReviewRequest> getReviewRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ReviewRequest> reviewRequest = (List<ReviewRequest>) listEntities(ReviewRequest.class, request, logger, getMethodName());
+        return reviewRequest;
     }
     
     @Override
-    public List<ReviewCollectionsRequest> getReviewCollectionsRequestByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<ReviewCollectionsRequest> reviewCollectionsRequest = null;
-        reviewCollectionsRequest = (List<ReviewCollectionsRequest>) getNamedQueryResult(ReviewCollectionsRequest.class, QueryConstants.REVIEW_COLLECTIONS_REQUEST_BY_REQUEST, request, getMethodName(), logger, "reviewCollectionsRequest");
-        return reviewCollectionsRequest;
+    public List<ReviewRequest> getReviewRequestByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ReviewRequest> reviewRequest = null;
+        reviewRequest = (List<ReviewRequest>) getNamedQueryResult(ReviewRequest.class, QueryConstants.REVIEW_REQUEST_BY_REQUEST, request, getMethodName(), logger, "reviewRequest");
+        return reviewRequest;
     }
 
     @Override
-    public ReviewCollectionsRequest loadReviewCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        ReviewCollectionsRequest reviewCollectionsRequest = (ReviewCollectionsRequest) loadEntity(ReviewCollectionsRequest.class, request, logger, getMethodName());
-        return reviewCollectionsRequest;
+    public ReviewRequest loadReviewRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ReviewRequest reviewRequest = (ReviewRequest) loadEntity(ReviewRequest.class, request, logger, getMethodName());
+        return reviewRequest;
     }
 
     @Override
-    public ReviewCollectionsRequest saveReviewCollectionsRequest(ReviewCollectionsRequest reviewCollectionsRequest) throws NullParameterException, GeneralException {
-        if (reviewCollectionsRequest == null) {
-            throw new NullParameterException("reviewCollectionsRequest", null);
+    public ReviewRequest saveReviewRequest(ReviewRequest reviewRequest) throws NullParameterException, GeneralException {
+        if (reviewRequest == null) {
+            throw new NullParameterException("reviewRequest", null);
         }
-        return (ReviewCollectionsRequest) saveEntity(reviewCollectionsRequest);
+        return (ReviewRequest) saveEntity(reviewRequest);
     }
 
     @Override
