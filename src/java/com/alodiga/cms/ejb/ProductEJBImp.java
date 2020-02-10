@@ -479,30 +479,17 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
     }
 
     @Override
-    public ProductHasCommerceCategory getProductHasCommerceCategoryBD(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        int productId = 0;
-        int commerceCategoryId = 0;
-        ProductHasCommerceCategory productHasCommerceCategory = new ProductHasCommerceCategory();
-        StringBuilder sqlBuilder = new StringBuilder("SELECT p FROM ProductHasCommerceCategory p WHERE p.commerceCategoryId.id = ?1 AND p.productId.id = ?2");
-        Query query = null;
-        Map<String, Object> params = request.getParams();
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
-            if (entry.getKey().equals("commerceCategoryId")) {
-               commerceCategoryId = Integer.parseInt(entry.getValue().toString());
-            } 
-            if (entry.getKey().equals("productId")) {
-               productId = Integer.parseInt(entry.getValue().toString());
-            } 
-        }  
-        try {
-            query = createQuery(sqlBuilder.toString());
-            query.setParameter("1",commerceCategoryId);
-            query.setParameter("2",productId);
-            productHasCommerceCategory = (ProductHasCommerceCategory) query.setHint("toplink.refresh", "true").getSingleResult();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public List<ProductHasCommerceCategory> getProductHasCommerceCategoryBD(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProductHasCommerceCategory> productHasCommerceCategoryList = null;
+        Map<String, Object> params = request.getParams(); 
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_ID), null);
         }
-        return productHasCommerceCategory;
+        if (!params.containsKey(EjbConstants.PARAM_COMMERCE_CATEGORY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COMMERCE_CATEGORY_ID), null);
+        }
+        productHasCommerceCategoryList = (List<ProductHasCommerceCategory>) getNamedQueryResult(ProductHasCommerceCategory.class, QueryConstants.COMMERCE_CATEGORY_FIND_BD, request, getMethodName(), logger, "productHasCommerceCategoryList");
+        return productHasCommerceCategoryList;
     }
 
         
