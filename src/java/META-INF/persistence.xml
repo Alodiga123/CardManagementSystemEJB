@@ -74,7 +74,7 @@
     <class>com.cms.commons.models.EmployedPosition</class>
     <class>com.cms.commons.models.Employee</class>
     <class>com.cms.commons.models.ReasonRejectionRequest</class>
-    <class>com.cms.commons.models.ReviewCollectionsRequest</class>
+    <class>com.cms.commons.models.ReviewRequest</class>
     <class>com.cms.commons.models.Transaction</class>
     <class>com.cms.commons.models.ProductHasChannelHasTransaction</class>
     <class>com.cms.commons.models.GeneralRate</class>
@@ -88,6 +88,18 @@
     <class>com.cms.commons.models.DaysWeekHasProgramLoyalty</class>
     <class>com.cms.commons.models.RateByProgram</class>
     <class>com.cms.commons.models.RateByProduct</class>
+    <class>com.cms.commons.models.ReviewRequestType</class>
+    <class>com.cms.commons.models.AddressType</class>
+    <class>com.cms.commons.models.LegalCustomer</class>
+    <class>com.cms.commons.models.StatusCustomer</class>
+    <class>com.cms.commons.models.Card</class>
+    <class>com.cms.commons.models.LegalCustomerHasLegalRepresentatives</class>
+    <class>com.cms.commons.models.NaturalCustomer</class>
+    <class>com.cms.commons.models.SubAccountType</class>
+    <class>com.cms.commons.models.ReviewOFAC</class>
+    <class>com.cms.commons.models.AccountSegment</class>
+    <class>com.cms.commons.models.AccountProperties</class>
+    <class>com.cms.commons.models.AccountType</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
