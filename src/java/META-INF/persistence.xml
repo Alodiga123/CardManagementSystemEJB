@@ -95,6 +95,11 @@
     <class>com.cms.commons.models.Card</class>
     <class>com.cms.commons.models.LegalCustomerHasLegalRepresentatives</class>
     <class>com.cms.commons.models.NaturalCustomer</class>
+    <class>com.cms.commons.models.SubAccountType</class>
+    <class>com.cms.commons.models.ReviewOFAC</class>
+    <class>com.cms.commons.models.AccountSegment</class>
+    <class>com.cms.commons.models.AccountProperties</class>
+    <class>com.cms.commons.models.AccountType</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
