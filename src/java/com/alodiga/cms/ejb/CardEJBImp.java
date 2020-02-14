@@ -39,10 +39,10 @@ import javax.persistence.Query;
 
 public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal, CardEJB {
 
-    private static final Logger logger = Logger.getLogger(UtilsEJBImp.class);
+    private static final Logger logger = Logger.getLogger(CardEJBImp.class);
 
    
-    //Account Properties
+    //AccountProperties
     @Override
     public List<AccountProperties> getAccountProperties(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<AccountProperties> accountProperties = (List<AccountProperties>) listEntities(AccountProperties.class, request, logger, getMethodName());
@@ -63,7 +63,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (AccountProperties) saveEntity(accountProperties);
     }
     
-    //Account Type
+    //AccountType
     @Override
     public List<AccountType> getAccountType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<AccountType> accountType = (List<AccountType>) listEntities(AccountType.class, request, logger, getMethodName());
@@ -84,7 +84,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (AccountType) saveEntity(accountType);
     }
     
-    //Account Type Has Product Type
+    //AccountTypeHasProductType
     @Override
     public List<AccountTypeHasProductType> getAccountTypeHasProductType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<AccountTypeHasProductType> accountTypeHasProductType = (List<AccountTypeHasProductType>) listEntities(AccountTypeHasProductType.class, request, logger, getMethodName());
@@ -116,20 +116,26 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (AccountTypeHasProductType) saveEntity(accountTypeHasProductType);
     }
-
+    
+    //SubAccountType
     @Override
     public List<SubAccountType> getSubAccountType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<SubAccountType> subAccountType = (List<SubAccountType>) listEntities(SubAccountType.class, request, logger, getMethodName());
+        return subAccountType;
     }
 
     @Override
     public SubAccountType loadSubAccountType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SubAccountType subAccountType = (SubAccountType) loadEntity(SubAccountType.class, request, logger, getMethodName());
+        return subAccountType;
     }
 
     @Override
     public SubAccountType saveSubAccountType(SubAccountType subAccountType) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (subAccountType == null) {
+            throw new NullParameterException("subAccountType", null);
+        }
+        return (SubAccountType) saveEntity(subAccountType);
     }
 
     @Override
