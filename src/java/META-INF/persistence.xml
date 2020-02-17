@@ -100,6 +100,7 @@
     <class>com.cms.commons.models.AccountSegment</class>
     <class>com.cms.commons.models.AccountProperties</class>
     <class>com.cms.commons.models.AccountType</class>
+    <class>com.cms.commons.models.StatusApplicant</class>
     <class>com.cms.commons.models.AccountTypeHasProductType</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
