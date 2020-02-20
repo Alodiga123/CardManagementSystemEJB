@@ -11,6 +11,7 @@ import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.AccountProperties;
+import com.cms.commons.models.AccountSegment;
 import com.cms.commons.models.AccountType;
 import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.SubAccountType;
@@ -147,6 +148,38 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         subAccountTypeList = (List<SubAccountType>) getNamedQueryResult(SubAccountType.class, QueryConstants.SUB_ACCOUNT_TYPE_BY_ACCOUNT_TYPE, request, getMethodName(), logger, "subAccountTypeList");
         return subAccountTypeList;
+    }
+    
+    //AccountSegment
+    @Override
+    public List<AccountSegment> getAccountSegment(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountSegment> accountSegment = (List<AccountSegment>) listEntities(AccountSegment.class, request, logger, getMethodName());
+        return accountSegment;
+    }
+
+    @Override
+    public AccountSegment loadAccountSegment(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        AccountSegment accountSegment = (AccountSegment) loadEntity(AccountSegment.class, request, logger, getMethodName());
+        return accountSegment;
+    }
+
+    @Override
+    public AccountSegment saveAccountSegment(AccountSegment accountSegment) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (accountSegment == null) {
+            throw new NullParameterException("accountSegment", null);
+        }
+        return (AccountSegment) saveEntity(accountSegment);
+    }
+
+    @Override
+    public List<AccountSegment> getAccountSegmentByAccountProperties(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountSegment> accountSegmentList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_ACCOUNT_PROPERTIES_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_ACCOUNT_PROPERTIES_ID), null);
+        }
+        accountSegmentList = (List<AccountSegment>) getNamedQueryResult(AccountSegment.class, QueryConstants.ACCOUNT_SEGMENT_BY_ACCOUNT_PROPERTIES, request, getMethodName(), logger, "accountSegmentList");
+        return accountSegmentList;
     }
 
         
