@@ -183,7 +183,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID), null);
         }
-        cardComplementaryByApplicantList = (List<ApplicantNaturalPerson>) getNamedQueryResult(UtilsEJB.class, QueryConstants.CARD_COMPLEMNTARY_BY_APPLICANT, request, getMethodName(), logger, "cardComplementaryByApplicantList");
+        cardComplementaryByApplicantList = (List<ApplicantNaturalPerson>) getNamedQueryResult(UtilsEJB.class, QueryConstants.CARD_COMPLEMENTARY_BY_APPLICANT, request, getMethodName(), logger, "cardComplementaryByApplicantList");
         return cardComplementaryByApplicantList;
     }
 
@@ -257,6 +257,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<LegalPersonHasLegalRepresentatives> legalPersonHasLegalRepresentatives = (List<LegalPersonHasLegalRepresentatives>) listEntities(LegalPersonHasLegalRepresentatives.class, request, logger, getMethodName());
         return legalPersonHasLegalRepresentatives;
     }
+    
+    @Override
+    public List<LegalPersonHasLegalRepresentatives> getLegalRepresentativesesBylegalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPersonHasLegalRepresentatives> legalRepresentativesByApplicantList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_LEGAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_LEGAL_PERSON_ID), null);
+        }
+        legalRepresentativesByApplicantList = (List<LegalPersonHasLegalRepresentatives>) getNamedQueryResult(LegalPersonHasLegalRepresentatives.class, QueryConstants.LEGAL_REPRESENTATIVES_BY_LEGAL_APPLICANT, request, getMethodName(), logger, "legalRepresentativesByApplicantList");
+        return legalRepresentativesByApplicantList;
+    }
 
     @Override
     public LegalPersonHasLegalRepresentatives loadLegalPersonHasLegalRepresentatives(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -283,7 +294,6 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     public PersonType loadPersonType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         PersonType personType = (PersonType) loadEntity(PersonType.class, request, logger, getMethodName());
         return personType;
-
     }
 
     @Override
@@ -322,6 +332,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return cardRequestNaturalPersons;
     }
 
+    @Override
+    public List<CardRequestNaturalPerson> getCardRequestNaturalPersonsByLegalApplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardRequestNaturalPerson> cardRequestNaturalPersonList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_LEGAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_LEGAL_PERSON_ID), null);
+        }
+        cardRequestNaturalPersonList = (List<CardRequestNaturalPerson>) getNamedQueryResult(CardRequestNaturalPerson.class, QueryConstants.ADDITIONAL_CARD_BY_LEGAL_APPLICANT, request, getMethodName(), logger, "cardRequestNaturalPersonList");
+        return cardRequestNaturalPersonList;
+    }
+    
     @Override
     public CardRequestNaturalPerson loadCardRequestNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         CardRequestNaturalPerson cardRequestNaturalPerson = (CardRequestNaturalPerson) loadEntity(CardRequestNaturalPerson.class, request, logger, getMethodName());
