@@ -28,6 +28,7 @@ import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
+import com.cms.commons.models.PlasticManufacturer;
 import com.cms.commons.models.Profession;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
@@ -517,5 +518,26 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("legalCustomer", null);
         }
         return (LegalCustomer) saveEntity(legalCustomer);
+    }
+    
+    //PlasticManufacturer
+    @Override
+    public List<PlasticManufacturer> getPlasticManufacturer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PlasticManufacturer> plasticManufacturer = (List<PlasticManufacturer>) listEntities(PlasticManufacturer.class, request, logger, getMethodName());
+        return plasticManufacturer;
+    }
+
+    @Override
+    public PlasticManufacturer loadPlasticManufacturer(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PlasticManufacturer plasticManufacturer = (PlasticManufacturer) loadEntity(PlasticManufacturer.class, request, logger, getMethodName());
+        return plasticManufacturer;
+    }
+
+    @Override
+    public PlasticManufacturer savePlasticManufacturer(PlasticManufacturer plasticManufacturer) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (plasticManufacturer == null) {
+            throw new NullParameterException("plasticManufacturer", null);
+        }
+        return (PlasticManufacturer) saveEntity(plasticManufacturer);
     }
 }
