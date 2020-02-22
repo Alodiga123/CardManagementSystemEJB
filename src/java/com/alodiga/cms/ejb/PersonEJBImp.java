@@ -19,13 +19,16 @@ import com.cms.commons.models.FamilyReferences;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.IssuerType;
 import com.cms.commons.models.KinShipApplicant;
+import com.cms.commons.models.LegalCustomer;
 import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
+import com.cms.commons.models.NaturalCustomer;
 import com.cms.commons.models.NaturalPerson;
 import com.cms.commons.models.Person;
 import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
+import com.cms.commons.models.PlasticManufacturer;
 import com.cms.commons.models.Profession;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
@@ -183,7 +186,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID), null);
         }
-        cardComplementaryByApplicantList = (List<ApplicantNaturalPerson>) getNamedQueryResult(UtilsEJB.class, QueryConstants.CARD_COMPLEMNTARY_BY_APPLICANT, request, getMethodName(), logger, "cardComplementaryByApplicantList");
+        cardComplementaryByApplicantList = (List<ApplicantNaturalPerson>) getNamedQueryResult(UtilsEJB.class, QueryConstants.CARD_COMPLEMENTARY_BY_APPLICANT, request, getMethodName(), logger, "cardComplementaryByApplicantList");
         return cardComplementaryByApplicantList;
     }
 
@@ -257,6 +260,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<LegalPersonHasLegalRepresentatives> legalPersonHasLegalRepresentatives = (List<LegalPersonHasLegalRepresentatives>) listEntities(LegalPersonHasLegalRepresentatives.class, request, logger, getMethodName());
         return legalPersonHasLegalRepresentatives;
     }
+    
+    @Override
+    public List<LegalPersonHasLegalRepresentatives> getLegalRepresentativesesBylegalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPersonHasLegalRepresentatives> legalRepresentativesByApplicantList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_LEGAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_LEGAL_PERSON_ID), null);
+        }
+        legalRepresentativesByApplicantList = (List<LegalPersonHasLegalRepresentatives>) getNamedQueryResult(LegalPersonHasLegalRepresentatives.class, QueryConstants.LEGAL_REPRESENTATIVES_BY_LEGAL_APPLICANT, request, getMethodName(), logger, "legalRepresentativesByApplicantList");
+        return legalRepresentativesByApplicantList;
+    }
 
     @Override
     public LegalPersonHasLegalRepresentatives loadLegalPersonHasLegalRepresentatives(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -283,7 +297,6 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     public PersonType loadPersonType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         PersonType personType = (PersonType) loadEntity(PersonType.class, request, logger, getMethodName());
         return personType;
-
     }
 
     @Override
@@ -323,6 +336,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
 
     @Override
+    public List<CardRequestNaturalPerson> getCardRequestNaturalPersonsByLegalApplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardRequestNaturalPerson> cardRequestNaturalPersonList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_LEGAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_LEGAL_PERSON_ID), null);
+        }
+        cardRequestNaturalPersonList = (List<CardRequestNaturalPerson>) getNamedQueryResult(CardRequestNaturalPerson.class, QueryConstants.ADDITIONAL_CARD_BY_LEGAL_APPLICANT, request, getMethodName(), logger, "cardRequestNaturalPersonList");
+        return cardRequestNaturalPersonList;
+    }
+    
+    @Override
     public CardRequestNaturalPerson loadCardRequestNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         CardRequestNaturalPerson cardRequestNaturalPerson = (CardRequestNaturalPerson) loadEntity(CardRequestNaturalPerson.class, request, logger, getMethodName());
         return cardRequestNaturalPerson;
@@ -341,6 +365,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     public List<Person> getPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Person> person = (List<Person>) listEntities(Person.class, request, logger, getMethodName());
         return person;
+    }
+
+    @Override
+    public List<Person> getPersonByCustommer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Person> personByCustommer = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_CLASSIFICATION_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
+        }
+        personByCustommer = (List<Person>) getNamedQueryResult(Person.class, QueryConstants.PERSON_BY_CLASIFICATION, request, getMethodName(), logger, "personByCustommer");
+        return personByCustommer;
     }
 
     @Override
@@ -421,4 +456,88 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return (IssuerType) saveEntity(issuerType);
     }
 
+    //NaturalCustomer
+    @Override
+    public List<NaturalCustomer> getNaturalCustomer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<NaturalCustomer> naturalCustomer = (List<NaturalCustomer>) listEntities(NaturalCustomer.class, request, logger, getMethodName());
+        return naturalCustomer;
+    }
+    
+    @Override
+    public List<NaturalCustomer> getNaturalCustomerByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<NaturalCustomer> naturalCustomerByPerson = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        naturalCustomerByPerson = (List<NaturalCustomer>) getNamedQueryResult(NaturalCustomer.class, QueryConstants.NATURAL_PERSON_BY_CUSTOMER, request, getMethodName(), logger, "naturalCustomerByPerson");
+        return naturalCustomerByPerson;
+    }
+
+    @Override
+    public NaturalCustomer loadNaturalCustomer(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        NaturalCustomer naturalCustomer = (NaturalCustomer) loadEntity(NaturalCustomer.class, request, logger, getMethodName());
+        return naturalCustomer;
+    }
+
+    @Override
+    public NaturalCustomer saveNaturalCustomer(NaturalCustomer naturalCustomer) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (naturalCustomer == null) {
+            throw new NullParameterException("naturalCustomer", null);
+        }
+        return (NaturalCustomer) saveEntity(naturalCustomer);
+    }
+
+    //LegalCustomer
+    @Override
+    public List<LegalCustomer> getLegalCustomer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalCustomer> legalCustomer = (List<LegalCustomer>) listEntities(LegalCustomer.class, request, logger, getMethodName());
+        return legalCustomer;
+    }
+    
+    @Override
+    public List<LegalCustomer> getLegalCustomerByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalCustomer> legalCustomerByPerson = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        legalCustomerByPerson = (List<LegalCustomer>) getNamedQueryResult(LegalCustomer.class, QueryConstants.LEGAL_PERSON_BY_CUSTOMER, request, getMethodName(), logger, "legalCustomerByPerson");
+        return legalCustomerByPerson;
+    }
+
+    @Override
+    public LegalCustomer loadLegalCustomer(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        LegalCustomer legalCustomer = (LegalCustomer) loadEntity(LegalCustomer.class, request, logger, getMethodName());
+        return legalCustomer;
+    }
+
+    @Override
+    public LegalCustomer saveLegalCustomer(LegalCustomer legalCustomer) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (legalCustomer == null) {
+            throw new NullParameterException("legalCustomer", null);
+        }
+        return (LegalCustomer) saveEntity(legalCustomer);
+    }
+    
+    //PlasticManufacturer
+    @Override
+    public List<PlasticManufacturer> getPlasticManufacturer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PlasticManufacturer> plasticManufacturer = (List<PlasticManufacturer>) listEntities(PlasticManufacturer.class, request, logger, getMethodName());
+        return plasticManufacturer;
+    }
+
+    @Override
+    public PlasticManufacturer loadPlasticManufacturer(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PlasticManufacturer plasticManufacturer = (PlasticManufacturer) loadEntity(PlasticManufacturer.class, request, logger, getMethodName());
+        return plasticManufacturer;
+    }
+
+    @Override
+    public PlasticManufacturer savePlasticManufacturer(PlasticManufacturer plasticManufacturer) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (plasticManufacturer == null) {
+            throw new NullParameterException("plasticManufacturer", null);
+        }
+        return (PlasticManufacturer) saveEntity(plasticManufacturer);
+    }
 }
