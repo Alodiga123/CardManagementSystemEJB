@@ -72,6 +72,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (PhonePerson) saveEntity(phonePerson);
     }
+    
+    @Override
+    public List<PhonePerson> getPhonePersonByperson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PhonePerson> phonePersonList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        phonePersonList = (List<PhonePerson>) getNamedQueryResult(PhonePerson.class, QueryConstants.PHONES_BY_PERSON, request, getMethodName(), logger, "phonePersonList");
+        return phonePersonList;
+    }
 
     //PersonHasAddress
     @Override
@@ -540,4 +551,5 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (PlasticManufacturer) saveEntity(plasticManufacturer);
     }
+    
 }
