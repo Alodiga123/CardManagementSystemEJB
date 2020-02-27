@@ -132,7 +132,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             params.put(Constants.COUNTRY_KEY, countryId);
             params.put(Constants.ORIGIN_APPLICATION_KEY, Constants.ORIGIN_APPLICATION_WALLET_ID);
             request1.setParams(params);
-            List<PersonType> personTypes = utilsEJB.getPersonTypesByCountry(request1);
+            List<PersonType> personTypes = utilsEJB.getPersonTypeByCountry(request1);
             for (PersonType p: personTypes) {
                 if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_WALLET_ID) {
                     personTypeApp = p;
@@ -465,7 +465,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             params.put(Constants.COUNTRY_KEY, countryId);
             params.put(Constants.ORIGIN_APPLICATION_KEY, Constants.ORIGIN_APPLICATION_WALLET_ID);
             request1.setParams(params);
-            List<PersonType> personTypes = utilsEJB.getPersonTypesByCountry(request1);
+            List<PersonType> personTypes = utilsEJB.getPersonTypeByCountry(request1);
             for (PersonType p: personTypes) {
                 if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_WALLET_ID) {
                     personTypeApp = p;
