@@ -28,6 +28,7 @@ import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
+import com.cms.commons.models.PlasticManufacturer;
 import com.cms.commons.models.Profession;
 import com.cms.commons.models.StatusCustomer;
 import com.cms.commons.util.EjbConstants;
@@ -72,6 +73,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("phonePerson", null);
         }
         return (PhonePerson) saveEntity(phonePerson);
+    }
+    
+    @Override
+    public List<PhonePerson> getPhonePersonByperson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PhonePerson> phonePersonList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        phonePersonList = (List<PhonePerson>) getNamedQueryResult(PhonePerson.class, QueryConstants.PHONES_BY_PERSON, request, getMethodName(), logger, "phonePersonList");
+        return phonePersonList;
     }
 
     //PersonHasAddress
@@ -535,6 +547,28 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (LegalCustomer) saveEntity(legalCustomer);
     }
+    
+    //PlasticManufacturer
+    @Override
+    public List<PlasticManufacturer> getPlasticManufacturer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PlasticManufacturer> plasticManufacturer = (List<PlasticManufacturer>) listEntities(PlasticManufacturer.class, request, logger, getMethodName());
+        return plasticManufacturer;
+    }
+
+    @Override
+    public PlasticManufacturer loadPlasticManufacturer(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PlasticManufacturer plasticManufacturer = (PlasticManufacturer) loadEntity(PlasticManufacturer.class, request, logger, getMethodName());
+        return plasticManufacturer;
+    }
+
+    @Override
+    public PlasticManufacturer savePlasticManufacturer(PlasticManufacturer plasticManufacturer) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (plasticManufacturer == null) {
+            throw new NullParameterException("plasticManufacturer", null);
+        }
+        return (PlasticManufacturer) saveEntity(plasticManufacturer);
+    }
+    
 
     //StatusCustomer
     @Override
