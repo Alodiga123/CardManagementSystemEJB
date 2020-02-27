@@ -44,6 +44,7 @@ import com.cms.commons.models.RequestHasCollectionsRequest;
 import com.cms.commons.models.ReviewRequest;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
+import com.cms.commons.models.StatusApplicant;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.StreetType;
 import com.cms.commons.models.ZipZone;
@@ -131,7 +132,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             params.put(Constants.COUNTRY_KEY, countryId);
             params.put(Constants.ORIGIN_APPLICATION_KEY, Constants.ORIGIN_APPLICATION_WALLET_ID);
             request1.setParams(params);
-            List<PersonType> personTypes = utilsEJB.getPersonTypesByCountry(request1);
+            List<PersonType> personTypes = utilsEJB.getPersonTypeByCountry(request1);
             for (PersonType p: personTypes) {
                 if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_WALLET_ID) {
                     personTypeApp = p;
@@ -464,7 +465,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             params.put(Constants.COUNTRY_KEY, countryId);
             params.put(Constants.ORIGIN_APPLICATION_KEY, Constants.ORIGIN_APPLICATION_WALLET_ID);
             request1.setParams(params);
-            List<PersonType> personTypes = utilsEJB.getPersonTypesByCountry(request1);
+            List<PersonType> personTypes = utilsEJB.getPersonTypeByCountry(request1);
             for (PersonType p: personTypes) {
                 if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_WALLET_ID) {
                     personTypeApp = p;
@@ -609,5 +610,25 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         requestHasCollectionsRequestList = (List<RequestHasCollectionsRequest>) getNamedQueryResult(RequestHasCollectionsRequest.class, QueryConstants.REQUEST_HAS_COLLECTION_REQUEST_BY_REQUEST_BY_COLLECTION_REQUEST, request, getMethodName(), logger, "requestHasCollectionsRequestList");
         return requestHasCollectionsRequestList;
+    }
+
+    @Override
+    public List<StatusApplicant> getStatusApplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusApplicant> statusApplicantList = (List<StatusApplicant>) listEntities(StatusApplicant.class, request, logger, getMethodName());
+        return statusApplicantList;
+    }
+
+    @Override
+    public StatusApplicant loadStatusApplicant(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusApplicant statusApplicant = (StatusApplicant) loadEntity(StatusApplicant.class, request, logger, getMethodName());
+        return statusApplicant;
+    }
+
+    @Override
+    public StatusApplicant saveStatusApplicant(StatusApplicant statusApplicant) throws NullParameterException, GeneralException {
+        if (statusApplicant == null) {
+            throw new NullParameterException("statusApplicant", null);
+        }
+        return (StatusApplicant) saveEntity(statusApplicant);
     }
 }
