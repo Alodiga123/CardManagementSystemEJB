@@ -42,6 +42,7 @@ import com.cms.commons.models.RequestType;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.RequestHasCollectionsRequest;
 import com.cms.commons.models.ReviewRequest;
+import com.cms.commons.models.ReviewRequestType;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StatusApplicant;
@@ -630,5 +631,36 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             throw new NullParameterException("statusApplicant", null);
         }
         return (StatusApplicant) saveEntity(statusApplicant);
+    }
+
+    @Override
+    public List<ReviewRequestType> getReviewRequestType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ReviewRequestType> reviewRequestTypeList = (List<ReviewRequestType>) listEntities(ReviewRequestType.class, request, logger, getMethodName());
+        return reviewRequestTypeList;
+    }
+
+    @Override
+    public ReviewRequestType loadReviewRequestType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ReviewRequestType reviewRequestType = (ReviewRequestType) loadEntity(ReviewRequestType.class, request, logger, getMethodName());
+        return reviewRequestType;
+    }
+
+    @Override
+    public ReviewRequestType saveReviewRequestType(ReviewRequestType reviewRequestType) throws NullParameterException, GeneralException {
+        if (reviewRequestType == null) {
+            throw new NullParameterException("reviewRequestType", null);
+        }
+        return (ReviewRequestType) saveEntity(reviewRequestType);
+    }
+
+    @Override
+    public List<RequestHasCollectionsRequest> getRequestsHasCollectionsRequestByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RequestHasCollectionsRequest> requestHasCollectionsRequestList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_REQUEST_ID), null);
+        }
+        requestHasCollectionsRequestList = (List<RequestHasCollectionsRequest>) getNamedQueryResult(RequestHasCollectionsRequest.class, QueryConstants.REQUEST_HAS_COLLECTION_REQUEST_BY_REQUEST, request, getMethodName(), logger, "requestHasCollectionsRequestList");
+        return requestHasCollectionsRequestList;
     }
 }
