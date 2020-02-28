@@ -20,6 +20,7 @@ import com.cms.commons.models.Issuer;
 import com.cms.commons.models.IssuerType;
 import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.LegalCustomer;
+import com.cms.commons.models.LegalCustomerHasLegalRepresentatives;
 import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
 import com.cms.commons.models.NaturalCustomer;
 import com.cms.commons.models.NaturalPerson;
@@ -589,6 +590,24 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("statusCustomer", null);
         }
         return (StatusCustomer) saveEntity(statusCustomer);
+    }
+
+    @Override
+    public List<LegalCustomerHasLegalRepresentatives> getLegalCustomerHasLegalRepresentatives(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public LegalCustomerHasLegalRepresentatives loadLegalCustomerHasLegalRepresentatives(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public LegalCustomerHasLegalRepresentatives saveLegalCustomerHasLegalRepresentatives(LegalCustomerHasLegalRepresentatives legalCustomerHasLegalRepresentatives) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (legalCustomerHasLegalRepresentatives == null) {
+            throw new NullParameterException("legalCustomerHasLegalRepresentatives", null);
+        }
+        return (LegalCustomerHasLegalRepresentatives) saveEntity(legalCustomerHasLegalRepresentatives);
     }
 
 }
