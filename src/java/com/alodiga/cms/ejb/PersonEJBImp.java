@@ -20,6 +20,7 @@ import com.cms.commons.models.Issuer;
 import com.cms.commons.models.IssuerType;
 import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.LegalCustomer;
+import com.cms.commons.models.LegalCustomerHasLegalRepresentatives;
 import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
 import com.cms.commons.models.NaturalCustomer;
 import com.cms.commons.models.NaturalPerson;
@@ -589,6 +590,27 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("statusCustomer", null);
         }
         return (StatusCustomer) saveEntity(statusCustomer);
+    }
+    
+    //LegalCustomerHasLegalRepresentatives
+    @Override
+    public List<LegalCustomerHasLegalRepresentatives> getLegalCustomerHasLegalRepresentatives(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<LegalCustomerHasLegalRepresentatives> legalCustomerHasLegalRepresentatives = (List<LegalCustomerHasLegalRepresentatives>) listEntities(LegalCustomerHasLegalRepresentatives.class, request, logger, getMethodName());
+        return legalCustomerHasLegalRepresentatives;
+    }
+
+    @Override
+    public LegalCustomerHasLegalRepresentatives loadLegalCustomerHasLegalRepresentatives(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        LegalCustomerHasLegalRepresentatives legalCustomerHasLegalRepresentatives = (LegalCustomerHasLegalRepresentatives) loadEntity(LegalCustomerHasLegalRepresentatives.class, request, logger, getMethodName());
+        return legalCustomerHasLegalRepresentatives;
+    }
+
+    @Override
+    public LegalCustomerHasLegalRepresentatives saveLegalCustomerHasLegalRepresentatives(LegalCustomerHasLegalRepresentatives legalCustomerHasLegalRepresentatives) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (legalCustomerHasLegalRepresentatives == null) {
+            throw new NullParameterException("legalCustomerHasLegalRepresentatives", null);
+        }
+        return (LegalCustomerHasLegalRepresentatives) saveEntity(legalCustomerHasLegalRepresentatives);
     }
 
 }
