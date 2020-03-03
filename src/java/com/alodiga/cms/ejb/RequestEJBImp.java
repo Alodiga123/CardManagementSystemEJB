@@ -38,6 +38,7 @@ import com.cms.commons.models.PhoneType;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Profession;
 import com.cms.commons.models.Program;
+import com.cms.commons.models.ReasonRejectionRequest;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.RequestHasCollectionsRequest;
@@ -662,5 +663,21 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         requestHasCollectionsRequestList = (List<RequestHasCollectionsRequest>) getNamedQueryResult(RequestHasCollectionsRequest.class, QueryConstants.REQUEST_HAS_COLLECTION_REQUEST_BY_REQUEST, request, getMethodName(), logger, "requestHasCollectionsRequestList");
         return requestHasCollectionsRequestList;
+    }
+
+    @Override
+    public List<ReasonRejectionRequest> getReasonRejectionRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ReasonRejectionRequest loadReasonRejectionRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ReasonRejectionRequest reasonRejectionRequest = (ReasonRejectionRequest) loadEntity(ReasonRejectionRequest.class, request, logger, getMethodName());
+        return reasonRejectionRequest;
+    }
+
+    @Override
+    public ReasonRejectionRequest saveReasonRejectionRequest(ReasonRejectionRequest reasonRejectionRequest) throws NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
