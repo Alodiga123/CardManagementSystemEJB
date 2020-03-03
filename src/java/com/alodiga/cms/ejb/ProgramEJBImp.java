@@ -25,6 +25,7 @@ import com.cms.commons.models.ProgramHasNetwork;
 import com.cms.commons.models.ProgramLoyalty;
 import com.cms.commons.models.ProgramLoyaltyTransaction;
 import com.cms.commons.models.ProgramLoyaltyType;
+import com.cms.commons.models.ProjectAnnualVolume;
 import com.cms.commons.models.StatusProgramLoyalty;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.Constants;
@@ -364,4 +365,37 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         return (LoyaltyTransactionHasCommerceCategory) saveEntity(loyaltyTransactionHasCommerceCategory);
     }
     
+    //ProjectAnnualVolume
+    @Override
+    public List<ProjectAnnualVolume> getProjectAnnualVolume(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+       List<ProjectAnnualVolume> projectAnnualVolume = (List<ProjectAnnualVolume>) listEntities(ProjectAnnualVolume.class, request, logger, getMethodName());
+        return projectAnnualVolume;
+    }
+
+    @Override
+    public ProjectAnnualVolume loadProjectAnnualVolume(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProjectAnnualVolume projectAnnualVolume = (ProjectAnnualVolume) loadEntity(ProjectAnnualVolume.class, request, logger, getMethodName());
+        return projectAnnualVolume;
+    }
+
+    @Override
+    public ProjectAnnualVolume saveProjectAnnualVolume(ProjectAnnualVolume projectAnnualVolume) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (projectAnnualVolume == null) {
+            throw new NullParameterException("projectAnnualVolume", null);
+        }
+        return (ProjectAnnualVolume) saveEntity(projectAnnualVolume);
+    }
+
+    @Override
+    public List<ProjectAnnualVolume> getProjectAnnualVolumeByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProjectAnnualVolume> projectAnnualVolumeByProgram = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        projectAnnualVolumeByProgram = (List<ProjectAnnualVolume>) getNamedQueryResult(ProjectAnnualVolume.class, QueryConstants.PROJECT_ANNUAL_VOLUME_BY_PROGRAM, request, getMethodName(), logger, "projectAnnualVolumeByProgram");
+        return projectAnnualVolumeByProgram;
+   
+    }
+   
 }
