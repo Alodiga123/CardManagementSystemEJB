@@ -11,6 +11,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.AdditionalInformationNaturalCustomer;
 import com.cms.commons.models.ApplicantNaturalPerson;
 import com.cms.commons.models.CardRequestNaturalPerson;
 import com.cms.commons.models.CivilStatus;
@@ -75,7 +76,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (PhonePerson) saveEntity(phonePerson);
     }
-    
+
     @Override
     public List<PhonePerson> getPhonePersonByperson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PhonePerson> phonePersonList = null;
@@ -203,7 +204,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         cardComplementaryByApplicantList = (List<ApplicantNaturalPerson>) getNamedQueryResult(UtilsEJB.class, QueryConstants.CARD_COMPLEMENTARY_BY_APPLICANT, request, getMethodName(), logger, "cardComplementaryByApplicantList");
         return cardComplementaryByApplicantList;
     }
-    
+
     @Override
     public Long countCardComplementaryByApplicant(long applicantNaturalPersonId) throws GeneralException, NullParameterException {
         List result = null;
@@ -289,7 +290,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<LegalPersonHasLegalRepresentatives> legalPersonHasLegalRepresentatives = (List<LegalPersonHasLegalRepresentatives>) listEntities(LegalPersonHasLegalRepresentatives.class, request, logger, getMethodName());
         return legalPersonHasLegalRepresentatives;
     }
-    
+
     @Override
     public List<LegalPersonHasLegalRepresentatives> getLegalRepresentativesesBylegalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<LegalPersonHasLegalRepresentatives> legalRepresentativesByApplicantList = null;
@@ -374,7 +375,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         cardRequestNaturalPersonList = (List<CardRequestNaturalPerson>) getNamedQueryResult(CardRequestNaturalPerson.class, QueryConstants.ADDITIONAL_CARD_BY_LEGAL_APPLICANT, request, getMethodName(), logger, "cardRequestNaturalPersonList");
         return cardRequestNaturalPersonList;
     }
-    
+
     @Override
     public CardRequestNaturalPerson loadCardRequestNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         CardRequestNaturalPerson cardRequestNaturalPerson = (CardRequestNaturalPerson) loadEntity(CardRequestNaturalPerson.class, request, logger, getMethodName());
@@ -491,7 +492,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<NaturalCustomer> naturalCustomer = (List<NaturalCustomer>) listEntities(NaturalCustomer.class, request, logger, getMethodName());
         return naturalCustomer;
     }
-    
+
     @Override
     public List<NaturalCustomer> getNaturalCustomerByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<NaturalCustomer> naturalCustomerByPerson = null;
@@ -523,7 +524,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<LegalCustomer> legalCustomer = (List<LegalCustomer>) listEntities(LegalCustomer.class, request, logger, getMethodName());
         return legalCustomer;
     }
-    
+
     @Override
     public List<LegalCustomer> getLegalCustomerByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<LegalCustomer> legalCustomerByPerson = null;
@@ -548,7 +549,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (LegalCustomer) saveEntity(legalCustomer);
     }
-    
+
     //PlasticManufacturer
     @Override
     public List<PlasticManufacturer> getPlasticManufacturer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -569,7 +570,6 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (PlasticManufacturer) saveEntity(plasticManufacturer);
     }
-    
 
     //StatusCustomer
     @Override
@@ -591,11 +591,11 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (StatusCustomer) saveEntity(statusCustomer);
     }
-    
+
     //LegalCustomerHasLegalRepresentatives
     @Override
     public List<LegalCustomerHasLegalRepresentatives> getLegalCustomerHasLegalRepresentatives(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-         List<LegalCustomerHasLegalRepresentatives> legalCustomerHasLegalRepresentatives = (List<LegalCustomerHasLegalRepresentatives>) listEntities(LegalCustomerHasLegalRepresentatives.class, request, logger, getMethodName());
+        List<LegalCustomerHasLegalRepresentatives> legalCustomerHasLegalRepresentatives = (List<LegalCustomerHasLegalRepresentatives>) listEntities(LegalCustomerHasLegalRepresentatives.class, request, logger, getMethodName());
         return legalCustomerHasLegalRepresentatives;
     }
 
@@ -611,6 +611,27 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("legalCustomerHasLegalRepresentatives", null);
         }
         return (LegalCustomerHasLegalRepresentatives) saveEntity(legalCustomerHasLegalRepresentatives);
+    }
+
+    //AdditionalInformationNaturalCustomer
+    @Override
+    public List<AdditionalInformationNaturalCustomer> getAdditionalInformationNaturalCustomer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AdditionalInformationNaturalCustomer> additionalInformationNaturalCustomer = (List<AdditionalInformationNaturalCustomer>) listEntities(AdditionalInformationNaturalCustomer.class, request, logger, getMethodName());
+        return additionalInformationNaturalCustomer;
+    }
+
+    @Override
+    public AdditionalInformationNaturalCustomer loadAdditionalInformationNaturalCustomer(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        AdditionalInformationNaturalCustomer additionalInformationNaturalCustomer = (AdditionalInformationNaturalCustomer) loadEntity(AdditionalInformationNaturalCustomer.class, request, logger, getMethodName());
+        return additionalInformationNaturalCustomer;
+    }
+
+    @Override
+    public AdditionalInformationNaturalCustomer saveAdditionalInformationNaturalCustomer(AdditionalInformationNaturalCustomer additionalInformationNaturalCustomer) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (additionalInformationNaturalCustomer == null) {
+            throw new NullParameterException("additionalInformationNaturalCustomer", null);
+        }
+        return (AdditionalInformationNaturalCustomer) saveEntity(additionalInformationNaturalCustomer);
     }
 
 }
