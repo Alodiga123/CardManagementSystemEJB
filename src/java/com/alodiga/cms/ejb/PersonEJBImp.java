@@ -619,6 +619,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<AdditionalInformationNaturalCustomer> additionalInformationNaturalCustomer = (List<AdditionalInformationNaturalCustomer>) listEntities(AdditionalInformationNaturalCustomer.class, request, logger, getMethodName());
         return additionalInformationNaturalCustomer;
     }
+    
+    @Override
+    public List<AdditionalInformationNaturalCustomer> getAdditionalInformationNaturalCustomeByCustomer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AdditionalInformationNaturalCustomer> additionalInformationNaturalCustomeByCustomer = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_NATURAL_CUSTOMER_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_NATURAL_CUSTOMER_ID), null);
+        }
+        additionalInformationNaturalCustomeByCustomer = (List<AdditionalInformationNaturalCustomer>) getNamedQueryResult(AdditionalInformationNaturalCustomer.class, QueryConstants.ADDITIONAL_INFORMATION_BY_CUSTOMER, request, getMethodName(), logger, "additionalInformationNaturalCustomeByCustomer");
+        return additionalInformationNaturalCustomeByCustomer;
+    }
 
     @Override
     public AdditionalInformationNaturalCustomer loadAdditionalInformationNaturalCustomer(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
