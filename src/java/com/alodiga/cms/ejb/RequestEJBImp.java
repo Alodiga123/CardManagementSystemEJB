@@ -86,6 +86,17 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
         return requests;
     }
+    
+    @Override
+    public List<Request> getRequestsByStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+       List<Request> requestByStatusList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_STATUS_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATUS_REQUEST_ID), null);
+        }
+        requestByStatusList = (List<Request>) getNamedQueryResult(Request.class, QueryConstants.REQUEST_APPROVED, request, getMethodName(), logger, "requestByStatusList");
+        return requestByStatusList; 
+    }
 
     @Override
     public Request loadRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -686,5 +697,5 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     @Override
     public ReasonRejectionRequest saveReasonRejectionRequest(ReasonRejectionRequest reasonRejectionRequest) throws NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    }    
 }
