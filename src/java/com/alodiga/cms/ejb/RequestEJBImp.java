@@ -94,7 +94,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         if (!params.containsKey(EjbConstants.PARAM_STATUS_REQUEST_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATUS_REQUEST_ID), null);
         }
-        requestByStatusList = (List<Request>) getNamedQueryResult(Request.class, QueryConstants.REQUEST_APPROVED, request, getMethodName(), logger, "requestByStatusList");
+        requestByStatusList = (List<Request>) getNamedQueryResult(Request.class, QueryConstants.STATUS_REQUEST, request, getMethodName(), logger, "requestByStatusList");
         return requestByStatusList; 
     }
 
@@ -602,6 +602,17 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         reviewRequest = (List<ReviewRequest>) getNamedQueryResult(ReviewRequest.class, QueryConstants.REVIEW_REQUEST_BY_REQUEST, request, getMethodName(), logger, "reviewRequest");
         return reviewRequest;
+    }
+    
+    @Override
+    public List<ReviewRequest> getReviewByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ReviewRequest> reviewByRequest = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_REQUEST_ID), null);
+        }
+        reviewByRequest = (List<ReviewRequest>) getNamedQueryResult(ReviewRequest.class, QueryConstants.REVIEW_BY_REQUEST, request, getMethodName(), logger, "reviewByRequest");
+        return reviewByRequest;
     }
 
     @Override
