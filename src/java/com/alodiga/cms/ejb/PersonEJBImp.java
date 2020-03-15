@@ -33,6 +33,7 @@ import com.cms.commons.models.PhoneType;
 import com.cms.commons.models.PlasticManufacturer;
 import com.cms.commons.models.Profession;
 import com.cms.commons.models.StatusCustomer;
+import com.cms.commons.models.Title;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.List;
@@ -698,6 +699,26 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("additionalInformationNaturalCustomer", null);
         }
         return (AdditionalInformationNaturalCustomer) saveEntity(additionalInformationNaturalCustomer);
+    }
+    
+    @Override
+    public List<Title> getTitles(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Title> titles = (List<Title>) listEntities(Title.class, request, logger, getMethodName());
+        return titles;
+    }
+
+    @Override
+    public Title loadTitle(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       Title title = (Title) loadEntity(Title.class, request, logger, getMethodName());
+       return title;
+    }
+
+    @Override
+    public Title saveTitle(Title title) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (title == null) {
+            throw new NullParameterException("title", null);
+        }
+        return (Title) saveEntity(title);
     }
 
 }
