@@ -29,6 +29,7 @@ import com.cms.commons.models.Person;
 import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.FamilyReferences;
+import com.cms.commons.models.ImagensAplicantNaturalPerson;
 import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.PersonHasAddress;
@@ -712,9 +713,9 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }    
 
     @Override
-    public Long saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String cellPhone, int countryAddress, int state, int city, String postalZone, String address, boolean recommendation, boolean promotion, boolean citizen, String password, int titleId) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+    public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String cellPhone, int countryAddress, int state, int city, String postalZone, String address, boolean recommendation, boolean promotion, boolean citizen, String password, int titleId) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
         PersonType personTypeApp = new PersonType();
-        Long idApplicantNaturalPerson = 0L;
+        ApplicantNaturalPerson applicantNatural = null;
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
         programEJB = (ProgramEJB) EJBServiceLocator.getInstance().get(EjbConstants.PROGRAM_EJB);
         requestEJB = (RequestEJB) EJBServiceLocator.getInstance().get(EjbConstants.REQUEST_EJB);
@@ -799,7 +800,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             Title title = personEJB.loadTitle(request1);
 
             //Guarda en BD el applicantNaturalPerson
-            ApplicantNaturalPerson applicantNatural = new ApplicantNaturalPerson();
+            applicantNatural = new ApplicantNaturalPerson();
             applicantNatural.setPersonId(applicant);
 //            applicantNatural.setIdentificationNumber(identificationNumber);
             applicantNatural.setDueDateDocumentIdentification(dueDateIdentification);
@@ -812,7 +813,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantNatural.setCitizen(citizen);
             applicantNatural.setDateBirth(dateBirth);
             applicantNatural = personEJB.saveApplicantNaturalPerson(applicantNatural);
-            idApplicantNaturalPerson = applicantNatural.getId();
+//            idApplicantNaturalPerson = applicantNatural.getId();
 
             //4. Telefonos del solicitante
             //Guarda el telf. Celular en BD
@@ -852,6 +853,31 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return idApplicantNaturalPerson;
+        return applicantNatural;
+    }
+
+    @Override
+    public List<ImagensAplicantNaturalPerson> getImagensAplicantNaturalPersonByAplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ImagensAplicantNaturalPerson> imagensAplicantNaturalPersonList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        imagensAplicantNaturalPersonList = (List<ImagensAplicantNaturalPerson>) getNamedQueryResult(ImagensAplicantNaturalPerson.class, QueryConstants.IMAGENS_BY_APPLICANT, request, getMethodName(), logger, "ImagensAplicantNaturalPersonList");
+        return imagensAplicantNaturalPersonList;
+    }
+
+    @Override
+    public ImagensAplicantNaturalPerson loadImagensAplicantNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ImagensAplicantNaturalPerson imagensAplicantNaturalPerson = (ImagensAplicantNaturalPerson) loadEntity(ImagensAplicantNaturalPerson.class, request, logger, getMethodName());
+        return imagensAplicantNaturalPerson;
+    }
+
+    @Override
+    public ImagensAplicantNaturalPerson saveImagensAplicantNaturalPerson(ImagensAplicantNaturalPerson imagensAplicantNaturalPerson) throws NullParameterException, GeneralException {
+         if (imagensAplicantNaturalPerson == null) {
+            throw new NullParameterException("imagensAplicantNaturalPerson", null);
+        }
+        return (ImagensAplicantNaturalPerson) saveEntity(imagensAplicantNaturalPerson);
     }
 }

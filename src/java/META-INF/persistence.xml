@@ -105,6 +105,7 @@
     <class>com.cms.commons.models.AdditionalInformationNaturalCustomer</class>
     <class>com.cms.commons.models.PlasticManufacturer</class>
     <class>com.cms.commons.models.Title</class>
+    <class>com.cms.commons.models.ImagensAplicantNaturalPerson</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
