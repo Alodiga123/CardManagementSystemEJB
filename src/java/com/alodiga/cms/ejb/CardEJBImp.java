@@ -14,6 +14,8 @@ import com.cms.commons.models.AccountProperties;
 import com.cms.commons.models.AccountSegment;
 import com.cms.commons.models.AccountType;
 import com.cms.commons.models.AccountTypeHasProductType;
+import com.cms.commons.models.Card;
+import com.cms.commons.models.CardNumberCredential;
 import com.cms.commons.models.SubAccountType;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -21,13 +23,9 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
-import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import javax.persistence.Query;
 
 /**
  *
@@ -42,7 +40,6 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
 
     private static final Logger logger = Logger.getLogger(CardEJBImp.class);
 
-   
     //AccountProperties
     @Override
     public List<AccountProperties> getAccountProperties(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -63,7 +60,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (AccountProperties) saveEntity(accountProperties);
     }
-    
+
     //AccountType
     @Override
     public List<AccountType> getAccountType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -73,7 +70,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
 
     @Override
     public AccountType loadAccountType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-         AccountType accountType = (AccountType) loadEntity(AccountType.class, request, logger, getMethodName());
+        AccountType accountType = (AccountType) loadEntity(AccountType.class, request, logger, getMethodName());
         return accountType;
     }
 
@@ -84,7 +81,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (AccountType) saveEntity(accountType);
     }
-    
+
     //AccountTypeHasProductType
     @Override
     public List<AccountTypeHasProductType> getAccountTypeHasProductType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -103,7 +100,6 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return accountTypeHasProductTypeList;
     }
 
-
     @Override
     public AccountTypeHasProductType loadAccountTypeHasProductType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         AccountTypeHasProductType accountTypeHasProductType = (AccountTypeHasProductType) loadEntity(AccountTypeHasProductType.class, request, logger, getMethodName());
@@ -117,7 +113,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (AccountTypeHasProductType) saveEntity(accountTypeHasProductType);
     }
-    
+
     //SubAccountType
     @Override
     public List<SubAccountType> getSubAccountType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -149,7 +145,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         subAccountTypeList = (List<SubAccountType>) getNamedQueryResult(SubAccountType.class, QueryConstants.SUB_ACCOUNT_TYPE_BY_ACCOUNT_TYPE, request, getMethodName(), logger, "subAccountTypeList");
         return subAccountTypeList;
     }
-    
+
     //AccountSegment
     @Override
     public List<AccountSegment> getAccountSegment(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -182,5 +178,57 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return accountSegmentList;
     }
 
-        
+    //Card
+    @Override
+    public List<Card> getCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Card> card = (List<Card>) listEntities(Card.class, request, logger, getMethodName());
+        return card;
+    }
+
+    @Override
+    public Card loadCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Card card = (Card) loadEntity(Card.class, request, logger, getMethodName());
+        return card;
+    }
+
+    @Override
+    public Card saveCard(Card card) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (card == null) {
+            throw new NullParameterException("card", null);
+        }
+        return (Card) saveEntity(card);
+    }
+
+    //CardNumberCredential
+    @Override
+    public List<CardNumberCredential> getCardNumberCredential(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardNumberCredential> cardNumberCredential = (List<CardNumberCredential>) listEntities(CardNumberCredential.class, request, logger, getMethodName());
+        return cardNumberCredential;
+    }
+
+    @Override
+    public List<CardNumberCredential> getCardNumberCredentialByUse(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardNumberCredential> cardNumberCredentialByUse = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CARD_NUMBER_IND_USE)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARD_NUMBER_IND_USE), null);
+        }
+        cardNumberCredentialByUse = (List<CardNumberCredential>) getNamedQueryResult(CardNumberCredential.class, QueryConstants.CARD_NUMBER_BY_USE, request, getMethodName(), logger, "cardNumberCredentialByUse");
+        return cardNumberCredentialByUse;
+    }
+
+    @Override
+    public CardNumberCredential loadCardNumberCredential(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CardNumberCredential cardNumberCredential = (CardNumberCredential) loadEntity(CardNumberCredential.class, request, logger, getMethodName());
+        return cardNumberCredential;
+    }
+
+    @Override
+    public CardNumberCredential saveCardNumberCredential(CardNumberCredential cardNumberCredential) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (cardNumberCredential == null) {
+            throw new NullParameterException("cardNumberCredential", null);
+        }
+        return (CardNumberCredential) saveEntity(cardNumberCredential);
+    }
+
 }
