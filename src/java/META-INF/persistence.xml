@@ -3,7 +3,6 @@
   <persistence-unit name="cmsPu" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>jdbc/cms</jta-data-source>
-    <class>com.cms.commons.models.Account</class>
     <class>com.cms.commons.models.EdificationType</class>
     <class>com.cms.commons.models.RequestType</class>
     <class>com.cms.commons.models.StreetType</class>
@@ -104,6 +103,10 @@
     <class>com.cms.commons.models.AccountTypeHasProductType</class>
     <class>com.cms.commons.models.AdditionalInformationNaturalCustomer</class>
     <class>com.cms.commons.models.PlasticManufacturer</class>
+    <class>com.cms.commons.models.Title</class>
+    <class>com.cms.commons.models.ImagensAplicantNaturalPerson</class>
+    <class>com.cms.commons.models.AccountCard</class>
+    <class>com.cms.commons.models.StatusAccount</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
