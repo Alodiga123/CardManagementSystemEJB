@@ -15,7 +15,9 @@ import com.cms.commons.models.AdditionalInformationNaturalCustomer;
 import com.cms.commons.models.ApplicantNaturalPerson;
 import com.cms.commons.models.CardRequestNaturalPerson;
 import com.cms.commons.models.CivilStatus;
+import com.cms.commons.models.ComercialAgency;
 import com.cms.commons.models.DocumentsPersonType;
+import com.cms.commons.models.Employee;
 import com.cms.commons.models.FamilyReferences;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.IssuerType;
@@ -34,6 +36,7 @@ import com.cms.commons.models.PlasticManufacturer;
 import com.cms.commons.models.Profession;
 import com.cms.commons.models.StatusCustomer;
 import com.cms.commons.models.Title;
+import com.cms.commons.models.User;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.List;
@@ -719,6 +722,72 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("title", null);
         }
         return (Title) saveEntity(title);
+    }
+    
+    //User
+    @Override
+    public List<User> getUser(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<User> user = (List<User>) listEntities(User.class, request, logger, getMethodName());
+        return user;
+    }
+
+    @Override
+    public User loadUser(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+         User user = (User) loadEntity(User.class, request, logger, getMethodName());
+       return user;
+    }
+
+    @Override
+    public User saveUser(User user) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       if (user == null) {
+            throw new NullParameterException("user", null);
+        }
+        return (User) saveEntity(user);
+    }
+    
+    
+    //Employee
+    @Override
+    public List<Employee> getEmployee(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Employee> employee = (List<Employee>) listEntities(Employee.class, request, logger, getMethodName());
+        return employee;
+    }
+
+
+    @Override
+    public Employee loadEmployee(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+         Employee employee = (Employee) loadEntity(Employee.class, request, logger, getMethodName());
+       return employee;
+    }
+
+    @Override
+    public Employee saveEmployee(Employee employee) throws RegisterNotFoundException, NullParameterException, GeneralException {
+         if (employee == null) {
+            throw new NullParameterException("employee", null);
+        }
+        return (Employee) saveEntity(employee);
+    }
+    
+    //ComercialAgency
+    @Override
+    public List<ComercialAgency> getComercialAgency(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ComercialAgency> comercialAgency = (List<ComercialAgency>) listEntities(ComercialAgency.class, request, logger, getMethodName());
+        return comercialAgency;
+    }
+
+    @Override
+    public ComercialAgency loadComercialAgency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ComercialAgency comercialAgency = (ComercialAgency) loadEntity(ComercialAgency.class, request, logger, getMethodName());
+       return comercialAgency;
+    }
+
+
+    @Override
+    public ComercialAgency saveComercialAgency(ComercialAgency comercialAgency) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (comercialAgency == null) {
+            throw new NullParameterException("comercialAgency", null);
+        }
+        return (ComercialAgency) saveEntity(comercialAgency);
     }
 
 }
