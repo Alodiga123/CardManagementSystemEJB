@@ -16,6 +16,7 @@ import com.cms.commons.models.AccountType;
 import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.Card;
 import com.cms.commons.models.CardNumberCredential;
+import com.cms.commons.models.RateCard;
 import com.cms.commons.models.SubAccountType;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -229,6 +230,26 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException("cardNumberCredential", null);
         }
         return (CardNumberCredential) saveEntity(cardNumberCredential);
+    }
+
+    @Override
+    public List<RateCard> getRateCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateCard> rateCardList = (List<RateCard>) listEntities(RateCard.class, request, logger, getMethodName());
+        return rateCardList;
+    }
+
+    @Override
+    public RateCard loadRateCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        RateCard rateCard = (RateCard) loadEntity(RateCard.class, request, logger, getMethodName());
+        return rateCard;
+    }
+
+    @Override
+    public RateCard saveRateCard(RateCard rateCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (rateCard == null) {
+            throw new NullParameterException("rateCard", null);
+        }
+        return (RateCard) saveEntity(rateCard); 
     }
 
 }
