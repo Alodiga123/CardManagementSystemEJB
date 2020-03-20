@@ -185,7 +185,30 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         List<Card> card = (List<Card>) listEntities(Card.class, request, logger, getMethodName());
         return card;
     }
-
+    
+    @Override
+    public List<Card> getCardByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Card> cardByProgramList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        cardByProgramList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_PROGRAM, request, getMethodName(), logger, "cardByProgramList");
+        return cardByProgramList;
+    }
+    
+    
+    @Override
+    public List<Card> getCardByCardHolder(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Card> cardByCardHolderList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CARDHOLDER)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARDHOLDER), null);
+        }
+        cardByCardHolderList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_CARDHOLDER, request, getMethodName(), logger, "cardByCardHolderList");
+        return cardByCardHolderList;
+    }
+    
     @Override
     public Card loadCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Card card = (Card) loadEntity(Card.class, request, logger, getMethodName());
