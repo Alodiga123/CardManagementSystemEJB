@@ -107,6 +107,7 @@
     <class>com.cms.commons.models.AccountCard</class>
     <class>com.cms.commons.models.StatusAccount</class>
     <class>com.cms.commons.models.RateCard</class>
+    <class>com.cms.commons.models.CardNumberCredential</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
