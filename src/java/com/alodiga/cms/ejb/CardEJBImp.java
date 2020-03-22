@@ -16,7 +16,7 @@ import com.cms.commons.models.AccountType;
 import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.Card;
 import com.cms.commons.models.CardNumberCredential;
-import com.cms.commons.models.RateCard;
+import com.cms.commons.models.RateByCard;
 import com.cms.commons.models.SubAccountType;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -256,23 +256,34 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     @Override
-    public List<RateCard> getRateCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<RateCard> rateCardList = (List<RateCard>) listEntities(RateCard.class, request, logger, getMethodName());
-        return rateCardList;
+    public List<RateByCard> getRateByCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByCard> rateByCardList = (List<RateByCard>) listEntities(RateByCard.class, request, logger, getMethodName());
+        return rateByCardList;
     }
 
     @Override
-    public RateCard loadRateCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        RateCard rateCard = (RateCard) loadEntity(RateCard.class, request, logger, getMethodName());
-        return rateCard;
+    public RateByCard loadRateByCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        RateByCard rateByCard = (RateByCard) loadEntity(RateByCard.class, request, logger, getMethodName());
+        return rateByCard;
     }
 
     @Override
-    public RateCard saveRateCard(RateCard rateCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (rateCard == null) {
-            throw new NullParameterException("rateCard", null);
+    public RateByCard saveRateByCard(RateByCard rateByCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (rateByCard == null) {
+            throw new NullParameterException("rateByCard", null);
         }
-        return (RateCard) saveEntity(rateCard); 
+        return (RateByCard) saveEntity(rateByCard); 
+    }
+
+    @Override
+    public List<RateByCard> getRateByCardByCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<RateByCard> rateByCardList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CARD_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARD_ID), null);
+        }
+        rateByCardList = (List<RateByCard>) getNamedQueryResult(RateByCard.class, QueryConstants.RATE_BY_CARD_BY_CARD, request, getMethodName(), logger, "rateByCardList");
+        return rateByCardList;
     }
 
 }
