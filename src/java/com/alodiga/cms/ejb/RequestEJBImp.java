@@ -29,6 +29,7 @@ import com.cms.commons.models.Person;
 import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.FamilyReferences;
+import com.cms.commons.models.ImagensAplicantNaturalPerson;
 import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.PersonHasAddress;
@@ -42,6 +43,7 @@ import com.cms.commons.models.ReasonRejectionRequest;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.RequestHasCollectionsRequest;
+import com.cms.commons.models.ReviewOFAC;
 import com.cms.commons.models.ReviewRequest;
 import com.cms.commons.models.ReviewRequestType;
 import com.cms.commons.models.Sequences;
@@ -49,6 +51,7 @@ import com.cms.commons.models.State;
 import com.cms.commons.models.StatusApplicant;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.StreetType;
+import com.cms.commons.models.Title;
 import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.Constants;
@@ -709,4 +712,221 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     public ReasonRejectionRequest saveReasonRejectionRequest(ReasonRejectionRequest reasonRejectionRequest) throws NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
+
+    @Override
+    public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String cellPhone, int countryAddress, int state, int city, String postalZone, String address, boolean recommendation, boolean promotion, boolean citizen, String password, int titleId) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+        PersonType personTypeApp = new PersonType();
+        ApplicantNaturalPerson applicantNatural = null;
+        utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
+        programEJB = (ProgramEJB) EJBServiceLocator.getInstance().get(EjbConstants.PROGRAM_EJB);
+        requestEJB = (RequestEJB) EJBServiceLocator.getInstance().get(EjbConstants.REQUEST_EJB);
+        personEJB = (PersonEJB) EJBServiceLocator.getInstance().get(EjbConstants.PERSON_EJB);
+
+        try {
+            //1. Persona que hace la solicitud
+            //Clasificacion de la persona (Solicitante)
+            EJBRequest request1 = new EJBRequest();
+            Map params = new HashMap();
+            request1.setParam(Constants.PERSON_CLASSIFICATION_APPLICANT);
+            PersonClassification personClassification = utilsEJB.loadPersonClassification(request1);
+            //pais de la persona que hace la solicitud
+            request1 = new EJBRequest();
+            request1.setParam(countryId);
+            Country country = utilsEJB.loadCountry(request1);
+            //tipo de la persona que hace la solicitud
+            request1 = new EJBRequest();
+            params = new HashMap();
+            params.put(Constants.COUNTRY_KEY, countryId);
+            params.put(Constants.ORIGIN_APPLICATION_KEY, Constants.ORIGIN_APPLICATION_WALLET_ID);
+            request1.setParams(params);
+            List<PersonType> personTypes = utilsEJB.getPersonTypeByCountry(request1);
+            for (PersonType p : personTypes) {
+                if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_WALLET_ID) {
+                    personTypeApp = p;
+                }
+            }
+
+            //Crea el person y lo guarda en BD
+            Person applicant = new Person();
+            applicant.setCountryId(country);
+            applicant.setEmail(email);
+            applicant.setPersonClassificationId(personClassification);
+            applicant.setPersonTypeId(personTypeApp);
+            applicant = personEJB.savePerson(applicant);
+
+            //2. Solicitud de tarjeta         
+            //programa asociado a la solicitud
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PROGRAM_WALLET_APP_ID);
+            Program program = programEJB.loadProgram(request1);
+            //tipo de solicitud
+            request1 = new EJBRequest();
+            request1.setParam(Constants.REQUEST_TYPE_WALLET_APP_ID);
+            RequestType requestType = utilsEJB.loadRequestType(request1);
+            //tipo de producto de la solicitud
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PRODUCT_TYPE_WALLET_APP_ID);
+            ProductType productType = utilsEJB.loadProductType(request1);
+            //colocar estatus de solicitud "EN PROCESO"
+            request1 = new EJBRequest();
+            request1.setParam(Constants.STATUS_REQUEST_IN_PROCESS);
+            StatusRequest statusRequest = utilsEJB.loadStatusRequest(request1);
+
+            //Obtiene el numero de secuencia para documento Request
+            request1 = new EJBRequest();
+            params = new HashMap();
+            params.put(Constants.DOCUMENT_TYPE_KEY, Constants.DOCUMENT_TYPE_REQUEST);
+            request1.setParams(params);
+            List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
+            String numberRequest = utilsEJB.generateNumberSequence(sequence, Constants.ORIGIN_APPLICATION_WALLET_ID);
+
+            //Crea el request y lo guarda en BD
+            Request request = new Request();
+            request.setRequestNumber(numberRequest);//APP-1-2019
+            Date dateRequest = new Date();
+            request.setRequestDate(dateRequest);
+            request.setCountryId(country);
+            request.setPersonId(applicant);
+            request.setPersonTypeId(personTypeApp);
+            request.setProgramId(program);
+            request.setProductTypeId(productType);
+            request.setRequestTypeId(requestType);
+            request.setStatusRequestId(statusRequest);
+            request.setCreateDate(dateRequest);
+            request = requestEJB.saveRequest(request);
+
+            //3. Titulo del solicitante
+            request1 = new EJBRequest();
+            request1.setParam(titleId);
+            Title title = personEJB.loadTitle(request1);
+
+            //Guarda en BD el applicantNaturalPerson
+            applicantNatural = new ApplicantNaturalPerson();
+            applicantNatural.setPersonId(applicant);
+//            applicantNatural.setIdentificationNumber(identificationNumber);
+            applicantNatural.setDueDateDocumentIdentification(dueDateIdentification);
+            applicantNatural.setFirstNames(firstNames);
+            applicantNatural.setLastNames(lastNames);
+            applicantNatural.setTitle(title);
+            applicantNatural.setPassword(password);
+            applicantNatural.setPromotion(promotion);
+            applicantNatural.setRecommendation(recommendation);
+            applicantNatural.setCitizen(citizen);
+            applicantNatural.setDateBirth(dateBirth);
+            applicantNatural = personEJB.saveApplicantNaturalPerson(applicantNatural);
+//            idApplicantNaturalPerson = applicantNatural.getId();
+
+            //4. Telefonos del solicitante
+            //Guarda el telf. Celular en BD
+            PhonePerson cellPhoneApplicant = new PhonePerson();
+            cellPhoneApplicant.setNumberPhone(cellPhone);
+            cellPhoneApplicant.setPersonId(applicant);
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PHONE_TYPE_MOBILE);
+            PhoneType mobilePhoneType = personEJB.loadPhoneType(request1);
+            cellPhoneApplicant.setPhoneTypeId(mobilePhoneType);
+            cellPhoneApplicant = personEJB.savePhonePerson(cellPhoneApplicant);
+            //5. Direccion del solicitante
+            Address addressApplicant = new Address();
+            //pais
+            request1 = new EJBRequest();
+            request1.setParam(countryAddress);
+            Country countryAddressApplicant = utilsEJB.loadCountry(request1);
+            //estado
+            request1 = new EJBRequest();
+            request1.setParam(state);
+            State stateAddress = utilsEJB.loadState(request1);
+            //ciudad
+            request1 = new EJBRequest();
+            request1.setParam(city);
+            City cityAddress = utilsEJB.loadCity(request1);
+            //Guarda la direccion en BD
+            addressApplicant.setCityId(cityAddress);
+            addressApplicant.setCountryId(countryAddressApplicant);
+            addressApplicant.setFullAddress(address);
+//            addressApplicant.setPostalZone(postalZone);
+            addressApplicant = utilsEJB.saveAddress(addressApplicant);
+            PersonHasAddress personHasAddress = new PersonHasAddress();
+            personHasAddress.setAddressId(addressApplicant);
+            personHasAddress.setPersonId(applicant);
+            personHasAddress = personEJB.savePersonHasAddress(personHasAddress);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return applicantNatural;
+    }
+
+    @Override
+    public List<ImagensAplicantNaturalPerson> getImagensAplicantNaturalPersonByAplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ImagensAplicantNaturalPerson> imagensAplicantNaturalPersonList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        imagensAplicantNaturalPersonList = (List<ImagensAplicantNaturalPerson>) getNamedQueryResult(ImagensAplicantNaturalPerson.class, QueryConstants.IMAGENS_BY_APPLICANT, request, getMethodName(), logger, "ImagensAplicantNaturalPersonList");
+        return imagensAplicantNaturalPersonList;
+    }
+
+    @Override
+    public ImagensAplicantNaturalPerson loadImagensAplicantNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ImagensAplicantNaturalPerson imagensAplicantNaturalPerson = (ImagensAplicantNaturalPerson) loadEntity(ImagensAplicantNaturalPerson.class, request, logger, getMethodName());
+        return imagensAplicantNaturalPerson;
+    }
+
+    @Override
+    public ImagensAplicantNaturalPerson saveImagensAplicantNaturalPerson(ImagensAplicantNaturalPerson imagensAplicantNaturalPerson) throws NullParameterException, GeneralException {
+         if (imagensAplicantNaturalPerson == null) {
+            throw new NullParameterException("imagensAplicantNaturalPerson", null);
+        }
+        return (ImagensAplicantNaturalPerson) saveEntity(imagensAplicantNaturalPerson);
+    }
+
+    @Override
+    public List<ReviewOFAC> getReviewOFAC(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public List<ReviewOFAC> getReviewOFACByApplicantByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ReviewOFAC> ReviewOFACList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_REQUEST_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        ReviewOFACList = (List<ReviewOFAC>) getNamedQueryResult(ReviewOFAC.class, QueryConstants.REVIEW_OFAC_BY_APPLICANT_BY_REQUEST, request, getMethodName(), logger, "ReviewOFACList");
+        return ReviewOFACList;
+    }
+
+    @Override
+    public ReviewOFAC loadReviewOFAC(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ReviewOFAC saveReviewOFAC(ReviewOFAC reviewOFAC) throws NullParameterException, GeneralException {
+        if (reviewOFAC == null) {
+            throw new NullParameterException("reviewOFAC", null);
+        }
+        return (ReviewOFAC) saveEntity(reviewOFAC);
+    }
+
+    @Override
+    public List<StatusRequest> getStatusRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public StatusRequest loadStatusRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusRequest statusRequest = (StatusRequest) loadEntity(StatusRequest.class, request, logger, getMethodName());
+        return statusRequest;
+    }
+
+    @Override
+    public StatusRequest saveStatusRequest(StatusRequest statusRequest) throws NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
