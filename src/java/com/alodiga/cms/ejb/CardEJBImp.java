@@ -10,6 +10,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.AccountCard;
 import com.cms.commons.models.AccountProperties;
 import com.cms.commons.models.AccountSegment;
 import com.cms.commons.models.AccountType;
@@ -46,6 +47,20 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     public List<AccountProperties> getAccountProperties(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<AccountProperties> accountProperties = (List<AccountProperties>) listEntities(AccountProperties.class, request, logger, getMethodName());
         return accountProperties;
+    }
+    
+    @Override
+    public List<AccountProperties> getAccountPropertiesByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountProperties> accountPropertiesByRequest = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        accountPropertiesByRequest = (List<AccountProperties>) getNamedQueryResult(AccountProperties.class, QueryConstants.REVIEW_REQUEST_BY_REQUEST, request, getMethodName(), logger, "accountPropertiesByRequest");
+        return accountPropertiesByRequest;
     }
 
     @Override
@@ -286,4 +301,23 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return rateByCardList;
     }
 
+    @Override
+    public List<AccountCard> getAccountCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountCard> accountCard = (List<AccountCard>) listEntities(AccountCard.class, request, logger, getMethodName());
+        return accountCard;
+    }
+
+    @Override
+    public AccountCard loadAccountCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        AccountCard accountCard = (AccountCard) loadEntity(AccountCard.class, request, logger, getMethodName());
+        return accountCard;
+    }
+
+    @Override
+    public AccountCard saveAccountCard(AccountCard accountCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (accountCard == null) {
+            throw new NullParameterException("accountCard", null);
+        }
+        return (AccountCard) saveEntity(accountCard);
+    }
 }
