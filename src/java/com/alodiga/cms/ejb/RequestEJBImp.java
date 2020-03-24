@@ -844,7 +844,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             addressApplicant.setCityId(cityAddress);
             addressApplicant.setCountryId(countryAddressApplicant);
             addressApplicant.setFullAddress(address);
-            addressApplicant.setPostalZone(postalZone);
+//            addressApplicant.setPostalZone(postalZone);
             addressApplicant = utilsEJB.saveAddress(addressApplicant);
             PersonHasAddress personHasAddress = new PersonHasAddress();
             personHasAddress.setAddressId(addressApplicant);
