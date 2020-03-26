@@ -18,6 +18,7 @@ import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.Card;
 import com.cms.commons.models.CardNumberCredential;
 import com.cms.commons.models.RateByCard;
+import com.cms.commons.models.StatusAccount;
 import com.cms.commons.models.SubAccountType;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -59,7 +60,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
         }
-        accountPropertiesByRequest = (List<AccountProperties>) getNamedQueryResult(AccountProperties.class, QueryConstants.REVIEW_REQUEST_BY_REQUEST, request, getMethodName(), logger, "accountPropertiesByRequest");
+        accountPropertiesByRequest = (List<AccountProperties>) getNamedQueryResult(AccountProperties.class, QueryConstants.ACCOUNT_PROPERTIES_BY_REQUEST, request, getMethodName(), logger, "accountPropertiesByRequest");
         return accountPropertiesByRequest;
     }
 
@@ -319,5 +320,25 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException("accountCard", null);
         }
         return (AccountCard) saveEntity(accountCard);
+    }
+
+    @Override
+    public List<StatusAccount> getStatusAccount(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusAccount> statusAccountList = (List<StatusAccount>) listEntities(StatusAccount.class, request, logger, getMethodName());
+        return statusAccountList;
+    }
+
+    @Override
+    public StatusAccount loadStatusAccount(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusAccount statusAccount = (StatusAccount) loadEntity(StatusAccount.class, request, logger, getMethodName());
+        return statusAccount;
+    }
+
+    @Override
+    public StatusAccount saveStatusAccount(StatusAccount statusAccount) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (statusAccount == null) {
+            throw new NullParameterException("statusAccount", null);
+        }
+        return (StatusAccount) saveEntity(statusAccount);
     }
 }
