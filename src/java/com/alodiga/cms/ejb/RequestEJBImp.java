@@ -813,6 +813,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantNatural.setCitizen(citizen);
             applicantNatural.setDateBirth(dateBirth);
             applicantNatural = personEJB.saveApplicantNaturalPerson(applicantNatural);
+            applicantNatural.setRequest(request);
 //            idApplicantNaturalPerson = applicantNatural.getId();
 
             //4. Telefonos del solicitante
