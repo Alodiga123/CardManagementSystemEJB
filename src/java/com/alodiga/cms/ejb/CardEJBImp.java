@@ -10,6 +10,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.AccountCard;
 import com.cms.commons.models.AccountProperties;
 import com.cms.commons.models.AccountSegment;
 import com.cms.commons.models.AccountType;
@@ -17,6 +18,7 @@ import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.Card;
 import com.cms.commons.models.CardNumberCredential;
 import com.cms.commons.models.RateByCard;
+import com.cms.commons.models.StatusAccount;
 import com.cms.commons.models.SubAccountType;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -46,6 +48,20 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     public List<AccountProperties> getAccountProperties(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<AccountProperties> accountProperties = (List<AccountProperties>) listEntities(AccountProperties.class, request, logger, getMethodName());
         return accountProperties;
+    }
+    
+    @Override
+    public List<AccountProperties> getAccountPropertiesByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountProperties> accountPropertiesByRequest = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        accountPropertiesByRequest = (List<AccountProperties>) getNamedQueryResult(AccountProperties.class, QueryConstants.ACCOUNT_PROPERTIES_BY_REQUEST, request, getMethodName(), logger, "accountPropertiesByRequest");
+        return accountPropertiesByRequest;
     }
 
     @Override
@@ -286,4 +302,43 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return rateByCardList;
     }
 
+    @Override
+    public List<AccountCard> getAccountCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountCard> accountCard = (List<AccountCard>) listEntities(AccountCard.class, request, logger, getMethodName());
+        return accountCard;
+    }
+
+    @Override
+    public AccountCard loadAccountCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        AccountCard accountCard = (AccountCard) loadEntity(AccountCard.class, request, logger, getMethodName());
+        return accountCard;
+    }
+
+    @Override
+    public AccountCard saveAccountCard(AccountCard accountCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (accountCard == null) {
+            throw new NullParameterException("accountCard", null);
+        }
+        return (AccountCard) saveEntity(accountCard);
+    }
+
+    @Override
+    public List<StatusAccount> getStatusAccount(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusAccount> statusAccountList = (List<StatusAccount>) listEntities(StatusAccount.class, request, logger, getMethodName());
+        return statusAccountList;
+    }
+
+    @Override
+    public StatusAccount loadStatusAccount(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusAccount statusAccount = (StatusAccount) loadEntity(StatusAccount.class, request, logger, getMethodName());
+        return statusAccount;
+    }
+
+    @Override
+    public StatusAccount saveStatusAccount(StatusAccount statusAccount) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (statusAccount == null) {
+            throw new NullParameterException("statusAccount", null);
+        }
+        return (StatusAccount) saveEntity(statusAccount);
+    }
 }
