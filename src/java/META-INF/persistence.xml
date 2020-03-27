@@ -108,6 +108,11 @@
     <class>com.cms.commons.models.StatusAccount</class>
     <class>com.cms.commons.models.RateByCard</class>
     <class>com.cms.commons.models.CardNumberCredential</class>
+    <class>com.cms.commons.models.ApprovalProgramRate</class>
+    <class>com.cms.commons.models.ApprovalGeneralRate</class>
+    <class>com.cms.commons.models.PlasticCustomizingRequest</class>
+    <class>com.cms.commons.models.ApprovalProductRate</class>
+    <class>com.cms.commons.models.StatusPlasticCustomizingRequest</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
