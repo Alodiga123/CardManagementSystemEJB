@@ -29,7 +29,6 @@ import com.cms.commons.models.Person;
 import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.FamilyReferences;
-import com.cms.commons.models.ImagensAplicantNaturalPerson;
 import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.PersonClassification;
 import com.cms.commons.models.PersonHasAddress;
@@ -855,31 +854,6 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             e.printStackTrace();
         }
         return applicantNatural;
-    }
-
-    @Override
-    public List<ImagensAplicantNaturalPerson> getImagensAplicantNaturalPersonByAplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<ImagensAplicantNaturalPerson> imagensAplicantNaturalPersonList = null;        
-        Map<String, Object> params = request.getParams();
-        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
-            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
-        }
-        imagensAplicantNaturalPersonList = (List<ImagensAplicantNaturalPerson>) getNamedQueryResult(ImagensAplicantNaturalPerson.class, QueryConstants.IMAGENS_BY_APPLICANT, request, getMethodName(), logger, "ImagensAplicantNaturalPersonList");
-        return imagensAplicantNaturalPersonList;
-    }
-
-    @Override
-    public ImagensAplicantNaturalPerson loadImagensAplicantNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        ImagensAplicantNaturalPerson imagensAplicantNaturalPerson = (ImagensAplicantNaturalPerson) loadEntity(ImagensAplicantNaturalPerson.class, request, logger, getMethodName());
-        return imagensAplicantNaturalPerson;
-    }
-
-    @Override
-    public ImagensAplicantNaturalPerson saveImagensAplicantNaturalPerson(ImagensAplicantNaturalPerson imagensAplicantNaturalPerson) throws NullParameterException, GeneralException {
-         if (imagensAplicantNaturalPerson == null) {
-            throw new NullParameterException("imagensAplicantNaturalPerson", null);
-        }
-        return (ImagensAplicantNaturalPerson) saveEntity(imagensAplicantNaturalPerson);
     }
 
     @Override
