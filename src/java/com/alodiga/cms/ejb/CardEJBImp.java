@@ -324,8 +324,8 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
 
     @Override
     public List<StatusAccount> getStatusAccount(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<StatusAccount> statusAccount = (List<StatusAccount>) listEntities(StatusAccount.class, request, logger, getMethodName());
-        return statusAccount;
+        List<StatusAccount> statusAccountList = (List<StatusAccount>) listEntities(StatusAccount.class, request, logger, getMethodName());
+        return statusAccountList;
     }
 
     @Override
