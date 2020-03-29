@@ -3,7 +3,6 @@
   <persistence-unit name="cmsPu" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>jdbc/cms</jta-data-source>
-    <class>com.cms.commons.models.Account</class>
     <class>com.cms.commons.models.EdificationType</class>
     <class>com.cms.commons.models.RequestType</class>
     <class>com.cms.commons.models.StreetType</class>
@@ -105,7 +104,24 @@
     <class>com.cms.commons.models.AdditionalInformationNaturalCustomer</class>
     <class>com.cms.commons.models.PlasticManufacturer</class>
     <class>com.cms.commons.models.Title</class>
-    <class>com.cms.commons.models.ImagensAplicantNaturalPerson</class>
+    <class>com.cms.commons.models.AccountCard</class>
+    <class>com.cms.commons.models.StatusAccount</class>
+    <class>com.cms.commons.models.RateByCard</class>
+    <class>com.cms.commons.models.CardNumberCredential</class>
+    <class>com.cms.commons.models.ApprovalProgramRate</class>
+    <class>com.cms.commons.models.ApprovalGeneralRate</class>
+    <class>com.cms.commons.models.PlasticCustomizingRequest</class>
+    <class>com.cms.commons.models.ApprovalProductRate</class>
+    <class>com.cms.commons.models.StatusPlasticCustomizingRequest</class>
+    <class>com.cms.commons.models.ProfileHasProfile</class>
+    <class>com.cms.commons.models.ProfileData</class>
+    <class>com.cms.commons.models.PermissionData</class>
+    <class>com.cms.commons.models.PermissionHasProfile</class>
+    <class>com.cms.commons.models.PermissionGroup</class>
+    <class>com.cms.commons.models.PermissionGroupData</class>
+    <class>com.cms.commons.models.Language</class>
+    <class>com.cms.commons.models.Profile</class>
+    <class>com.cms.commons.models.Permission</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
