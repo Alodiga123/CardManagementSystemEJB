@@ -113,6 +113,15 @@
     <class>com.cms.commons.models.PlasticCustomizingRequest</class>
     <class>com.cms.commons.models.ApprovalProductRate</class>
     <class>com.cms.commons.models.StatusPlasticCustomizingRequest</class>
+    <class>com.cms.commons.models.ProfileHasProfile</class>
+    <class>com.cms.commons.models.ProfileData</class>
+    <class>com.cms.commons.models.PermissionData</class>
+    <class>com.cms.commons.models.PermissionHasProfile</class>
+    <class>com.cms.commons.models.PermissionGroup</class>
+    <class>com.cms.commons.models.PermissionGroupData</class>
+    <class>com.cms.commons.models.Language</class>
+    <class>com.cms.commons.models.Profile</class>
+    <class>com.cms.commons.models.Permission</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
