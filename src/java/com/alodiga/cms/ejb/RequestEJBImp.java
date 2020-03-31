@@ -35,6 +35,7 @@ import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
+import com.cms.commons.models.PlasticCustomizingRequest;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Profession;
 import com.cms.commons.models.Program;
@@ -48,6 +49,7 @@ import com.cms.commons.models.ReviewRequestType;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StatusApplicant;
+import com.cms.commons.models.StatusPlasticCustomizingRequest;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.StreetType;
 import com.cms.commons.models.Title;
@@ -889,6 +891,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         return (ReviewOFAC) saveEntity(reviewOFAC);
     }
 
+    //StatusRequest
     @Override
     public List<StatusRequest> getStatusRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -903,5 +906,47 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     @Override
     public StatusRequest saveStatusRequest(StatusRequest statusRequest) throws NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    //PlasticCustomizingRequest
+    @Override
+    public List<PlasticCustomizingRequest> getPlasticCustomizingRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PlasticCustomizingRequest> plasticCustomizingRequest = (List<PlasticCustomizingRequest>) listEntities(PlasticCustomizingRequest.class, request, logger, getMethodName());
+        return plasticCustomizingRequest;
+    }
+
+    @Override
+    public PlasticCustomizingRequest loadPlasticCustomizingRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PlasticCustomizingRequest plasticCustomizingRequest = (PlasticCustomizingRequest) loadEntity(PlasticCustomizingRequest.class, request, logger, getMethodName());
+        return plasticCustomizingRequest;
+    }
+
+    @Override
+    public PlasticCustomizingRequest savePlasticCustomizingRequest(PlasticCustomizingRequest plasticCustomizingRequest) throws NullParameterException, GeneralException {
+        if (plasticCustomizingRequest == null) {
+            throw new NullParameterException("plasticCustomizingRequest", null);
+        }
+        return (PlasticCustomizingRequest) saveEntity(plasticCustomizingRequest);
+    }
+
+    //StatusPlasticCustomizingRequest
+    @Override
+    public List<StatusPlasticCustomizingRequest> getStatusPlasticCustomizingRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusPlasticCustomizingRequest> statusPlasticCustomizingRequest = (List<StatusPlasticCustomizingRequest>) listEntities(StatusPlasticCustomizingRequest.class, request, logger, getMethodName());
+        return statusPlasticCustomizingRequest;
+    }
+
+    @Override
+    public StatusPlasticCustomizingRequest loadStatusPlasticCustomizingRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusPlasticCustomizingRequest statusPlasticCustomizingRequest = (StatusPlasticCustomizingRequest) loadEntity(StatusPlasticCustomizingRequest.class, request, logger, getMethodName());
+        return statusPlasticCustomizingRequest;
+    }
+
+    @Override
+    public StatusPlasticCustomizingRequest saveStatusPlasticCustomizingRequest(StatusPlasticCustomizingRequest statusPlasticCustomizingRequest) throws NullParameterException, GeneralException {
+        if (statusPlasticCustomizingRequest == null) {
+            throw new NullParameterException("statusPlasticCustomizingRequest", null);
+        }
+        return (StatusPlasticCustomizingRequest) saveEntity(statusPlasticCustomizingRequest);
     }
 }
