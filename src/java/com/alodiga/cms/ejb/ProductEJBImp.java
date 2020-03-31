@@ -10,6 +10,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.ApprovalGeneralRate;
 import com.cms.commons.models.Channel;
 import com.cms.commons.models.CommerceCategory;
 import com.cms.commons.models.GeneralRate;
@@ -492,5 +493,24 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         return productHasCommerceCategoryList;
     }
 
-        
+    @Override
+    public List<ApprovalGeneralRate> getApprovalGeneralRate(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApprovalGeneralRate> approvalGeneralRateList = (List<ApprovalGeneralRate>) listEntities(ApprovalGeneralRate.class, request, logger, getMethodName());
+        return approvalGeneralRateList;
+    }
+
+    @Override
+    public ApprovalGeneralRate loadApprovalGeneralRate(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ApprovalGeneralRate approvalGeneralRate = (ApprovalGeneralRate) loadEntity(ApprovalGeneralRate.class, request, logger, getMethodName());
+        return approvalGeneralRate;
+    }
+
+    @Override
+    public ApprovalGeneralRate saveApprovalGeneralRate(ApprovalGeneralRate approvalGeneralRate) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (approvalGeneralRate == null) {
+            throw new NullParameterException("approvalGeneralRate", null);
+        }
+        return (ApprovalGeneralRate) saveEntity(approvalGeneralRate);
+    }
+    
 }
