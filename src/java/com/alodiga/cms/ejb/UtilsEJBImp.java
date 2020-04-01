@@ -31,6 +31,7 @@ import com.cms.commons.models.EconomicActivity;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.KindCard;
+import com.cms.commons.models.Language;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.OriginApplication;
@@ -867,6 +868,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<PermissionGroupData> permissionGroupDataList = (List<PermissionGroupData>) listEntities(PermissionGroupData.class, request, logger, getMethodName());
         return permissionGroupDataList;
     }
+    
     @Override
     public PermissionGroupData loadPermissionGroupData(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         PermissionGroupData permissionGroupData = (PermissionGroupData) loadEntity(PermissionGroupData.class, request, logger, getMethodName());
@@ -880,5 +882,25 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (PermissionGroupData) saveEntity(permissionGroupData);
     }
+    
+    //Language
+    @Override
+    public List<Language> getLanguage(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Language> languageList = (List<Language>) listEntities(Language.class, request, logger, getMethodName());
+        return languageList;
+    }
 
-}
+    @Override
+    public Language loadLanguage(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Language language = (Language) loadEntity(Language.class, request, logger, getMethodName());
+        return language;
+    }
+
+    @Override
+    public Language saveLanguage(Language language) throws RegisterNotFoundException, NullParameterException, GeneralException {
+         if (language == null) {
+            throw new NullParameterException("language", null);
+        }
+        return (Language) saveEntity(language);
+    }
+}    
