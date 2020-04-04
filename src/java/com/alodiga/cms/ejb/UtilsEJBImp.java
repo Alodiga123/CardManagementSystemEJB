@@ -34,6 +34,8 @@ import com.cms.commons.models.KindCard;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.OriginApplication;
+import com.cms.commons.models.PermissionGroup;
+import com.cms.commons.models.PermissionGroupData;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.ResponsibleNetworkReporting;
@@ -834,6 +836,49 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     @Override
     public KindCard saveKindCard(KindCard kindCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
+    //PermissionGroup
+    @Override
+    public List<PermissionGroup> getPermissionGroup(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<PermissionGroup> permissionGroupList = (List<PermissionGroup>) listEntities(PermissionGroup.class, request, logger, getMethodName());
+        return permissionGroupList;
+    }
+
+    @Override
+    public PermissionGroup loadPermissionGroup(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PermissionGroup permissionGroup = (PermissionGroup) loadEntity(PermissionGroup.class, request, logger, getMethodName());
+        return permissionGroup;
+    }
+
+    @Override
+    public PermissionGroup savePermissionGroup(PermissionGroup permissionGroup) throws RegisterNotFoundException, NullParameterException, GeneralException {
+         if (permissionGroup == null) {
+            throw new NullParameterException("permissionGroup", null);
+        }
+        return (PermissionGroup) saveEntity(permissionGroup);
+    }
+    
+    
+    //PermissionGroupData
+    @Override
+    public List<PermissionGroupData> getPermissionGroupData(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PermissionGroupData> permissionGroupDataList = (List<PermissionGroupData>) listEntities(PermissionGroupData.class, request, logger, getMethodName());
+        return permissionGroupDataList;
+    }
+    @Override
+    public PermissionGroupData loadPermissionGroupData(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PermissionGroupData permissionGroupData = (PermissionGroupData) loadEntity(PermissionGroupData.class, request, logger, getMethodName());
+        return permissionGroupData;
+    }
+
+    @Override
+    public PermissionGroupData savePermissionGroupData(PermissionGroupData permissionGroupData) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (permissionGroupData == null) {
+            throw new NullParameterException("permissionGroupData", null);
+        }
+        return (PermissionGroupData) saveEntity(permissionGroupData);
     }
 
 }
