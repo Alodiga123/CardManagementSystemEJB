@@ -137,7 +137,7 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
     }
     
     @Override
-    public List<ProgramHasNetwork> getProgramHasNetworkByNetworkByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    public List<ProgramHasNetwork> getProgramHasNetworkBD(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ProgramHasNetwork> programHasNetworkList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
@@ -146,7 +146,7 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         if (!params.containsKey(EjbConstants.PARAM_NETWORK_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_NETWORK_ID), null);
         }
-        programHasNetworkList = (List<ProgramHasNetwork>) getNamedQueryResult(ProgramHasNetwork.class, QueryConstants.PROGRAM_HAS_NETWORK_BY_NETWORK_BY_PROGRAM, request, getMethodName(), logger, "programHasNetworkList");
+        programHasNetworkList = (List<ProgramHasNetwork>) getNamedQueryResult(ProgramHasNetwork.class, QueryConstants.PROGRAM_HAS_NETWORK_BD, request, getMethodName(), logger, "programHasNetworkList");
         return programHasNetworkList;
     }
 
