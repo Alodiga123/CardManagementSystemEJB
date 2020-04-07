@@ -103,7 +103,6 @@
     <class>com.cms.commons.models.AccountTypeHasProductType</class>
     <class>com.cms.commons.models.AdditionalInformationNaturalCustomer</class>
     <class>com.cms.commons.models.PlasticManufacturer</class>
-    <class>com.cms.commons.models.Title</class>
     <class>com.cms.commons.models.AccountCard</class>
     <class>com.cms.commons.models.StatusAccount</class>
     <class>com.cms.commons.models.RateByCard</class>
@@ -122,6 +121,10 @@
     <class>com.cms.commons.models.Language</class>
     <class>com.cms.commons.models.Profile</class>
     <class>com.cms.commons.models.Permission</class>
+    <class>com.cms.commons.models.DeliveryRequetsHasCard</class>
+    <class>com.cms.commons.models.PlastiCustomizingRequestHasCard</class>
+    <class>com.cms.commons.models.StatusDeliveryRequest</class>
+    <class>com.cms.commons.models.DeliveryRequest</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
