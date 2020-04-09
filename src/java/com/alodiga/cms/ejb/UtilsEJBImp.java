@@ -31,9 +31,12 @@ import com.cms.commons.models.EconomicActivity;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.KindCard;
+import com.cms.commons.models.Language;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.OriginApplication;
+import com.cms.commons.models.Permission;
+import com.cms.commons.models.PermissionData;
 import com.cms.commons.models.PermissionGroup;
 import com.cms.commons.models.PermissionGroupData;
 import com.cms.commons.models.PersonType;
@@ -867,6 +870,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<PermissionGroupData> permissionGroupDataList = (List<PermissionGroupData>) listEntities(PermissionGroupData.class, request, logger, getMethodName());
         return permissionGroupDataList;
     }
+    
     @Override
     public PermissionGroupData loadPermissionGroupData(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         PermissionGroupData permissionGroupData = (PermissionGroupData) loadEntity(PermissionGroupData.class, request, logger, getMethodName());
@@ -880,5 +884,67 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (PermissionGroupData) saveEntity(permissionGroupData);
     }
+    
+    //Language
+    @Override
+    public List<Language> getLanguage(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Language> languageList = (List<Language>) listEntities(Language.class, request, logger, getMethodName());
+        return languageList;
+    }
 
-}
+    @Override
+    public Language loadLanguage(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Language language = (Language) loadEntity(Language.class, request, logger, getMethodName());
+        return language;
+    }
+
+    @Override
+    public Language saveLanguage(Language language) throws RegisterNotFoundException, NullParameterException, GeneralException {
+         if (language == null) {
+            throw new NullParameterException("language", null);
+        }
+        return (Language) saveEntity(language);
+    }
+
+    //Permission
+    @Override
+    public List<Permission> getPermission(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Permission> permissionList = (List<Permission>) listEntities(Permission.class, request, logger, getMethodName());
+        return permissionList;
+    }
+
+    @Override
+    public Permission loadPermission(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Permission permission = (Permission) loadEntity(Permission.class, request, logger, getMethodName());
+        return permission;
+    }
+
+    @Override
+    public Permission savePermission(Permission permission) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (permission == null) {
+            throw new NullParameterException("permission", null);
+        }
+        return (Permission) saveEntity(permission);
+    }
+    
+    //PermissionData
+    @Override
+    public List<PermissionData> getPermissionData(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PermissionData> permissionDataList = (List<PermissionData>) listEntities(PermissionData.class, request, logger, getMethodName());
+        return permissionDataList;
+    }
+
+    @Override
+    public PermissionData loadPermissionData(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PermissionData permission = (PermissionData) loadEntity(PermissionData.class, request, logger, getMethodName());
+        return permission;
+    }
+
+    @Override
+    public PermissionData savePermissionData(PermissionData permissionData) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (permissionData == null) {
+            throw new NullParameterException("permissionData", null);
+        }
+        return (PermissionData) saveEntity(permissionData);
+    }
+}    
