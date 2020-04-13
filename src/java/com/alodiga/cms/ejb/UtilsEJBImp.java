@@ -35,6 +35,8 @@ import com.cms.commons.models.Language;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalRepresentatives;
 import com.cms.commons.models.OriginApplication;
+import com.cms.commons.models.Permission;
+import com.cms.commons.models.PermissionData;
 import com.cms.commons.models.PermissionGroup;
 import com.cms.commons.models.PermissionGroupData;
 import com.cms.commons.models.PersonType;
@@ -902,5 +904,47 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("language", null);
         }
         return (Language) saveEntity(language);
+    }
+
+    //Permission
+    @Override
+    public List<Permission> getPermission(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Permission> permissionList = (List<Permission>) listEntities(Permission.class, request, logger, getMethodName());
+        return permissionList;
+    }
+
+    @Override
+    public Permission loadPermission(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Permission permission = (Permission) loadEntity(Permission.class, request, logger, getMethodName());
+        return permission;
+    }
+
+    @Override
+    public Permission savePermission(Permission permission) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (permission == null) {
+            throw new NullParameterException("permission", null);
+        }
+        return (Permission) saveEntity(permission);
+    }
+    
+    //PermissionData
+    @Override
+    public List<PermissionData> getPermissionData(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PermissionData> permissionDataList = (List<PermissionData>) listEntities(PermissionData.class, request, logger, getMethodName());
+        return permissionDataList;
+    }
+
+    @Override
+    public PermissionData loadPermissionData(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PermissionData permission = (PermissionData) loadEntity(PermissionData.class, request, logger, getMethodName());
+        return permission;
+    }
+
+    @Override
+    public PermissionData savePermissionData(PermissionData permissionData) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (permissionData == null) {
+            throw new NullParameterException("permissionData", null);
+        }
+        return (PermissionData) saveEntity(permissionData);
     }
 }    
