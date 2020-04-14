@@ -35,6 +35,7 @@ import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
+import com.cms.commons.models.PlastiCustomizingRequestHasCard;
 import com.cms.commons.models.PlasticCustomizingRequest;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Profession;
@@ -52,7 +53,6 @@ import com.cms.commons.models.StatusApplicant;
 import com.cms.commons.models.StatusPlasticCustomizingRequest;
 import com.cms.commons.models.StatusRequest;
 import com.cms.commons.models.StreetType;
-import com.cms.commons.models.Title;
 import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.Constants;
@@ -796,11 +796,6 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request.setCreateDate(dateRequest);
             request = requestEJB.saveRequest(request);
 
-            //3. Titulo del solicitante
-            request1 = new EJBRequest();
-            request1.setParam(titleId);
-            Title title = personEJB.loadTitle(request1);
-
             //Guarda en BD el applicantNaturalPerson
             applicantNatural = new ApplicantNaturalPerson();
             applicantNatural.setPersonId(applicant);
@@ -808,8 +803,6 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantNatural.setDueDateDocumentIdentification(dueDateIdentification);
             applicantNatural.setFirstNames(firstNames);
             applicantNatural.setLastNames(lastNames);
-            applicantNatural.setTitle(title);
-            applicantNatural.setPassword(password);
             applicantNatural.setPromotion(promotion);
             applicantNatural.setRecommendation(recommendation);
             applicantNatural.setCitizen(citizen);
@@ -845,7 +838,6 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             //Guarda la direccion en BD
             addressApplicant.setCityId(cityAddress);
             addressApplicant.setCountryId(countryAddressApplicant);
-            addressApplicant.setFullAddress(address);
 //            addressApplicant.setPostalZone(postalZone);
             addressApplicant = utilsEJB.saveAddress(addressApplicant);
             PersonHasAddress personHasAddress = new PersonHasAddress();
@@ -927,6 +919,27 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             throw new NullParameterException("plasticCustomizingRequest", null);
         }
         return (PlasticCustomizingRequest) saveEntity(plasticCustomizingRequest);
+    }
+    
+    //PlastiCustomizingRequestHasCard
+    @Override
+    public List<PlastiCustomizingRequestHasCard> getPlastiCustomizingRequestHasCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PlastiCustomizingRequestHasCard> plastiCustomizingRequestHasCard = (List<PlastiCustomizingRequestHasCard>) listEntities(PlastiCustomizingRequestHasCard.class, request, logger, getMethodName());
+        return plastiCustomizingRequestHasCard;
+    }
+
+    @Override
+    public PlastiCustomizingRequestHasCard loadPlastiCustomizingRequestHasCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PlastiCustomizingRequestHasCard plastiCustomizingRequestHasCard = (PlastiCustomizingRequestHasCard) loadEntity(PlastiCustomizingRequestHasCard.class, request, logger, getMethodName());
+        return plastiCustomizingRequestHasCard;
+    }
+
+    @Override
+    public PlastiCustomizingRequestHasCard savePlastiCustomizingRequestHasCard(PlastiCustomizingRequestHasCard plastiCustomizingRequestHasCard) throws NullParameterException, GeneralException {
+        if (plastiCustomizingRequestHasCard == null) {
+            throw new NullParameterException("plastiCustomizingRequestHasCard", null);
+        }
+        return (PlastiCustomizingRequestHasCard) saveEntity(plastiCustomizingRequestHasCard);
     }
 
     //StatusPlasticCustomizingRequest
