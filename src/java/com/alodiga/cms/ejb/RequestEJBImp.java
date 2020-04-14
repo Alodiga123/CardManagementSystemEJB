@@ -35,6 +35,7 @@ import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
+import com.cms.commons.models.PlastiCustomizingRequestHasCard;
 import com.cms.commons.models.PlasticCustomizingRequest;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Profession;
@@ -918,6 +919,27 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             throw new NullParameterException("plasticCustomizingRequest", null);
         }
         return (PlasticCustomizingRequest) saveEntity(plasticCustomizingRequest);
+    }
+    
+    //PlastiCustomizingRequestHasCard
+    @Override
+    public List<PlastiCustomizingRequestHasCard> getPlastiCustomizingRequestHasCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PlastiCustomizingRequestHasCard> plastiCustomizingRequestHasCard = (List<PlastiCustomizingRequestHasCard>) listEntities(PlastiCustomizingRequestHasCard.class, request, logger, getMethodName());
+        return plastiCustomizingRequestHasCard;
+    }
+
+    @Override
+    public PlastiCustomizingRequestHasCard loadPlastiCustomizingRequestHasCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PlastiCustomizingRequestHasCard plastiCustomizingRequestHasCard = (PlastiCustomizingRequestHasCard) loadEntity(PlastiCustomizingRequestHasCard.class, request, logger, getMethodName());
+        return plastiCustomizingRequestHasCard;
+    }
+
+    @Override
+    public PlastiCustomizingRequestHasCard savePlastiCustomizingRequestHasCard(PlastiCustomizingRequestHasCard plastiCustomizingRequestHasCard) throws NullParameterException, GeneralException {
+        if (plastiCustomizingRequestHasCard == null) {
+            throw new NullParameterException("plastiCustomizingRequestHasCard", null);
+        }
+        return (PlastiCustomizingRequestHasCard) saveEntity(plastiCustomizingRequestHasCard);
     }
 
     //StatusPlasticCustomizingRequest
