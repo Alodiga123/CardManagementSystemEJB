@@ -34,13 +34,9 @@ import com.cms.commons.models.SegmentCommerce;
 import com.cms.commons.models.SegmentMarketing;
 import com.cms.commons.models.StorageMedio;
 import com.cms.commons.models.Transaction;
-import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import javax.persistence.Query;
 
 /**
  *
