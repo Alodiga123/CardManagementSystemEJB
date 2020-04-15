@@ -715,7 +715,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }    
 
     @Override
-    public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String cellPhone, int countryAddress, int state, int city, String postalZone, String address, boolean recommendation, boolean promotion, boolean citizen, String password, int titleId) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+     public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String cellPhone, int countryAddress, int state, int city, ZipZone postalZone, boolean recommendation, boolean promotion, boolean citizen, DocumentsPersonType documentsPersonType,
+        String documentNumber,String gender,CivilStatus civilStatus,EdificationType edificationType,String street,String number) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
         PersonType personTypeApp = new PersonType();
         ApplicantNaturalPerson applicantNatural = null;
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
@@ -799,10 +800,15 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             //Guarda en BD el applicantNaturalPerson
             applicantNatural = new ApplicantNaturalPerson();
             applicantNatural.setPersonId(applicant);
-//            applicantNatural.setIdentificationNumber(identificationNumber);
+            applicantNatural.setIdentificationNumber(documentNumber);
+            applicantNatural.setDocumentsPersonTypeId(documentsPersonType);
             applicantNatural.setDueDateDocumentIdentification(dueDateIdentification);
             applicantNatural.setFirstNames(firstNames);
             applicantNatural.setLastNames(lastNames);
+            applicantNatural.setMarriedLastName(civilStatus.getDescription());
+            applicantNatural.setGender(gender); //pasar por parámetro M ó F
+            applicantNatural.setDateBirth(dateBirth);
+            applicantNatural.setCivilStatusId(civilStatus);
             applicantNatural.setPromotion(promotion);
             applicantNatural.setRecommendation(recommendation);
             applicantNatural.setCitizen(citizen);
@@ -838,7 +844,10 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             //Guarda la direccion en BD
             addressApplicant.setCityId(cityAddress);
             addressApplicant.setCountryId(countryAddressApplicant);
-//            addressApplicant.setPostalZone(postalZone);
+            addressApplicant.setEdificationTypeId(edificationType);
+            addressApplicant.setNameStreet(street);
+            addressApplicant.setNumber(number);
+            addressApplicant.setZipZoneId(postalZone);
             addressApplicant = utilsEJB.saveAddress(addressApplicant);
             PersonHasAddress personHasAddress = new PersonHasAddress();
             personHasAddress.setAddressId(addressApplicant);
