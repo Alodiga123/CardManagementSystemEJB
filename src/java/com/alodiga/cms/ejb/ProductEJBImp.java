@@ -11,6 +11,7 @@ import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.ApprovalGeneralRate;
+import com.cms.commons.models.ApprovalProgramRate;
 import com.cms.commons.models.Channel;
 import com.cms.commons.models.CommerceCategory;
 import com.cms.commons.models.GeneralRate;
@@ -33,13 +34,9 @@ import com.cms.commons.models.SegmentCommerce;
 import com.cms.commons.models.SegmentMarketing;
 import com.cms.commons.models.StorageMedio;
 import com.cms.commons.models.Transaction;
-import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import javax.persistence.Query;
 
 /**
  *
@@ -511,6 +508,26 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
             throw new NullParameterException("approvalGeneralRate", null);
         }
         return (ApprovalGeneralRate) saveEntity(approvalGeneralRate);
+    }
+
+    @Override
+    public List<ApprovalProgramRate> getApprovalProgramRate(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApprovalProgramRate> approvalProgramRateList = (List<ApprovalProgramRate>) listEntities(ApprovalProgramRate.class, request, logger, getMethodName());
+        return approvalProgramRateList;
+    }
+
+    @Override
+    public ApprovalProgramRate loadApprovalProgramRate(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ApprovalProgramRate approvalProgramRate = (ApprovalProgramRate) loadEntity(ApprovalProgramRate.class, request, logger, getMethodName());
+        return approvalProgramRate;
+    }
+
+    @Override
+    public ApprovalProgramRate saveApprovalProgramRate(ApprovalProgramRate approvalProgramRate) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (approvalProgramRate == null) {
+            throw new NullParameterException("approvalProgramRate", null);
+        }
+        return (ApprovalProgramRate) saveEntity(approvalProgramRate);
     }
     
 }
