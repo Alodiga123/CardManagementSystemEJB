@@ -178,14 +178,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     //PersonClassification
     @Override
-    public PersonClassification savePersonClassification(PersonClassification personclassification) throws NullParameterException, GeneralException {
-        if (personclassification == null) {
-            throw new NullParameterException("requestType", null);
-        }
-        return (PersonClassification) saveEntity(personclassification);
-    }
-
-    @Override
     public List<PersonClassification> getPersonClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PersonClassification> personclassification = (List<PersonClassification>) listEntities(PersonClassification.class, request, logger, getMethodName());
         return personclassification;
@@ -197,6 +189,15 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return personclassification;
 
     }
+    @Override
+    public PersonClassification savePersonClassification(PersonClassification personclassification) throws NullParameterException, GeneralException {
+        if (personclassification == null) {
+            throw new NullParameterException("requestType", null);
+        }
+        return (PersonClassification) saveEntity(personclassification);
+    }
+
+    
 
     //ProductType
     @Override
@@ -951,4 +952,5 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (PermissionData) saveEntity(permissionData);
     }
+
 }    
