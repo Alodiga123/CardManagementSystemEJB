@@ -44,6 +44,7 @@ import com.cms.commons.models.ReasonRejectionRequest;
 import com.cms.commons.models.RequestType;
 import com.cms.commons.models.Request;
 import com.cms.commons.models.RequestHasCollectionsRequest;
+import com.cms.commons.models.ResultPlasticCustomizingRequest;
 import com.cms.commons.models.ReviewOFAC;
 import com.cms.commons.models.ReviewRequest;
 import com.cms.commons.models.ReviewRequestType;
@@ -52,12 +53,14 @@ import com.cms.commons.models.State;
 import com.cms.commons.models.StatusApplicant;
 import com.cms.commons.models.StatusPlasticCustomizingRequest;
 import com.cms.commons.models.StatusRequest;
+import com.cms.commons.models.StatusResultPlasticCustomizing;
 import com.cms.commons.models.StreetType;
 import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EJBServiceLocator;
 import com.cms.commons.util.QueryConstants;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +69,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.persistence.Query;
 import org.apache.log4j.Logger;
 
 /**
@@ -73,12 +77,12 @@ import org.apache.log4j.Logger;
  * @author jose
  */
 //
-
 @Interceptors({DistributionLoggerInterceptor.class, DistributionContextInterceptor.class})
 @Stateless(name = EjbConstants.REQUEST_EJB, mappedName = EjbConstants.REQUEST_EJB)
 @TransactionManagement(TransactionManagementType.BEAN)
 
 public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB, RequestEJBLocal {
+
     private static final Logger logger = Logger.getLogger(RequestEJBImp.class);
     private UtilsEJB utilsEJB = null;
     private ProgramEJB programEJB = null;
@@ -90,16 +94,16 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         List<Request> requests = (List<Request>) listEntities(Request.class, request, logger, getMethodName());
         return requests;
     }
-    
+
     @Override
     public List<Request> getRequestsByStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-       List<Request> requestByStatusList = null;        
+        List<Request> requestByStatusList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_STATUS_REQUEST_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATUS_REQUEST_ID), null);
         }
         requestByStatusList = (List<Request>) getNamedQueryResult(Request.class, QueryConstants.STATUS_REQUEST, request, getMethodName(), logger, "requestByStatusList");
-        return requestByStatusList; 
+        return requestByStatusList;
     }
 
     @Override
@@ -118,20 +122,20 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
 
     @Override
     public Long saveRequestPersonData(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
-                                         String firstNames, String lastNames, String marriedLastName, String gender, String placeBirth, Date dateBirth, int familyResponsabilities,  
-                                         int civilStatusId, int professionId, String roomPhone, String cellPhone, int countryAddress, int state, int city, int zipZone, int edificationType, String nameEdification,
-                                         String tower, int floor, int streetType, String nameStreet, String Urbanization, String firstNamesFamilyOne, String lastNamesFamilyOne, String cellPhoneFamilyOne,
-                                         String roomPhoneFamilyOne, String cityFamilyOne, String firstNamesFamilyTwo, String lastNamesFamilyTwo, String cellPhoneFamilyTwo, String roomPhoneFamilyTwo, String cityFamilyTwo) 
-                                         throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
- 
+            String firstNames, String lastNames, String marriedLastName, String gender, String placeBirth, Date dateBirth, int familyResponsabilities,
+            int civilStatusId, int professionId, String roomPhone, String cellPhone, int countryAddress, int state, int city, int zipZone, int edificationType, String nameEdification,
+            String tower, int floor, int streetType, String nameStreet, String Urbanization, String firstNamesFamilyOne, String lastNamesFamilyOne, String cellPhoneFamilyOne,
+            String roomPhoneFamilyOne, String cityFamilyOne, String firstNamesFamilyTwo, String lastNamesFamilyTwo, String cellPhoneFamilyTwo, String roomPhoneFamilyTwo, String cityFamilyTwo)
+            throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+
         PersonType personTypeApp = new PersonType();
         int numberSequence = 0;
         Long idApplicantNaturalPerson = 0L;
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
         programEJB = (ProgramEJB) EJBServiceLocator.getInstance().get(EjbConstants.PROGRAM_EJB);
-        requestEJB = (RequestEJB) EJBServiceLocator.getInstance().get(EjbConstants.REQUEST_EJB); 
-        personEJB = (PersonEJB) EJBServiceLocator.getInstance().get(EjbConstants.PERSON_EJB); 
-        
+        requestEJB = (RequestEJB) EJBServiceLocator.getInstance().get(EjbConstants.REQUEST_EJB);
+        personEJB = (PersonEJB) EJBServiceLocator.getInstance().get(EjbConstants.PERSON_EJB);
+
         try {
             //1. Persona que hace la solicitud
             //Clasificacion de la persona (Solicitante)
@@ -150,7 +154,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             params.put(Constants.ORIGIN_APPLICATION_KEY, Constants.ORIGIN_APPLICATION_WALLET_ID);
             request1.setParams(params);
             List<PersonType> personTypes = utilsEJB.getPersonTypeByCountry(request1);
-            for (PersonType p: personTypes) {
+            for (PersonType p : personTypes) {
                 if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_WALLET_ID) {
                     personTypeApp = p;
                 }
@@ -188,7 +192,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             params.put(Constants.DOCUMENT_TYPE_KEY, Constants.DOCUMENT_TYPE_REQUEST);
             request1.setParams(params);
             List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
-            String numberRequest = utilsEJB.generateNumberSequence(sequence,Constants.ORIGIN_APPLICATION_WALLET_ID);
+            String numberRequest = utilsEJB.generateNumberSequence(sequence, Constants.ORIGIN_APPLICATION_WALLET_ID);
 
             //Crea el request y lo guarda en BD
             Request request = new Request();
@@ -202,7 +206,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request.setProductTypeId(productType);
             request.setRequestTypeId(requestType);
             request.setStatusRequestId(statusRequest);
-            request = requestEJB.saveRequest(request);        
+            request = requestEJB.saveRequest(request);
 
             //3. Datos basicos del solicitante
             //tipo de documento del solicitante
@@ -319,20 +323,20 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             familyReferencesTwo.setFirstNames(firstNamesFamilyTwo);
             familyReferencesTwo.setLastNames(lastNamesFamilyTwo);
             familyReferencesTwo = personEJB.saveFamilyReferences(familyReferencesTwo);
-        
+
         } catch (Exception e) {
-            e.printStackTrace(); 
-        } 
-        
+            e.printStackTrace();
+        }
+
         return idApplicantNaturalPerson;
     }
-    
+
     @Override
-    public ApplicantNaturalPerson saveCardComplementary(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
-                                                        String firstNames, String lastNames, String marriedLastName, String gender, String placeBirth, Date dateBirth, int civilStatusId,  
-                                                        int professionId, String roomPhone, String cellPhone, int countryAddress, int state, int city, int zipZone, int edificationType, String nameEdification,
-                                                        String tower, int floor, int streetType, String nameStreet, String Urbanization, Long applicantId, int kinShipApplicantId)
-                                                        throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+     public ApplicantNaturalPerson saveCardComplementary(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
+                                                        String firstNames, String lastNames,  String gender, Date dateBirth, int civilStatusId,  
+                                                        String cellPhone, int countryAddress, int state, int city, int zipZone, int edificationType, 
+                                                        String nameStreet, Long applicantId, int kinShipApplicantId)
+                                                        throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException{
     
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
         personEJB = (PersonEJB) EJBServiceLocator.getInstance().get(EjbConstants.PERSON_EJB); 
@@ -372,9 +376,9 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1.setParam(civilStatusId);
             CivilStatus civilStatus = personEJB.loadCivilStatus(request1);
             //profesion del solicitante
-            request1 = new EJBRequest();
-            request1.setParam(professionId);
-            Profession profession = personEJB.loadProfession(request1);
+//            request1 = new EJBRequest();
+//            request1.setParam(professionId);
+//            Profession profession = personEJB.loadProfession(request1);
             //Solicitante Principal
             request1 = new EJBRequest();
             request1.setParam(applicantId);
@@ -395,10 +399,10 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantCardComplementary.setGender(gender);
             applicantCardComplementary.setIdentificationNumber(identificationNumber);
             applicantCardComplementary.setKinShipApplicantId(kinShipApplicant);
-            applicantCardComplementary.setMarriedLastName(marriedLastName);
+//            applicantCardComplementary.setMarriedLastName(marriedLastName);
             applicantCardComplementary.setPersonId(cardComplementaryPerson);
-            applicantCardComplementary.setPlaceBirth(placeBirth);
-            applicantCardComplementary.setProfessionId(profession);
+//            applicantCardComplementary.setPlaceBirth(placeBirth);
+//            applicantCardComplementary.setProfessionId(profession);
             applicantCardComplementary = personEJB.saveApplicantNaturalPerson(applicantCardComplementary);
 
             //4. Telefonos del solicitante de tarjeta complementaria
@@ -412,14 +416,14 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             cellPhoneCardComplementary.setPhoneTypeId(mobilePhoneType);
             cellPhoneCardComplementary = personEJB.savePhonePerson(cellPhoneCardComplementary);
             //Guarda el telf. Habitacion en BD
-            PhonePerson roomPhoneCardComplementary = new PhonePerson();
-            roomPhoneCardComplementary.setNumberPhone(roomPhone);
-            roomPhoneCardComplementary.setPersonId(cardComplementaryPerson);
-            request1 = new EJBRequest();
-            request1.setParam(Constants.PHONE_TYPE_ROOM);
-            PhoneType roomPhoneType = personEJB.loadPhoneType(request1);
-            roomPhoneCardComplementary.setPhoneTypeId(roomPhoneType);
-            roomPhoneCardComplementary = personEJB.savePhonePerson(roomPhoneCardComplementary);
+//            PhonePerson roomPhoneCardComplementary = new PhonePerson();
+//            roomPhoneCardComplementary.setNumberPhone(roomPhone);
+//            roomPhoneCardComplementary.setPersonId(cardComplementaryPerson);
+//            request1 = new EJBRequest();
+//            request1.setParam(Constants.PHONE_TYPE_ROOM);
+//            PhoneType roomPhoneType = personEJB.loadPhoneType(request1);
+//            roomPhoneCardComplementary.setPhoneTypeId(roomPhoneType);
+//            roomPhoneCardComplementary = personEJB.savePhonePerson(roomPhoneCardComplementary);
 
             //5. Direccion del solicitante de tarjeta complementaria
             Address addressCardComplementary = new Address();
@@ -444,20 +448,20 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1.setParam(edificationType);
             EdificationType edificationTypeAddress = utilsEJB.loadEdificationType(request1);
             //tipos de calle
-            request1 = new EJBRequest();
-            request1.setParam(streetType);
-            StreetType streetTypeAddress = utilsEJB.loadStreetType(request1);
+//            request1 = new EJBRequest();
+//            request1.setParam(streetType);
+//            StreetType streetTypeAddress = utilsEJB.loadStreetType(request1);
 
             //Guarda la direccion en BD
             addressCardComplementary.setCityId(cityAddress);
             addressCardComplementary.setCountryId(countryAddressCardComplementary);
             addressCardComplementary.setEdificationTypeId(edificationTypeAddress);
-            addressCardComplementary.setFloor(floor);
-            addressCardComplementary.setNameEdification(nameEdification);
-            addressCardComplementary.setNameStreet(nameStreet);
-            addressCardComplementary.setStreetTypeId(streetTypeAddress);
-            addressCardComplementary.setTower(tower);
-            addressCardComplementary.setUrbanization(Urbanization);
+//            addressCardComplementary.setFloor(floor);
+//            addressCardComplementary.setNameEdification(nameEdification);
+//            addressCardComplementary.setNameStreet(nameStreet);
+//            addressCardComplementary.setStreetTypeId(streetTypeAddress);
+//            addressCardComplementary.setTower(tower);
+//            addressCardComplementary.setUrbanization(Urbanization);
             addressCardComplementary.setZipZoneId(zipZoneAddress);
             addressCardComplementary = utilsEJB.saveAddress(addressCardComplementary);
             PersonHasAddress personHasAddress = new PersonHasAddress();
@@ -471,10 +475,57 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         
         return applicantCardComplementary;
     }
+	
+	
+	
+	
+	 @Override
+    public boolean existsApplicantNaturalPersonByEmail(String email) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApplicantNaturalPerson> applicantNaturalPersons = new ArrayList<ApplicantNaturalPerson>();
+        boolean exists = false;
+        System.out.println("llego a validar email");
+        if (email==null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "email"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT a FROM ApplicantNaturalPerson a, Person p WHERE a.personId.id = p.id AND p.email ='" + email+"'");
+        Query query = null;
+        try {
+            query = createQuery(sqlBuilder.toString());
+            applicantNaturalPersons = (List<ApplicantNaturalPerson>) query.setHint("toplink.refresh", "true").getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!applicantNaturalPersons.isEmpty())
+            exists = true;
+        System.out.println("El email"+email+" :"+exists);
+        return exists;
+    }
+
+    @Override
+    public boolean existsApplicantNaturalPersonByPhoneNumber(String numberPhone) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApplicantNaturalPerson> applicantNaturalPersons = new ArrayList<ApplicantNaturalPerson>();
+        boolean exists = false;
+        System.out.println("llego a validar numero");
+        if (numberPhone==null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "numberPhone"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT a FROM ApplicantNaturalPerson a, PhonePerson p WHERE a.personId.id = p.personId.id AND p.numberPhone ='" + numberPhone+"'");
+        Query query = null;
+        try {
+            query = createQuery(sqlBuilder.toString());
+            applicantNaturalPersons = (List<ApplicantNaturalPerson>) query.setHint("toplink.refresh", "true").getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!applicantNaturalPersons.isEmpty())
+            exists = true;
+        System.out.println("El numero"+numberPhone+" :"+exists);
+        return exists;
+    }
 
     @Override
     public PersonType personTypeWallet(int countryId) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
-        
+
         PersonType personTypeApp = new PersonType();
         try {
             EJBRequest request1 = new EJBRequest();
@@ -483,7 +534,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             params.put(Constants.ORIGIN_APPLICATION_KEY, Constants.ORIGIN_APPLICATION_WALLET_ID);
             request1.setParams(params);
             List<PersonType> personTypes = utilsEJB.getPersonTypeByCountry(request1);
-            for (PersonType p: personTypes) {
+            for (PersonType p : personTypes) {
                 if (p.getOriginApplicationId().getId() == Constants.ORIGIN_APPLICATION_WALLET_ID) {
                     personTypeApp = p;
                 }
@@ -492,18 +543,18 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             e.printStackTrace();
         }
         return personTypeApp;
-    }  
-    
+    }
+
     //Collections Requests
     @Override
     public List<CollectionsRequest> getCollectionsRequests(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CollectionsRequest> collectionsRequest = (List<CollectionsRequest>) listEntities(CollectionsRequest.class, request, logger, getMethodName());
         return collectionsRequest;
     }
-    
+
     @Override
     public List<CollectionsRequest> getCollectionsByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CollectionsRequest> CollectionsRequestByrequestsList = null;        
+        List<CollectionsRequest> CollectionsRequestByrequestsList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
@@ -534,8 +585,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (CollectionsRequest) saveEntity(collectionRequest);
     }
-    
-    
+
     //RequestHasCollectionsRequest
     @Override
     public List<RequestHasCollectionsRequest> getRequestsHasCollectionsRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -556,15 +606,14 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (RequestHasCollectionsRequest) saveEntity(requestHasCollectionsRequest);
     }
-    
-    
+
     //CollectionType
     @Override
     public List<CollectionType> getCollectionType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CollectionType> collectionType = (List<CollectionType>) listEntities(CollectionType.class, request, logger, getMethodName());
         return collectionType;
     }
-    
+
     @Override
     public List<CollectionType> getCollectionTypeByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CollectionType> collectionTypeByCountry = null;
@@ -586,14 +635,13 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         return (CollectionType) saveEntity(collectionType);
     }
 
-    
     //ReviewRequest
     @Override
     public List<ReviewRequest> getReviewRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ReviewRequest> reviewRequest = (List<ReviewRequest>) listEntities(ReviewRequest.class, request, logger, getMethodName());
         return reviewRequest;
     }
-    
+
     @Override
     public List<ReviewRequest> getReviewRequestByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ReviewRequest> reviewRequest = null;
@@ -607,7 +655,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         reviewRequest = (List<ReviewRequest>) getNamedQueryResult(ReviewRequest.class, QueryConstants.REVIEW_REQUEST_BY_REQUEST, request, getMethodName(), logger, "reviewRequest");
         return reviewRequest;
     }
-    
+
     @Override
     public List<ReviewRequest> getReviewByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ReviewRequest> reviewByRequest = null;
@@ -635,7 +683,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
 
     @Override
     public List<RequestHasCollectionsRequest> getRequestsHasCollectionsRequestByRequestByCollectionRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<RequestHasCollectionsRequest> requestHasCollectionsRequestList = null;        
+        List<RequestHasCollectionsRequest> requestHasCollectionsRequestList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_REQUEST_ID), null);
@@ -689,7 +737,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
 
     @Override
     public List<RequestHasCollectionsRequest> getRequestsHasCollectionsRequestByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<RequestHasCollectionsRequest> requestHasCollectionsRequestList = null;        
+        List<RequestHasCollectionsRequest> requestHasCollectionsRequestList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_REQUEST_ID), null);
@@ -712,11 +760,11 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     @Override
     public ReasonRejectionRequest saveReasonRejectionRequest(ReasonRejectionRequest reasonRejectionRequest) throws NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+    }
 
     @Override
-     public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String cellPhone, int countryAddress, int state, int city, ZipZone postalZone, boolean recommendation, boolean promotion, boolean citizen, DocumentsPersonType documentsPersonType,
-        String documentNumber,String gender,CivilStatus civilStatus,EdificationType edificationType,String street,String number) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+    public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String cellPhone, int countryAddress, int state, int city, ZipZone postalZone, boolean recommendation, boolean promotion, boolean citizen, DocumentsPersonType documentsPersonType,
+            String documentNumber, String gender, CivilStatus civilStatus, EdificationType edificationType, String street, String number) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
         PersonType personTypeApp = new PersonType();
         ApplicantNaturalPerson applicantNatural = null;
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
@@ -753,6 +801,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicant.setCountryId(country);
             applicant.setEmail(email);
             applicant.setPersonClassificationId(personClassification);
+            applicant.setCreateDate(dueDateIdentification);
             applicant.setPersonTypeId(personTypeApp);
             applicant = personEJB.savePerson(applicant);
 
@@ -795,6 +844,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request.setRequestTypeId(requestType);
             request.setStatusRequestId(statusRequest);
             request.setCreateDate(dateRequest);
+            request.setIndPersonNaturalRequest(true);
             request = requestEJB.saveRequest(request);
 
             //Guarda en BD el applicantNaturalPerson
@@ -864,10 +914,10 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     public List<ReviewOFAC> getReviewOFAC(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public List<ReviewOFAC> getReviewOFACByApplicantByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<ReviewOFAC> ReviewOFACList = null;        
+        List<ReviewOFAC> ReviewOFACList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_REQUEST_ID), null);
@@ -929,7 +979,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (PlasticCustomizingRequest) saveEntity(plasticCustomizingRequest);
     }
-    
+
     //PlastiCustomizingRequestHasCard
     @Override
     public List<PlastiCustomizingRequestHasCard> getPlastiCustomizingRequestHasCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -949,6 +999,72 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             throw new NullParameterException("plastiCustomizingRequestHasCard", null);
         }
         return (PlastiCustomizingRequestHasCard) saveEntity(plastiCustomizingRequestHasCard);
+    }
+
+    //ResultPlasticCustomizingRequest
+    @Override
+    public List<ResultPlasticCustomizingRequest> getResultPlasticCustomizingRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ResultPlasticCustomizingRequest> resultPlasticCustomizingRequest = (List<ResultPlasticCustomizingRequest>) listEntities(ResultPlasticCustomizingRequest.class, request, logger, getMethodName());
+        return resultPlasticCustomizingRequest;
+    }
+
+    @Override
+    public ResultPlasticCustomizingRequest loadResultPlasticCustomizingRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ResultPlasticCustomizingRequest resultPlasticCustomizingRequest = (ResultPlasticCustomizingRequest) loadEntity(ResultPlasticCustomizingRequest.class, request, logger, getMethodName());
+        return resultPlasticCustomizingRequest;
+    }
+
+    @Override
+    public ResultPlasticCustomizingRequest saveResultPlasticCustomizingRequest(ResultPlasticCustomizingRequest resultPlasticCustomizingRequest) throws NullParameterException, GeneralException {
+        if (resultPlasticCustomizingRequest == null) {
+            throw new NullParameterException("resultPlasticCustomizingRequest", null);
+        }
+        return (ResultPlasticCustomizingRequest) saveEntity(resultPlasticCustomizingRequest);
+    }
+
+    //StatusResultPlasticCustomizing
+    @Override
+    public List<StatusResultPlasticCustomizing> getStatusResultPlasticCustomizing(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusResultPlasticCustomizing> statusResultPlasticCustomizing = (List<StatusResultPlasticCustomizing>) listEntities(StatusResultPlasticCustomizing.class, request, logger, getMethodName());
+        return statusResultPlasticCustomizing;
+    }
+
+    @Override
+    public List<StatusResultPlasticCustomizing> getStatusByDescription(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusResultPlasticCustomizing> statusResult = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(QueryConstants.PARAM_STATUS_DESCRIPTION)) {
+            throw new NullParameterException(logger, sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "position"), null);
+        }
+        statusResult = (List<StatusResultPlasticCustomizing>) getNamedQueryResult(StatusResultPlasticCustomizing.class, QueryConstants.STATUS_BY_DESCRIPTION, request, getMethodName(), logger, "statusResult");
+        return statusResult;
+
+    }
+    
+    @Override
+    public List<StatusResultPlasticCustomizing> getStatusByPlasticManufacturer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusResultPlasticCustomizing> statusResult = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PLASTIC_MANUFACTURER_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PLASTIC_MANUFACTURER_ID), null);            
+        }
+        statusResult = (List<StatusResultPlasticCustomizing>) getNamedQueryResult(StatusResultPlasticCustomizing.class, QueryConstants.STATUS_BY_PLASTIC_MANUFACTURER, request, getMethodName(), logger, "statusResult");
+        return statusResult;
+    }
+    
+    @Override
+    public StatusResultPlasticCustomizing loadStatusResultPlasticCustomizing(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusResultPlasticCustomizing statusResultPlasticCustomizing = (StatusResultPlasticCustomizing) loadEntity(StatusResultPlasticCustomizing.class, request, logger, getMethodName());
+        return statusResultPlasticCustomizing;
+
+    }
+
+    @Override
+    public StatusResultPlasticCustomizing saveStatusResultPlasticCustomizing(StatusResultPlasticCustomizing statusResultPlasticCustomizing) throws NullParameterException, GeneralException {
+        if (statusResultPlasticCustomizing == null) {
+            throw new NullParameterException("statusResultPlasticCustomizing", null);
+        }
+        return (StatusResultPlasticCustomizing) saveEntity(statusResultPlasticCustomizing);
     }
 
     //StatusPlasticCustomizingRequest
@@ -971,4 +1087,5 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (StatusPlasticCustomizingRequest) saveEntity(statusPlasticCustomizingRequest);
     }
+    
 }
