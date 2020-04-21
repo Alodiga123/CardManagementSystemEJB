@@ -49,7 +49,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         List<AccountProperties> accountProperties = (List<AccountProperties>) listEntities(AccountProperties.class, request, logger, getMethodName());
         return accountProperties;
     }
-    
+
     @Override
     public List<AccountProperties> getAccountPropertiesByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<AccountProperties> accountPropertiesByRequest = null;
@@ -201,7 +201,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         List<Card> card = (List<Card>) listEntities(Card.class, request, logger, getMethodName());
         return card;
     }
-    
+
     @Override
     public List<Card> getCardByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Card> cardByProgramList = null;
@@ -212,8 +212,24 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         cardByProgramList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_PROGRAM, request, getMethodName(), logger, "cardByProgramList");
         return cardByProgramList;
     }
-    
-    
+
+    @Override
+    public List<Card> getCardByProgramByStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Card> cardByProgramByStatus = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_CARD_STATUS)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARD_STATUS), null);
+        }
+        cardByProgramByStatus = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_PROGRAM_BY_STATUS, request, getMethodName(), logger, "cardByProgramByStatus");
+        return cardByProgramByStatus;
+    }
+
     @Override
     public List<Card> getCardByCardHolder(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Card> cardByCardHolderList = null;
@@ -224,7 +240,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         cardByCardHolderList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_CARDHOLDER, request, getMethodName(), logger, "cardByCardHolderList");
         return cardByCardHolderList;
     }
-    
+
     @Override
     public Card loadCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Card card = (Card) loadEntity(Card.class, request, logger, getMethodName());
@@ -288,7 +304,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         if (rateByCard == null) {
             throw new NullParameterException("rateByCard", null);
         }
-        return (RateByCard) saveEntity(rateByCard); 
+        return (RateByCard) saveEntity(rateByCard);
     }
 
     @Override
@@ -341,4 +357,5 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (StatusAccount) saveEntity(statusAccount);
     }
+
 }
