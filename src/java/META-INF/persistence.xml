@@ -127,6 +127,7 @@
     <class>com.cms.commons.models.DeliveryRequest</class>
     <class>com.cms.commons.models.ResultPlasticCustomizingRequest</class>
     <class>com.cms.commons.models.StatusResultPlasticCustomizing</class>
+    <class>com.cms.commons.models.ApprovalCardRate</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
