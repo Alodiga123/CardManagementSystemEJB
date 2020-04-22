@@ -17,8 +17,11 @@ import com.cms.commons.models.AccountType;
 import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.Card;
 import com.cms.commons.models.CardNumberCredential;
+import com.cms.commons.models.DeliveryRequest;
+import com.cms.commons.models.DeliveryRequetsHasCard;
 import com.cms.commons.models.RateByCard;
 import com.cms.commons.models.StatusAccount;
+import com.cms.commons.models.StatusDeliveryRequest;
 import com.cms.commons.models.SubAccountType;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -229,6 +232,17 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         cardByProgramByStatus = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_PROGRAM_BY_STATUS, request, getMethodName(), logger, "cardByProgramByStatus");
         return cardByProgramByStatus;
     }
+    
+    @Override
+    public List<Card> getCardByStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Card> cardByStatus = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CARD_STATUS)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARD_STATUS), null);
+        }
+        cardByStatus = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_STATUS, request, getMethodName(), logger, "cardByStatus");
+        return cardByStatus;
+    }
 
     @Override
     public List<Card> getCardByCardHolder(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -286,7 +300,9 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (CardNumberCredential) saveEntity(cardNumberCredential);
     }
+    
 
+    //RateByCard
     @Override
     public List<RateByCard> getRateByCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<RateByCard> rateByCardList = (List<RateByCard>) listEntities(RateByCard.class, request, logger, getMethodName());
@@ -318,6 +334,8 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return rateByCardList;
     }
 
+    
+     //AccountCard
     @Override
     public List<AccountCard> getAccountCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<AccountCard> accountCard = (List<AccountCard>) listEntities(AccountCard.class, request, logger, getMethodName());
@@ -338,6 +356,8 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (AccountCard) saveEntity(accountCard);
     }
 
+    
+    //StatusAccount
     @Override
     public List<StatusAccount> getStatusAccount(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<StatusAccount> statusAccountList = (List<StatusAccount>) listEntities(StatusAccount.class, request, logger, getMethodName());
@@ -356,6 +376,69 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException("statusAccount", null);
         }
         return (StatusAccount) saveEntity(statusAccount);
+    }
+
+    //DeliveryRequest
+    @Override
+    public List<DeliveryRequest> getDeliveryRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<DeliveryRequest> deliveryRequest = (List<DeliveryRequest>) listEntities(DeliveryRequest.class, request, logger, getMethodName());
+        return deliveryRequest;
+    }
+
+    @Override
+    public DeliveryRequest loadDeliveryRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        DeliveryRequest deliveryRequest = (DeliveryRequest) loadEntity(DeliveryRequest.class, request, logger, getMethodName());
+        return deliveryRequest;
+    }
+
+    @Override
+    public DeliveryRequest saveDeliveryRequest(DeliveryRequest deliveryRequest) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (deliveryRequest == null) {
+            throw new NullParameterException("deliveryRequest", null);
+        }
+        return (DeliveryRequest) saveEntity(deliveryRequest);
+    }
+    
+     //DeliveryRequestHasCard
+    @Override
+    public List<DeliveryRequetsHasCard> getDeliveryRequestHasCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<DeliveryRequetsHasCard> deliveryRequetsHasCard = (List<DeliveryRequetsHasCard>) listEntities(DeliveryRequetsHasCard.class, request, logger, getMethodName());
+        return deliveryRequetsHasCard;
+    }
+
+    @Override
+    public DeliveryRequetsHasCard loadDeliveryRequestHasCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        DeliveryRequetsHasCard deliveryRequetsHasCard = (DeliveryRequetsHasCard) loadEntity(DeliveryRequetsHasCard.class, request, logger, getMethodName());
+        return deliveryRequetsHasCard;
+    }
+
+    @Override
+    public DeliveryRequetsHasCard saveDeliveryRequestHasCard(DeliveryRequetsHasCard deliveryRequetsHasCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (deliveryRequetsHasCard == null) {
+            throw new NullParameterException("deliveryRequetsHasCard", null);
+        }
+        return (DeliveryRequetsHasCard) saveEntity(deliveryRequetsHasCard);
+    }
+
+    @Override
+    public List<StatusDeliveryRequest> getStatusDeliveryRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusDeliveryRequest> statusDeliveryRequest = (List<StatusDeliveryRequest>) listEntities(StatusDeliveryRequest.class, request, logger, getMethodName());
+        return statusDeliveryRequest;
+
+    }
+
+    @Override
+    public StatusDeliveryRequest loadStatusDeliveryRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusDeliveryRequest statusDeliveryRequest = (StatusDeliveryRequest) loadEntity(StatusDeliveryRequest.class, request, logger, getMethodName());
+        return statusDeliveryRequest;
+    }
+
+    @Override
+    public StatusDeliveryRequest saveStatusDeliveryRequest(StatusDeliveryRequest statusDeliveryRequest) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (statusDeliveryRequest == null) {
+            throw new NullParameterException("statusDeliveryRequest", null);
+        }
+        return (StatusDeliveryRequest) saveEntity(statusDeliveryRequest);
     }
 
 }
