@@ -128,6 +128,18 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         return cardManagementProgramList;
     }
+    
+    
+    @Override
+    public List<LegalPerson> getLegalPersonByDelivery(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPerson> legalPersonByDelivery = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_ECONOMIC_ACTIVITY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        legalPersonByDelivery = (List<LegalPerson>) getNamedQueryResult(LegalPerson.class, QueryConstants.ECONOMIC_ACTIVITY_BY_LEGAL_PERSON, request, getMethodName(), logger, "legalPersonByDelivery");
+        return legalPersonByDelivery;
+    }
 
     //ProgramHasNetwork
     @Override
@@ -411,5 +423,4 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         return projectAnnualVolumeByProgram;
    
     }
-   
 }
