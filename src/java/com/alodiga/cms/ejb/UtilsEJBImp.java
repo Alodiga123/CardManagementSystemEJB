@@ -777,6 +777,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public String generateNumberSequence(List<Sequences> sequence, int originApplication) throws GeneralException, RegisterNotFoundException, NullParameterException {
         int numberSequence = 0;
         String prefixNumberSequence = "";
+        String acronym = "";
         for (Sequences s : sequence) {
             if (s.getOriginApplicationId().getId() == originApplication) {
                 if (s.getCurrentValue() > 1) {
@@ -784,6 +785,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
                 } else {
                     numberSequence = s.getInitialValue();
                 }
+                acronym = s.getDocumentTypeId().getAcronym();
                 s.setCurrentValue(s.getCurrentValue() + 1);
                 saveSequences(s);
             }
@@ -800,9 +802,11 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             default:
                 break;
         }
+        prefixNumberSequence = prefixNumberSequence.concat(acronym);
         String suffixNumberSequence = "-";
         suffixNumberSequence = suffixNumberSequence.concat(String.valueOf(year));
         String numberSequenceDoc = prefixNumberSequence;
+        numberSequenceDoc = numberSequenceDoc.concat("-");
         numberSequenceDoc = numberSequenceDoc.concat(String.valueOf(numberSequence));
         numberSequenceDoc = numberSequenceDoc.concat(suffixNumberSequence);
         return numberSequenceDoc;

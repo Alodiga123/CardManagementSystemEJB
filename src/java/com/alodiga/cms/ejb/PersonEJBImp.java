@@ -81,7 +81,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
 
     @Override
-    public List<PhonePerson> getPhonePersonByperson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    public List<PhonePerson> getPhoneByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PhonePerson> phonePersonList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
@@ -220,14 +220,14 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
     
     @Override
-    public List<ApplicantNaturalPerson> getApplicantByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<ApplicantNaturalPerson> applicantByRequestList = null;
+    public List<ApplicantNaturalPerson> getApplicantByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApplicantNaturalPerson> applicantByPersonList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
         }
-        applicantByRequestList = (List<ApplicantNaturalPerson>) getNamedQueryResult(ApplicantNaturalPerson.class, QueryConstants.APPLICANT_BY_REQUEST, request, getMethodName(), logger, "applicantByRequestList");
-        return applicantByRequestList;
+        applicantByPersonList = (List<ApplicantNaturalPerson>) getNamedQueryResult(ApplicantNaturalPerson.class, QueryConstants.APPLICANT_BY_PERSON, request, getMethodName(), logger, "applicantByPersonList");
+        return applicantByPersonList;
     }
 
     @Override
