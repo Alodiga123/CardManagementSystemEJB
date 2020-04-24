@@ -256,6 +256,20 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     @Override
+    public List<Card> getCardByCardNumber(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Card> cardByCardNumberList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CARDNUMBER)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARDHOLDER), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_CARD_STATUS)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARDHOLDER), null);
+        }
+        cardByCardNumberList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_CARDNUMBER, request, getMethodName(), logger, "cardByCardNumberList");
+        return cardByCardNumberList;
+    }
+    
+    @Override
     public Card loadCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Card card = (Card) loadEntity(Card.class, request, logger, getMethodName());
         return card;

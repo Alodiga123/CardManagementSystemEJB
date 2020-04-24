@@ -1053,6 +1053,17 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }
     
     @Override
+    public List<StatusResultPlasticCustomizing> getStatusByCardStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusResultPlasticCustomizing> statusResult = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CARD_STATUS)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PLASTIC_MANUFACTURER_ID), null);            
+        }
+        statusResult = (List<StatusResultPlasticCustomizing>) getNamedQueryResult(StatusResultPlasticCustomizing.class, QueryConstants.STATUS_BY_CARD_STATUS, request, getMethodName(), logger, "statusResult");
+        return statusResult;
+    }
+    
+    @Override
     public StatusResultPlasticCustomizing loadStatusResultPlasticCustomizing(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         StatusResultPlasticCustomizing statusResultPlasticCustomizing = (StatusResultPlasticCustomizing) loadEntity(StatusResultPlasticCustomizing.class, request, logger, getMethodName());
         return statusResultPlasticCustomizing;
