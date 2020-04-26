@@ -32,6 +32,7 @@ import com.cms.commons.models.RateByProduct;
 import com.cms.commons.models.RateByProgram;
 import com.cms.commons.models.SegmentCommerce;
 import com.cms.commons.models.SegmentMarketing;
+import com.cms.commons.models.StatusProduct;
 import com.cms.commons.models.StorageMedio;
 import com.cms.commons.models.Transaction;
 import com.cms.commons.util.EjbConstants;
@@ -528,6 +529,26 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
             throw new NullParameterException("approvalProgramRate", null);
         }
         return (ApprovalProgramRate) saveEntity(approvalProgramRate);
+    }   
+
+    @Override
+    public List<StatusProduct> getStatusProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusProduct> statusProductList = (List<StatusProduct>) listEntities(StatusProduct.class, request, logger, getMethodName());
+        return statusProductList;
+    }
+
+    @Override
+    public StatusProduct loadStatusProduct(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusProduct statusProduct = (StatusProduct) loadEntity(StatusProduct.class, request, logger, getMethodName());
+        return statusProduct;
+    }
+
+    @Override
+    public StatusProduct saveStatusProduct(StatusProduct statusProduct) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (statusProduct == null) {
+            throw new NullParameterException("statusProduct", null);
+        }
+        return (StatusProduct) saveEntity(statusProduct);
     }
     
 }
