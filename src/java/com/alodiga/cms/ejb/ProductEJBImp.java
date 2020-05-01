@@ -551,5 +551,25 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (StatusProduct) saveEntity(statusProduct);
     }
+
+    @Override
+    public List<ApprovalProductRate> getApprovalProductRate(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApprovalProductRate> approvalProductRateList = (List<ApprovalProductRate>) listEntities(ApprovalProductRate.class, request, logger, getMethodName());
+        return approvalProductRateList;
+    }
+
+    @Override
+    public ApprovalProductRate loadApprovalProductRate(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ApprovalProductRate approvalProductRate = (ApprovalProductRate) loadEntity(ApprovalProductRate.class, request, logger, getMethodName());
+        return approvalProductRate;
+    }
+
+    @Override
+    public ApprovalProductRate saveApprovalProductRate(ApprovalProductRate approvalProductRate) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (approvalProductRate == null) {
+            throw new NullParameterException("approvalProductRate", null);
+        }
+        return (ApprovalProductRate) saveEntity(approvalProductRate);
+    }
     
 }
