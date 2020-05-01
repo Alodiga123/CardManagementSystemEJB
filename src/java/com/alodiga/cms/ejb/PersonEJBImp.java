@@ -24,6 +24,7 @@ import com.cms.commons.models.IssuerType;
 import com.cms.commons.models.KinShipApplicant;
 import com.cms.commons.models.LegalCustomer;
 import com.cms.commons.models.LegalCustomerHasLegalRepresentatives;
+import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
 import com.cms.commons.models.NaturalCustomer;
 import com.cms.commons.models.NaturalPerson;
@@ -465,6 +466,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<NaturalPerson> naturalPerson = (List<NaturalPerson>) listEntities(NaturalPerson.class, request, logger, getMethodName());
         return naturalPerson;
     }
+    
+    @Override
+    public List<NaturalPerson> getNaturalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<NaturalPerson> naturalPersonByPerson = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        naturalPersonByPerson = (List<NaturalPerson>) getNamedQueryResult(NaturalPerson.class, QueryConstants.NATURAL_PERSON_BY_PERSON, request, getMethodName(), logger, "naturalPersonByPerson");
+        return naturalPersonByPerson;
+    }
 
     @Override
     public NaturalPerson loadNaturalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -478,6 +490,18 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("naturalPerson", null);
         }
         return (NaturalPerson) saveEntity(naturalPerson);
+    }
+    
+    //LegalPerson
+    @Override
+    public List<LegalPerson> getLegalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPerson> legalPersonByPerson = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        legalPersonByPerson = (List<LegalPerson>) getNamedQueryResult(LegalPerson.class, QueryConstants.LEGAL_PERSON_BY_PERSON, request, getMethodName(), logger, "legalPersonByPerson");
+        return legalPersonByPerson;
     }
 
     //Issuer

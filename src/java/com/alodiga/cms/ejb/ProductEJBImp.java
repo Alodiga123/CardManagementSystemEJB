@@ -11,6 +11,7 @@ import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.ApprovalGeneralRate;
+import com.cms.commons.models.ApprovalProductRate;
 import com.cms.commons.models.ApprovalProgramRate;
 import com.cms.commons.models.Channel;
 import com.cms.commons.models.CommerceCategory;
