@@ -288,6 +288,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (CivilStatus) saveEntity(civilStatus);
     }
+    
+    @Override
+    public List<CivilStatus> getCivilStatusByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CivilStatus> civilStatuses = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        civilStatuses = (List<CivilStatus>) getNamedQueryResult(UtilsEJB.class, "CivilStatus.findByCountryId", request, getMethodName(), logger, "civilStatuses");
+        return civilStatuses;
+    }
 
     //Profession
     @Override
@@ -382,6 +393,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("documentsPersonType", null);
         }
         return (DocumentsPersonType) saveEntity(documentsPersonType);
+    }
+    
+    @Override
+    public List<DocumentsPersonType> getDocumentsPersonTypeByPersonType(EJBRequest request)throws EmptyListException, GeneralException, NullParameterException{
+        List<DocumentsPersonType> documentsPersonTypes = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        documentsPersonTypes = (List<DocumentsPersonType>) getNamedQueryResult(UtilsEJB.class, "DocumentsPersonType.findByPersonType", request, getMethodName(), logger, "documentsPersonTypes");
+        return documentsPersonTypes;
     }
 
     //CardRequestNaturalPerson

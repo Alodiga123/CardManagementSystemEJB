@@ -334,8 +334,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     @Override
      public ApplicantNaturalPerson saveCardComplementary(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
                                                         String firstNames, String lastNames,  String gender, Date dateBirth, int civilStatusId,  
-                                                        String cellPhone, int countryAddress, int state, int city, int zipZone, int edificationType, 
-                                                        String nameStreet, Long applicantId, int kinShipApplicantId)
+                                                        String cellPhone, int countryAddress, int state, int city, int zipZone,  
+                                                        String nameStreet, String nameStreet2,Long applicantId, int kinShipApplicantId)
                                                         throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException{
     
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
@@ -444,9 +444,9 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1.setParam(zipZone);
             ZipZone zipZoneAddress = utilsEJB.loadZipZone(request1);
             //tipos de edificacion
-            request1 = new EJBRequest();
-            request1.setParam(edificationType);
-            EdificationType edificationTypeAddress = utilsEJB.loadEdificationType(request1);
+//            request1 = new EJBRequest();
+//            request1.setParam(edificationType);
+//            EdificationType edificationTypeAddress = utilsEJB.loadEdificationType(request1);
             //tipos de calle
 //            request1 = new EJBRequest();
 //            request1.setParam(streetType);
@@ -455,7 +455,9 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             //Guarda la direccion en BD
             addressCardComplementary.setCityId(cityAddress);
             addressCardComplementary.setCountryId(countryAddressCardComplementary);
-            addressCardComplementary.setEdificationTypeId(edificationTypeAddress);
+            addressCardComplementary.setAddressLine1(nameStreet);
+            addressCardComplementary.setAddressLine2(nameStreet2);
+//            addressCardComplementary.setEdificationTypeId(edificationTypeAddress);
 //            addressCardComplementary.setFloor(floor);
 //            addressCardComplementary.setNameEdification(nameEdification);
 //            addressCardComplementary.setNameStreet(nameStreet);
@@ -764,7 +766,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
 
     @Override
     public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String cellPhone, int countryAddress, int state, int city, ZipZone postalZone, boolean recommendation, boolean promotion, boolean citizen, DocumentsPersonType documentsPersonType,
-            String documentNumber, String gender, CivilStatus civilStatus, EdificationType edificationType, String street, String number) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+            String documentNumber, String gender, CivilStatus civilStatus,  String street,String street2, String number) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
         PersonType personTypeApp = new PersonType();
         ApplicantNaturalPerson applicantNatural = null;
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
@@ -894,8 +896,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             //Guarda la direccion en BD
             addressApplicant.setCityId(cityAddress);
             addressApplicant.setCountryId(countryAddressApplicant);
-            addressApplicant.setEdificationTypeId(edificationType);
-            addressApplicant.setNameStreet(street);
+            addressApplicant.setAddressLine1(street);
+            addressApplicant.setAddressLine2(street2);
             addressApplicant.setNumber(number);
             addressApplicant.setZipZoneId(postalZone);
             addressApplicant = utilsEJB.saveAddress(addressApplicant);
