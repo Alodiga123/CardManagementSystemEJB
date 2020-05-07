@@ -22,6 +22,7 @@ import com.cms.commons.models.DeliveryRequetsHasCard;
 import com.cms.commons.models.RateByCard;
 import com.cms.commons.models.StatusAccount;
 import com.cms.commons.models.StatusDeliveryRequest;
+import com.cms.commons.models.StatusProduct;
 import com.cms.commons.models.SubAccountType;
 import java.util.Map;
 import javax.ejb.Stateless;
