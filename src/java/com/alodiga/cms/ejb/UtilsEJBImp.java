@@ -41,6 +41,7 @@ import com.cms.commons.models.PermissionGroup;
 import com.cms.commons.models.PermissionGroupData;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
+import com.cms.commons.models.Profile;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
@@ -954,6 +955,24 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("permissionData", null);
         }
         return (PermissionData) saveEntity(permissionData);
+    }
+    
+    //Profile    
+    public List<Profile> getProfile(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<Profile> profileList = (List<Profile>) listEntities(Profile.class, request, logger, getMethodName());
+        return profileList;
+    }
+    
+    public Profile loadProfile(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Profile profile = (Profile) loadEntity(Profile.class, request, logger, getMethodName());
+        return profile;
+    }
+    
+    public Profile saveProfile(Profile profile) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       if (profile == null) {
+            throw new NullParameterException("profile", null);
+        }
+        return (Profile) saveEntity(profile);
     }
 
 }    
