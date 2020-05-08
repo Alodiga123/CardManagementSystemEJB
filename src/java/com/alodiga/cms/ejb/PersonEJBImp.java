@@ -268,6 +268,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return (KinShipApplicant) saveEntity(kinShipApplicant);
     }
 
+    @Override
+    public List<KinShipApplicant> getKinShipApplicantByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<KinShipApplicant> kinShipApplicants = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        kinShipApplicants = (List<KinShipApplicant>) getNamedQueryResult(UtilsEJB.class, "KinShipApplicant.findByCountryId", request, getMethodName(), logger, "kinShipApplicants");
+        return kinShipApplicants;
+    }
+    
     //CivilStatus
     @Override
     public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
