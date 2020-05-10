@@ -269,13 +269,13 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
 
     @Override
-    public List<KinShipApplicant> getKinShipApplicantByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    public List<KinShipApplicant> getKinShipApplicantByLanguage(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<KinShipApplicant> kinShipApplicants = null;
         Map<String, Object> params = request.getParams();
-        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+        if (!params.containsKey(EjbConstants.PARAM_LANGUAGE_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
         }
-        kinShipApplicants = (List<KinShipApplicant>) getNamedQueryResult(UtilsEJB.class, "KinShipApplicant.findByCountryId", request, getMethodName(), logger, "kinShipApplicants");
+        kinShipApplicants = (List<KinShipApplicant>) getNamedQueryResult(UtilsEJB.class, "KinShipApplicant.findByLanguageId", request, getMethodName(), logger, "kinShipApplicants");
         return kinShipApplicants;
     }
     
@@ -300,6 +300,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return (CivilStatus) saveEntity(civilStatus);
     }
     
+    @Override
+    public List<CivilStatus> getCivilStatusByLanguage(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CivilStatus> civilStatuses = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_LANGUAGE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        civilStatuses = (List<CivilStatus>) getNamedQueryResult(UtilsEJB.class, "CivilStatus.findByLanguageId", request, getMethodName(), logger, "civilStatuses");
+        return civilStatuses;
+    }
+
     //Profession
     @Override
     public List<Profession> getProfession(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
