@@ -41,6 +41,7 @@ import com.cms.commons.models.PermissionGroup;
 import com.cms.commons.models.PermissionGroupData;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
+import com.cms.commons.models.Profile;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
@@ -281,7 +282,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public BinSponsor loadBinSponsore(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+    public BinSponsor loadBinSponsor(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         BinSponsor binSponsor = (BinSponsor) loadEntity(BinSponsor.class, request, logger, getMethodName());
         return binSponsor;
     }
@@ -954,6 +955,35 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new NullParameterException("permissionData", null);
         }
         return (PermissionData) saveEntity(permissionData);
+    }
+    
+    //Profile    
+    public List<Profile> getProfile(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<Profile> profileList = (List<Profile>) listEntities(Profile.class, request, logger, getMethodName());
+        return profileList;
+    }
+    
+    public Profile loadProfile(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Profile profile = (Profile) loadEntity(Profile.class, request, logger, getMethodName());
+        return profile;
+    }
+    
+    public Profile saveProfile(Profile profile) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       if (profile == null) {
+            throw new NullParameterException("profile", null);
+        }
+        return (Profile) saveEntity(profile);
+    }
+
+    @Override
+    public List<LegalPerson> getLegalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPerson> legalPersonList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        legalPersonList = (List<LegalPerson>) getNamedQueryResult(LegalPerson.class, QueryConstants.LEGAL_PERSON_BY_PERSON, request, getMethodName(), logger, "legalPersonList");
+        return legalPersonList;
     }
 
 }    
