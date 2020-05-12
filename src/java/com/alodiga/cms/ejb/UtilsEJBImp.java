@@ -990,6 +990,16 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         ProfileData profileData = (ProfileData) loadEntity(ProfileData.class, request, logger, getMethodName());
         return profileData;
     }
+    
+     @Override
+    public ProfileData saveProfileData(ProfileData profileData) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (profileData == null) {
+            throw new NullParameterException("profileData", null);
+        }
+        return (ProfileData) saveEntity(profileData);
+    }
+    
+    
     @Override
     public List<LegalPerson> getLegalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<LegalPerson> legalPersonList = null;        
@@ -1034,12 +1044,3 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
 }    
 
-    @Override
-    public ProfileData saveProfileData(ProfileData profileData) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (profileData == null) {
-            throw new NullParameterException("profileData", null);
-        }
-        return (ProfileData) saveEntity(profileData);
-    }
-
-}  
