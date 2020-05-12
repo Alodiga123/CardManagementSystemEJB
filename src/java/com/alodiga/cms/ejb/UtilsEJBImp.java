@@ -58,6 +58,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import org.apache.log4j.Logger;
 
 /**
@@ -283,7 +285,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public BinSponsor loadBinSponsore(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+    public BinSponsor loadBinSponsor(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         BinSponsor binSponsor = (BinSponsor) loadEntity(BinSponsor.class, request, logger, getMethodName());
         return binSponsor;
     }
@@ -988,13 +990,57 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         ProfileData profileData = (ProfileData) loadEntity(ProfileData.class, request, logger, getMethodName());
         return profileData;
     }
-
-    @Override
+    
+     @Override
     public ProfileData saveProfileData(ProfileData profileData) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (profileData == null) {
             throw new NullParameterException("profileData", null);
         }
         return (ProfileData) saveEntity(profileData);
     }
+    
+    
+    @Override
+    public List<LegalPerson> getLegalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPerson> legalPersonList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        legalPersonList = (List<LegalPerson>) getNamedQueryResult(LegalPerson.class, QueryConstants.LEGAL_PERSON_BY_PERSON, request, getMethodName(), logger, "legalPersonList");
+        return legalPersonList;
+    }
 
-}  
+    @Override
+    public Country searchCountry(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Country country = new Country(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
+            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("'");
+            country = (Country) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Country.class.getSimpleName(), "loadCountryByName", Country.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return country;
+    }
+
+    @Override
+    public List<Country> getSearchCountry(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<Country> countryList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM country c WHERE c.name LIKE '%name%'");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        countryList = (List<Country>) query.setHint("toplink.refresh", "true").getResultList();
+        return countryList;        
+    }
+
+}    
+
