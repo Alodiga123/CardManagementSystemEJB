@@ -268,6 +268,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return (KinShipApplicant) saveEntity(kinShipApplicant);
     }
 
+    @Override
+    public List<KinShipApplicant> getKinShipApplicantByLanguage(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<KinShipApplicant> kinShipApplicants = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_LANGUAGE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        kinShipApplicants = (List<KinShipApplicant>) getNamedQueryResult(UtilsEJB.class, "KinShipApplicant.findByLanguageId", request, getMethodName(), logger, "kinShipApplicants");
+        return kinShipApplicants;
+    }
+    
     //CivilStatus
     @Override
     public List<CivilStatus> getCivilStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -290,13 +301,13 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
     
     @Override
-    public List<CivilStatus> getCivilStatusByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    public List<CivilStatus> getCivilStatusByLanguage(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CivilStatus> civilStatuses = null;
         Map<String, Object> params = request.getParams();
-        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+        if (!params.containsKey(EjbConstants.PARAM_LANGUAGE_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
         }
-        civilStatuses = (List<CivilStatus>) getNamedQueryResult(UtilsEJB.class, "CivilStatus.findByCountryId", request, getMethodName(), logger, "civilStatuses");
+        civilStatuses = (List<CivilStatus>) getNamedQueryResult(UtilsEJB.class, "CivilStatus.findByLanguageId", request, getMethodName(), logger, "civilStatuses");
         return civilStatuses;
     }
 
@@ -457,7 +468,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
 
     @Override
-    public List<Person> getPersonByCustommer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    public List<Person> getPersonByClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Person> personByCustommer = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_PERSON_CLASSIFICATION_ID)) {
@@ -512,18 +523,6 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("naturalPerson", null);
         }
         return (NaturalPerson) saveEntity(naturalPerson);
-    }
-    
-    //LegalPerson
-    @Override
-    public List<LegalPerson> getLegalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<LegalPerson> legalPersonByPerson = null;
-        Map<String, Object> params = request.getParams();
-        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
-            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
-        }
-        legalPersonByPerson = (List<LegalPerson>) getNamedQueryResult(LegalPerson.class, QueryConstants.LEGAL_PERSON_BY_PERSON, request, getMethodName(), logger, "legalPersonByPerson");
-        return legalPersonByPerson;
     }
 
     //Issuer
@@ -802,7 +801,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
 
     @Override
     public ComercialAgency loadComercialAgency(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        ComercialAgency comercialAgency = (ComercialAgency) loadEntity(ComercialAgency.class, request, logger, getMethodName());
+       ComercialAgency comercialAgency = (ComercialAgency) loadEntity(ComercialAgency.class, request, logger, getMethodName());
        return comercialAgency;
     }
 
@@ -813,6 +812,38 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("comercialAgency", null);
         }
         return (ComercialAgency) saveEntity(comercialAgency);
+    }
+    
+    //LegalPerson
+    @Override
+    public List<LegalPerson> getLegalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPerson> legalPersonList = (List<LegalPerson>) listEntities(LegalPerson.class, request, logger, getMethodName());
+        return legalPersonList;
+    }
+
+    @Override
+    public LegalPerson loadLegalPerson(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        LegalPerson legalPerson = (LegalPerson) loadEntity(LegalPerson.class, request, logger, getMethodName());
+        return legalPerson;
+    }
+
+    @Override
+    public LegalPerson saveLegalegalPerson(LegalPerson legalPerson) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (legalPerson == null) {
+            throw new NullParameterException("legalPerson", null);
+        }
+        return (LegalPerson) saveEntity(legalPerson);
+    }
+
+    @Override
+    public List<LegalPerson> getLegalPersonByPerson(EJBRequest request ) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPerson> legalPersonList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        legalPersonList = (List<LegalPerson>) getNamedQueryResult(LegalPerson.class, QueryConstants.LEGAL_PERSON_BY_PERSON, request, getMethodName(), logger, "legalPersonList");
+        return legalPersonList;
     }
 
 }
