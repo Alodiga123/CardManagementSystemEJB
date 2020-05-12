@@ -19,6 +19,7 @@ import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.Address;
+import com.cms.commons.models.AddressType;
 import com.cms.commons.models.ApplicantNaturalPerson;
 import com.cms.commons.models.City;
 import com.cms.commons.models.CivilStatus;
@@ -443,28 +444,17 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             request1.setParam(zipZone);
             ZipZone zipZoneAddress = utilsEJB.loadZipZone(request1);
-            //tipos de edificacion
-//            request1 = new EJBRequest();
-//            request1.setParam(edificationType);
-//            EdificationType edificationTypeAddress = utilsEJB.loadEdificationType(request1);
-            //tipos de calle
-//            request1 = new EJBRequest();
-//            request1.setParam(streetType);
-//            StreetType streetTypeAddress = utilsEJB.loadStreetType(request1);
-
+           //addressType
+            request1 = new EJBRequest();
+            request1.setParam(Constants.ADDRESS_TYPE_DELIVERY);
+            AddressType addressType = utilsEJB.loadAddressType(request1);
             //Guarda la direccion en BD
             addressCardComplementary.setCityId(cityAddress);
             addressCardComplementary.setCountryId(countryAddressCardComplementary);
             addressCardComplementary.setAddressLine1(nameStreet);
             addressCardComplementary.setAddressLine2(nameStreet2);
-//            addressCardComplementary.setEdificationTypeId(edificationTypeAddress);
-//            addressCardComplementary.setFloor(floor);
-//            addressCardComplementary.setNameEdification(nameEdification);
-//            addressCardComplementary.setNameStreet(nameStreet);
-//            addressCardComplementary.setStreetTypeId(streetTypeAddress);
-//            addressCardComplementary.setTower(tower);
-//            addressCardComplementary.setUrbanization(Urbanization);
             addressCardComplementary.setZipZoneId(zipZoneAddress);
+            addressCardComplementary.setAddressTypeId(addressType);
             addressCardComplementary = utilsEJB.saveAddress(addressCardComplementary);
             PersonHasAddress personHasAddress = new PersonHasAddress();
             personHasAddress.setAddressId(addressCardComplementary);
@@ -893,6 +883,10 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             request1.setParam(city);
             City cityAddress = utilsEJB.loadCity(request1);
+            //addressType
+            request1 = new EJBRequest();
+            request1.setParam(Constants.ADDRESS_TYPE_DELIVERY);
+            AddressType addressType = utilsEJB.loadAddressType(request1);
             //Guarda la direccion en BD
             addressApplicant.setCityId(cityAddress);
             addressApplicant.setCountryId(countryAddressApplicant);
@@ -900,10 +894,11 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             addressApplicant.setAddressLine2(street2);
             addressApplicant.setNumber(number);
             addressApplicant.setZipZoneId(postalZone);
+            addressApplicant.setAddressTypeId(addressType);
             addressApplicant = utilsEJB.saveAddress(addressApplicant);
             PersonHasAddress personHasAddress = new PersonHasAddress();
             personHasAddress.setAddressId(addressApplicant);
-            personHasAddress.setPersonId(applicant);
+            personHasAddress.setPersonId(applicant);           
             personHasAddress = personEJB.savePersonHasAddress(personHasAddress);
 
         } catch (Exception e) {
