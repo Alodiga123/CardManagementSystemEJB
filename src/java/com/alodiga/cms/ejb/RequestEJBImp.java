@@ -375,10 +375,6 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             request1.setParam(civilStatusId);
             CivilStatus civilStatus = personEJB.loadCivilStatus(request1);
-            //profesion del solicitante
-//            request1 = new EJBRequest();
-//            request1.setParam(professionId);
-//            Profession profession = personEJB.loadProfession(request1);
             //Solicitante Principal
             request1 = new EJBRequest();
             request1.setParam(applicantId);
@@ -399,10 +395,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantCardComplementary.setGender(gender);
             applicantCardComplementary.setIdentificationNumber(identificationNumber);
             applicantCardComplementary.setKinShipApplicantId(kinShipApplicant);
-//            applicantCardComplementary.setMarriedLastName(marriedLastName);
             applicantCardComplementary.setPersonId(cardComplementaryPerson);
-//            applicantCardComplementary.setPlaceBirth(placeBirth);
-//            applicantCardComplementary.setProfessionId(profession);
             applicantCardComplementary = personEJB.saveApplicantNaturalPerson(applicantCardComplementary);
 
             //4. Telefonos del solicitante de tarjeta complementaria
@@ -415,15 +408,6 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             PhoneType mobilePhoneType = personEJB.loadPhoneType(request1);
             cellPhoneCardComplementary.setPhoneTypeId(mobilePhoneType);
             cellPhoneCardComplementary = personEJB.savePhonePerson(cellPhoneCardComplementary);
-            //Guarda el telf. Habitacion en BD
-//            PhonePerson roomPhoneCardComplementary = new PhonePerson();
-//            roomPhoneCardComplementary.setNumberPhone(roomPhone);
-//            roomPhoneCardComplementary.setPersonId(cardComplementaryPerson);
-//            request1 = new EJBRequest();
-//            request1.setParam(Constants.PHONE_TYPE_ROOM);
-//            PhoneType roomPhoneType = personEJB.loadPhoneType(request1);
-//            roomPhoneCardComplementary.setPhoneTypeId(roomPhoneType);
-//            roomPhoneCardComplementary = personEJB.savePhonePerson(roomPhoneCardComplementary);
 
             //5. Direccion del solicitante de tarjeta complementaria
             Address addressCardComplementary = new Address();
@@ -443,27 +427,12 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             request1.setParam(zipZone);
             ZipZone zipZoneAddress = utilsEJB.loadZipZone(request1);
-            //tipos de edificacion
-//            request1 = new EJBRequest();
-//            request1.setParam(edificationType);
-//            EdificationType edificationTypeAddress = utilsEJB.loadEdificationType(request1);
-            //tipos de calle
-//            request1 = new EJBRequest();
-//            request1.setParam(streetType);
-//            StreetType streetTypeAddress = utilsEJB.loadStreetType(request1);
 
             //Guarda la direccion en BD
             addressCardComplementary.setCityId(cityAddress);
             addressCardComplementary.setCountryId(countryAddressCardComplementary);
             addressCardComplementary.setAddressLine1(nameStreet);
             addressCardComplementary.setAddressLine2(nameStreet2);
-//            addressCardComplementary.setEdificationTypeId(edificationTypeAddress);
-//            addressCardComplementary.setFloor(floor);
-//            addressCardComplementary.setNameEdification(nameEdification);
-//            addressCardComplementary.setNameStreet(nameStreet);
-//            addressCardComplementary.setStreetTypeId(streetTypeAddress);
-//            addressCardComplementary.setTower(tower);
-//            addressCardComplementary.setUrbanization(Urbanization);
             addressCardComplementary.setZipZoneId(zipZoneAddress);
             addressCardComplementary = utilsEJB.saveAddress(addressCardComplementary);
             PersonHasAddress personHasAddress = new PersonHasAddress();
@@ -480,8 +449,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
 	
 	
 	
-	
-	 @Override
+    @Override
     public boolean existsApplicantNaturalPersonByEmail(String email) throws EmptyListException, GeneralException, NullParameterException {
         List<ApplicantNaturalPerson> applicantNaturalPersons = new ArrayList<ApplicantNaturalPerson>();
         boolean exists = false;
