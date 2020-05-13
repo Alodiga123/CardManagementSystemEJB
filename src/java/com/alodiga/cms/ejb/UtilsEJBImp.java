@@ -42,6 +42,7 @@ import com.cms.commons.models.PermissionGroupData;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Profile;
+import com.cms.commons.models.ProfileData;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
@@ -57,6 +58,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import org.apache.log4j.Logger;
 
 /**
@@ -974,7 +977,29 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (Profile) saveEntity(profile);
     }
+    
+    //ProfileData
+    @Override
+    public List<ProfileData> getProfileData(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<ProfileData> profileDataList = (List<ProfileData>) listEntities(ProfileData.class, request, logger, getMethodName());
+        return profileDataList;
+    }
 
+    @Override
+    public ProfileData loadProfileData(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProfileData profileData = (ProfileData) loadEntity(ProfileData.class, request, logger, getMethodName());
+        return profileData;
+    }
+    
+     @Override
+    public ProfileData saveProfileData(ProfileData profileData) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (profileData == null) {
+            throw new NullParameterException("profileData", null);
+        }
+        return (ProfileData) saveEntity(profileData);
+    }
+    
+    
     @Override
     public List<LegalPerson> getLegalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<LegalPerson> legalPersonList = null;        
@@ -986,4 +1011,36 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return legalPersonList;
     }
 
+    @Override
+    public Country searchCountry(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Country country = new Country(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
+            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("'");
+            country = (Country) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Country.class.getSimpleName(), "loadCountryByName", Country.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return country;
+    }
+
+    @Override
+    public List<Country> getSearchCountry(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<Country> countryList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM country c WHERE c.name LIKE '%name%'");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        countryList = (List<Country>) query.setHint("toplink.refresh", "true").getResultList();
+        return countryList;        
+    }
+
 }    
+
