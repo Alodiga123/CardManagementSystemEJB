@@ -1019,7 +1019,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
             }            
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
-            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("'");
+            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
             country = (Country) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
             
         } catch (NoResultException ex) {
