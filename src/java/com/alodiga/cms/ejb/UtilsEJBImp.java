@@ -42,6 +42,7 @@ import com.cms.commons.models.PermissionGroupData;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Profile;
+import com.cms.commons.models.ProfileData;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
@@ -976,7 +977,29 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (Profile) saveEntity(profile);
     }
+    
+    //ProfileData
+    @Override
+    public List<ProfileData> getProfileData(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<ProfileData> profileDataList = (List<ProfileData>) listEntities(ProfileData.class, request, logger, getMethodName());
+        return profileDataList;
+    }
 
+    @Override
+    public ProfileData loadProfileData(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProfileData profileData = (ProfileData) loadEntity(ProfileData.class, request, logger, getMethodName());
+        return profileData;
+    }
+    
+     @Override
+    public ProfileData saveProfileData(ProfileData profileData) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (profileData == null) {
+            throw new NullParameterException("profileData", null);
+        }
+        return (ProfileData) saveEntity(profileData);
+    }
+    
+    
     @Override
     public List<LegalPerson> getLegalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<LegalPerson> legalPersonList = null;        
@@ -996,7 +1019,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
             }            
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
-            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("'");
+            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
             country = (Country) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
             
         } catch (NoResultException ex) {
@@ -1020,3 +1043,4 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
 }    
+
