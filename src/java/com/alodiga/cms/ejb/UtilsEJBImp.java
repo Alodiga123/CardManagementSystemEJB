@@ -1168,5 +1168,36 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return requestsTypeList;        
     }
 
+    @Override
+    public Network searchNetwork(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Network network = new Network(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT n FROM Network n ");
+            sqlBuilder.append("WHERE n.name LIKE '").append(name).append("'");
+            network = (Network) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Network.class.getSimpleName(), "loadNetworkByName", Network.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return network;
+    }
+
+    @Override
+    public List<Network> getSearchNetwork(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<Network> networkList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM network n WHERE n.name LIKE '%name%'"); 
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        networkList = (List<Network>) query.setHint("toplink.refresh", "true").getResultList();
+        return networkList;        
+    }
+
 }    
 
