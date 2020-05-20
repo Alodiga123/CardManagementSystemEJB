@@ -968,14 +968,14 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }
     
     @Override
-    public List<PlastiCustomizingRequestHasCard> getPlastiCustomizingHasRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<PlastiCustomizingRequestHasCard> plastiCustomizingHasRequestList = null;
+    public List<PlastiCustomizingRequestHasCard> getCardByPlastiCustomizingRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PlastiCustomizingRequestHasCard> PlastiCustomizingRequestHasCardList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_PLASTIC_CUSTOMIZING_REQUEST_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PLASTIC_CUSTOMIZING_REQUEST_ID), null);
         }
-        plastiCustomizingHasRequestList = (List<PlastiCustomizingRequestHasCard>) getNamedQueryResult(PlastiCustomizingRequestHasCard.class, QueryConstants.PLASTIC_CUSTOMER_BY_REQUEST, request, getMethodName(), logger, "plastiCustomizingHasRequestList");
-        return plastiCustomizingHasRequestList;
+        PlastiCustomizingRequestHasCardList = (List<PlastiCustomizingRequestHasCard>) getNamedQueryResult(PlastiCustomizingRequestHasCard.class, QueryConstants.CARD_BY_PLASTIC_CUSTOMIZING_REQUEST, request, getMethodName(), logger, "PlastiCustomizingRequestHasCardList");
+        return PlastiCustomizingRequestHasCardList;
     }
 
     @Override
