@@ -70,6 +70,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import org.apache.log4j.Logger;
 
@@ -1089,5 +1090,56 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (StatusPlasticCustomizingRequest) saveEntity(statusPlasticCustomizingRequest);
     }
+
+    @Override
+    public CollectionsRequest searchCollectionsRequest(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CollectionsRequest collectionsRequest = new CollectionsRequest(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM CollectionsRequest c ");
+            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("'");
+            collectionsRequest = (CollectionsRequest) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, CollectionsRequest.class.getSimpleName(), "loadCollectionsRequestByName", CollectionsRequest.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return collectionsRequest;
+    }
+
+    @Override
+    public List<CollectionsRequest> getSearchCollectionsRequest(String name) throws EmptyListException, GeneralException, NullParameterException {
+         List<CollectionsRequest> collectionsRequestList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM collectionsRequest c WHERE c.name LIKE '%name%'"); 
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        collectionsRequestList = (List<CollectionsRequest>) query.setHint("toplink.refresh", "true").getResultList();
+        return collectionsRequestList;        
+    }
+
+    @Override
+    public CollectionType searchCollectionType(String description) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        CollectionType collectionType = new CollectionType(); 
+        try {
+            if (description == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM CollectionType c ");
+            sqlBuilder.append("WHERE c.description LIKE '").append(description).append("'");
+            collectionType = (CollectionType) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, CollectionType.class.getSimpleName(), "loadCollectionTypeByDescription", CollectionType.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return collectionType;
+    }
+    
     
 }
