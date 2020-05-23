@@ -16,6 +16,7 @@ import com.cms.commons.models.AccountSegment;
 import com.cms.commons.models.AccountType;
 import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.Card;
+import com.cms.commons.models.CardDeliveryRegister;
 import com.cms.commons.models.CardNumberCredential;
 import com.cms.commons.models.DeliveryRequest;
 import com.cms.commons.models.DeliveryRequetsHasCard;
@@ -316,6 +317,23 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (CardNumberCredential) saveEntity(cardNumberCredential);
     }
     
+    //CardDeliveryRegister
+    public List< CardDeliveryRegister> getCardDeliveryRegister(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+        List<CardDeliveryRegister> cardDeliveryRegister = (List<CardDeliveryRegister>) listEntities(CardDeliveryRegister.class, request, logger, getMethodName());
+        return cardDeliveryRegister;
+    }
+    
+    public CardDeliveryRegister loadCardDeliveryRegister(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        CardDeliveryRegister cardDeliveryRegister = (CardDeliveryRegister) loadEntity(CardDeliveryRegister.class, request, logger, getMethodName());
+        return cardDeliveryRegister;
+    }
+    
+    public CardDeliveryRegister saveCardDeliveryRegister(CardDeliveryRegister cardDeliveryRegister) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        if (cardDeliveryRegister == null) {
+            throw new NullParameterException("cardDeliveryRegister", null);
+        }
+        return (CardDeliveryRegister) saveEntity(cardDeliveryRegister);
+    }
 
     //RateByCard
     @Override
