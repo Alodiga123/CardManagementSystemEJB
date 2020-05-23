@@ -1041,6 +1041,132 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         countryList = (List<Country>) query.setHint("toplink.refresh", "true").getResultList();
         return countryList;        
     }
+    
+    
+    @Override
+    public State searchState(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        State state = new State(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT s FROM State s ");
+            sqlBuilder.append("WHERE s.name LIKE '").append(name).append("'");
+            state = (State) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, State.class.getSimpleName(), "loadStateByName", State.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return state;
+    }
+    
+    @Override
+    public List<State> getSearchState(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<State> stateList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM state s WHERE s.name LIKE '%name%'");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        stateList = (List<State>) query.setHint("toplink.refresh", "true").getResultList();
+        return stateList;        
+    }
+
+    @Override
+    public PersonClassification searchPersonClassification(String description) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PersonClassification personclassification = new PersonClassification(); 
+        try {
+            if (description == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT p FROM PersonClassification p ");
+            sqlBuilder.append("WHERE p.description LIKE '").append(description).append("'");
+            personclassification = (PersonClassification) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, PersonClassification.class.getSimpleName(), "loadPersonClassificationByDescription", PersonClassification.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return personclassification;
+    }
+
+    @Override
+    public List<PersonClassification> getSearchPersonClassification(String description) throws EmptyListException, GeneralException, NullParameterException {
+         List<PersonClassification> personclassificationList = null;
+        if (description == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM personClassification p WHERE p.description LIKE '%description%'"); 
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        personclassificationList = (List<PersonClassification>) query.setHint("toplink.refresh", "true").getResultList();
+        return personclassificationList;        
+    }
+
+    @Override
+    public Currency searchCurrency(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Currency currency = new Currency(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Currency c ");
+            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("'");
+            currency = (Currency) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Currency.class.getSimpleName(), "loadCurrencyByName", Currency.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return currency;
+    }
+
+    @Override
+    public List<Currency> getSearchCurrency(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<Currency> currencyList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c WHERE c.name LIKE '%name%'"); 
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        currencyList = (List<Currency>) query.setHint("toplink.refresh", "true").getResultList();
+        return currencyList;        
+    }
+
+   
+    @Override
+    public RequestType searchRequestType(String description) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        RequestType requestType = new RequestType(); 
+        try {
+            if (description == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT r FROM RequestType r ");
+            sqlBuilder.append("WHERE r.description LIKE '").append(description).append("'");
+            requestType = (RequestType) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, RequestType.class.getSimpleName(), "loadRequestTypeByDescription", RequestType.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return requestType;
+    }
+
+    @Override
+    public List<RequestType> getSearchRequestType(String description) throws EmptyListException, GeneralException, NullParameterException {
+         List<RequestType> requestsTypeList = null;
+        if (description == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM requestType r WHERE r.description LIKE '%description%'"); 
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        requestsTypeList = (List<RequestType>) query.setHint("toplink.refresh", "true").getResultList();
+        return requestsTypeList;        
+    }
 
 }    
 
