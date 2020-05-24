@@ -42,6 +42,7 @@ import com.cms.commons.models.PermissionGroupData;
 import com.cms.commons.models.PersonType;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Profile;
+import com.cms.commons.models.ProfileData;
 import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
@@ -57,6 +58,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import org.apache.log4j.Logger;
 
 /**
@@ -282,7 +285,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
 
     @Override
-    public BinSponsor loadBinSponsore(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+    public BinSponsor loadBinSponsor(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         BinSponsor binSponsor = (BinSponsor) loadEntity(BinSponsor.class, request, logger, getMethodName());
         return binSponsor;
     }
@@ -368,6 +371,41 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (Network) saveEntity(network);
     }
+    
+    @Override
+    public Network searchNetwork(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Network network = new Network(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT n FROM Network n ");
+            sqlBuilder.append("WHERE n.name LIKE '").append(name).append("'");
+            network = (Network) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Network.class.getSimpleName(), "loadNetworkByName", Network.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return network;
+    }
+
+    @Override
+    public List<Network> searchNetworkByCountry(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<Network> network = null; 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT n FROM Network n ");
+            sqlBuilder.append("WHERE n.countryId IN (SELECT c.id FROM Country WHERE c.name LIKE '").append(name).append("')");
+            network = (List<Network>) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getResultList();
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return network;
+    }   
 
     //ProgramHasNetwork
     @Override
@@ -974,5 +1012,196 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (Profile) saveEntity(profile);
     }
+    
+    //ProfileData
+    @Override
+    public List<ProfileData> getProfileData(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<ProfileData> profileDataList = (List<ProfileData>) listEntities(ProfileData.class, request, logger, getMethodName());
+        return profileDataList;
+    }
+
+    @Override
+    public ProfileData loadProfileData(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ProfileData profileData = (ProfileData) loadEntity(ProfileData.class, request, logger, getMethodName());
+        return profileData;
+    }
+    
+     @Override
+    public ProfileData saveProfileData(ProfileData profileData) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (profileData == null) {
+            throw new NullParameterException("profileData", null);
+        }
+        return (ProfileData) saveEntity(profileData);
+    }
+    
+    
+    @Override
+    public List<LegalPerson> getLegalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalPerson> legalPersonList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        legalPersonList = (List<LegalPerson>) getNamedQueryResult(LegalPerson.class, QueryConstants.LEGAL_PERSON_BY_PERSON, request, getMethodName(), logger, "legalPersonList");
+        return legalPersonList;
+    }
+
+    @Override
+    public Country searchCountry(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Country country = new Country(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
+            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
+            country = (Country) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Country.class.getSimpleName(), "loadCountryByName", Country.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return country;
+    }
+
+    @Override
+    public List<Country> getSearchCountry(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<Country> countryList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM country c WHERE c.name LIKE '%name%'");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        countryList = (List<Country>) query.setHint("toplink.refresh", "true").getResultList();
+        return countryList;        
+    }
+    
+    
+    @Override
+    public State searchState(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        State state = new State(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT s FROM State s ");
+            sqlBuilder.append("WHERE s.name LIKE '").append(name).append("'");
+            state = (State) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, State.class.getSimpleName(), "loadStateByName", State.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return state;
+    }
+    
+    @Override
+    public List<State> getSearchState(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<State> stateList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM state s WHERE s.name LIKE '%name%'");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        stateList = (List<State>) query.setHint("toplink.refresh", "true").getResultList();
+        return stateList;        
+    }
+
+    @Override
+    public PersonClassification searchPersonClassification(String description) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PersonClassification personclassification = new PersonClassification(); 
+        try {
+            if (description == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT p FROM PersonClassification p ");
+            sqlBuilder.append("WHERE p.description LIKE '").append(description).append("'");
+            personclassification = (PersonClassification) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, PersonClassification.class.getSimpleName(), "loadPersonClassificationByDescription", PersonClassification.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return personclassification;
+    }
+
+    @Override
+    public List<PersonClassification> getSearchPersonClassification(String description) throws EmptyListException, GeneralException, NullParameterException {
+         List<PersonClassification> personclassificationList = null;
+        if (description == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM personClassification p WHERE p.description LIKE '%description%'"); 
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        personclassificationList = (List<PersonClassification>) query.setHint("toplink.refresh", "true").getResultList();
+        return personclassificationList;        
+    }
+
+    @Override
+    public Currency searchCurrency(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Currency currency = new Currency(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Currency c ");
+            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("'");
+            currency = (Currency) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Currency.class.getSimpleName(), "loadCurrencyByName", Currency.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return currency;
+    }
+
+    @Override
+    public List<Currency> getSearchCurrency(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<Currency> currencyList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c WHERE c.name LIKE '%name%'"); 
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        currencyList = (List<Currency>) query.setHint("toplink.refresh", "true").getResultList();
+        return currencyList;        
+    }
+
+   
+    @Override
+    public RequestType searchRequestType(String description) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        RequestType requestType = new RequestType(); 
+        try {
+            if (description == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT r FROM RequestType r ");
+            sqlBuilder.append("WHERE r.description LIKE '").append(description).append("'");
+            requestType = (RequestType) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, RequestType.class.getSimpleName(), "loadRequestTypeByDescription", RequestType.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return requestType;
+    }
+
+    @Override
+    public List<RequestType> getSearchRequestType(String description) throws EmptyListException, GeneralException, NullParameterException {
+         List<RequestType> requestsTypeList = null;
+        if (description == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM requestType r WHERE r.description LIKE '%description%'"); 
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        requestsTypeList = (List<RequestType>) query.setHint("toplink.refresh", "true").getResultList();
+        return requestsTypeList;        
+    }
 
 }    
+
