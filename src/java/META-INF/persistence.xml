@@ -130,7 +130,10 @@
     <class>com.cms.commons.models.ApprovalCardRate</class>
     <class>com.cms.commons.models.StatusProduct</class>
     <class>com.cms.commons.models.CardDeliveryRegister</class>
-    <class>com.cms.commons.models.UserHasProfile</class>    
+    <class>com.cms.commons.models.UserHasProfile</class> 
+    <class>com.cms.commons.models.CardRenewalRequestHasCard</class>
+    <class>com.cms.commons.models.CardRenewalRequest</class>
+    <class>com.cms.commons.models.StatusCardRenewalRequest</class>   
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
