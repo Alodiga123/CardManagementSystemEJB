@@ -134,6 +134,9 @@
     <class>com.cms.commons.models.CardRenewalRequestHasCard</class>
     <class>com.cms.commons.models.CardRenewalRequest</class>
     <class>com.cms.commons.models.StatusCardRenewalRequest</class>   
+    <class>com.cms.commons.models.SystemFuncionality</class>
+    <class>com.cms.commons.models.SecurityQuestion</class>
+    <class>com.cms.commons.models.SystemFuncionalityHasSecurityQuestion</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
