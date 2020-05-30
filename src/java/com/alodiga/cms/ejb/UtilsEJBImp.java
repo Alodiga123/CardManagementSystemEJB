@@ -47,6 +47,8 @@ import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StreetType;
+import com.cms.commons.models.User;
+import com.cms.commons.models.UserHasProfile;
 import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
@@ -1203,5 +1205,24 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return requestsTypeList;        
     }
 
+    @Override
+    public List<UserHasProfile> getUserHasProfile(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<UserHasProfile> userHasProfileList = (List<UserHasProfile>) listEntities(UserHasProfile.class, request, logger, getMethodName());
+        return userHasProfileList;
+    }
+
+    @Override
+    public UserHasProfile saveUserHasProfile(UserHasProfile userHasProfile) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (userHasProfile == null) {
+            throw new NullParameterException("userHasProfile", null);
+        }
+        return (UserHasProfile) saveEntity(userHasProfile);  
+    }
+
+    @Override
+    public UserHasProfile loadUserHasProfile(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }    
 
