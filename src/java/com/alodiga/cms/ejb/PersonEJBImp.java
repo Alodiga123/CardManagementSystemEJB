@@ -615,18 +615,14 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return (NaturalCustomer) saveEntity(naturalCustomer);
     }
 
-    public NaturalCustomer validateQuestionNatural(Long person, String identificationNumber, Date dateBirth) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
+    public NaturalCustomer validateQuestionNatural(Long personId, String identificationNumber, Date dateBirth) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
         try {
-            Query query = entityManager.createQuery("SELECT n FROM NaturalCustomer n WHERE n.personId = " + person + "");
-            query.setMaxResults(1);
-            NaturalCustomer naturalCustomer = (NaturalCustomer) query.setHint("toplink.refresh", "true").getSingleResult();
-
+            //Se obtiene el cliente
+            Query query = entityManager.createQuery("SELECT n FROM NaturalCustomer n WHERE n.personId.id = :personId");
+            query.setParameter("personId", personId);
+            NaturalCustomer naturalCustomer = (NaturalCustomer) query.getSingleResult();
             
-//            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM naturalCustomer nc WHERE nc.personId = ?1");
-//            Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-//            query.setParameter("1",person);        
-//            NaturalCustomer result = (NaturalCustomer) query.setHint("toplink.refresh", "true").getSingleResult();
-//            naturalCustomer = loadValidateNaturalCustomer(person);
+            //Se validan las respuestas en BD
             if (!naturalCustomer.getIdentificationNumber().equals(identificationNumber)) {
                 throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
             }
@@ -639,20 +635,6 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         } catch (Exception ex) {
             throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
         }
-    }
-
-    public NaturalCustomer loadValidateNaturalCustomer(Long personId) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM naturalCustomer nc WHERE nc.personId = ?1");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        query.setParameter("1",personId);        
-        NaturalCustomer result = (NaturalCustomer) query.setHint("toplink.refresh", "true").getSingleResult();
-
-            
-//            Query query = createQuery("SELECT n FROM NaturalCustomer n WHERE n.personId = :personId");
-//            query.setParameter("personId", personId);
-//            naturalCustomer = (NaturalCustomer) query.getSingleResult();
-        
-        return result;
     }
 
     //LegalCustomer
