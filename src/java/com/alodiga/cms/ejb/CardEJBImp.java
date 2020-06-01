@@ -388,7 +388,17 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (AccountCard) saveEntity(accountCard);
     }
-
+    
+     @Override
+    public List<AccountCard> getAccountCardByProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountCard> accountCardList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_ID), null);
+        }
+        accountCardList = (List<AccountCard>) getNamedQueryResult(AccountCard.class, QueryConstants.ACCOUNT_CARD_BY_PRODUCT, request, getMethodName(), logger, "accountCardList");
+        return accountCardList;
+    }
     
     //StatusAccount
     @Override
@@ -473,5 +483,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (StatusDeliveryRequest) saveEntity(statusDeliveryRequest);
     }
+
+   
 
 }
