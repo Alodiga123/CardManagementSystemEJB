@@ -4,6 +4,7 @@ import com.alodiga.cms.commons.ejb.CardEJB;
 import com.alodiga.cms.commons.ejb.CardEJBLocal;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
+import com.alodiga.cms.commons.exception.InvalidQuestionException;
 import com.alodiga.cms.commons.exception.NullParameterException;
 import com.alodiga.cms.commons.exception.RegisterNotFoundException;
 import com.cms.commons.genericEJB.AbstractDistributionEJB;
@@ -21,10 +22,13 @@ import com.cms.commons.models.CardNumberCredential;
 import com.cms.commons.models.DeliveryRequest;
 import com.cms.commons.models.DeliveryRequetsHasCard;
 import com.cms.commons.models.RateByCard;
+import com.cms.commons.models.SecurityQuestion;
 import com.cms.commons.models.StatusAccount;
 import com.cms.commons.models.StatusDeliveryRequest;
 import com.cms.commons.models.StatusProduct;
 import com.cms.commons.models.SubAccountType;
+import com.cms.commons.models.SystemFuncionality;
+import com.cms.commons.models.SystemFuncionalityHasSecurityQuestion;
 import java.util.Map;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -33,7 +37,10 @@ import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
+import java.util.Date;
 import java.util.List;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 /**
  *
@@ -234,7 +241,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         cardByProgramByStatus = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_PROGRAM_BY_STATUS, request, getMethodName(), logger, "cardByProgramByStatus");
         return cardByProgramByStatus;
     }
-    
+
     @Override
     public List<Card> getCardByStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Card> cardByStatus = null;
@@ -270,7 +277,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         cardByCardNumberList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_CARDNUMBER, request, getMethodName(), logger, "cardByCardNumberList");
         return cardByCardNumberList;
     }
-    
+
     @Override
     public Card loadCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Card card = (Card) loadEntity(Card.class, request, logger, getMethodName());
@@ -283,6 +290,42 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException("card", null);
         }
         return (Card) saveEntity(card);
+    }
+
+    public Card validateQuestionCard(Long cardId, Date expirationDate, Date createDate, String ICVVMagneticStrip) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
+        Card card = null;
+        try {
+            card = loadValidateCard(cardId);
+            if (!card.getExpirationDate().equals(expirationDate)) {
+                throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
+            }
+            if (!card.getIssueDate().equals(createDate)) {
+                throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
+            }
+            if (!card.getICVVMagneticStrip().equals(ICVVMagneticStrip)) {
+                throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
+            }
+            return card;
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
+        } catch (Exception ex) {
+            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+        }
+    }
+
+    public Card loadValidateCard(Long cardId) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Card card = null;
+        try {
+            Query query = createQuery("SELECT c FROM Card c WHERE c.id = :cardId");
+            query.setParameter("cardId", cardId);
+            card = (Card) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
+        } catch (Exception ex) {
+            ex.getMessage();
+            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+        }
+        return card;
     }
 
     //CardNumberCredential
@@ -316,19 +359,19 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (CardNumberCredential) saveEntity(cardNumberCredential);
     }
-    
+
     //CardDeliveryRegister
-    public List< CardDeliveryRegister> getCardDeliveryRegister(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+    public List< CardDeliveryRegister> getCardDeliveryRegister(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CardDeliveryRegister> cardDeliveryRegister = (List<CardDeliveryRegister>) listEntities(CardDeliveryRegister.class, request, logger, getMethodName());
         return cardDeliveryRegister;
     }
-    
-    public CardDeliveryRegister loadCardDeliveryRegister(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException{
+
+    public CardDeliveryRegister loadCardDeliveryRegister(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         CardDeliveryRegister cardDeliveryRegister = (CardDeliveryRegister) loadEntity(CardDeliveryRegister.class, request, logger, getMethodName());
         return cardDeliveryRegister;
     }
-    
-    public CardDeliveryRegister saveCardDeliveryRegister(CardDeliveryRegister cardDeliveryRegister) throws RegisterNotFoundException, NullParameterException, GeneralException{
+
+    public CardDeliveryRegister saveCardDeliveryRegister(CardDeliveryRegister cardDeliveryRegister) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (cardDeliveryRegister == null) {
             throw new NullParameterException("cardDeliveryRegister", null);
         }
@@ -367,8 +410,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return rateByCardList;
     }
 
-    
-     //AccountCard
+    //AccountCard
     @Override
     public List<AccountCard> getAccountCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<AccountCard> accountCard = (List<AccountCard>) listEntities(AccountCard.class, request, logger, getMethodName());
@@ -441,8 +483,8 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (DeliveryRequest) saveEntity(deliveryRequest);
     }
-    
-     //DeliveryRequestHasCard
+
+    //DeliveryRequestHasCard
     @Override
     public List<DeliveryRequetsHasCard> getDeliveryRequestHasCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<DeliveryRequetsHasCard> deliveryRequetsHasCard = (List<DeliveryRequetsHasCard>) listEntities(DeliveryRequetsHasCard.class, request, logger, getMethodName());
@@ -483,7 +525,5 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (StatusDeliveryRequest) saveEntity(statusDeliveryRequest);
     }
-
-   
 
 }
