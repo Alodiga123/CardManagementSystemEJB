@@ -3,10 +3,8 @@ package com.alodiga.cms.ejb;
 import com.alodiga.cms.commons.ejb.PersonEJB;
 import com.alodiga.cms.commons.ejb.PersonEJBLocal;
 import com.alodiga.cms.commons.ejb.UtilsEJB;
-import com.alodiga.cms.commons.exception.DisabledUserException;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
-import com.alodiga.cms.commons.exception.InvalidPasswordException;
 import com.alodiga.cms.commons.exception.InvalidQuestionException;
 import com.alodiga.cms.commons.exception.NullParameterException;
 import com.alodiga.cms.commons.exception.RegisterNotFoundException;
@@ -95,6 +93,25 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         phonePersonList = (List<PhonePerson>) getNamedQueryResult(PhonePerson.class, QueryConstants.PHONES_BY_PERSON, request, getMethodName(), logger, "phonePersonList");
         return phonePersonList;
+    }
+    
+    public PhonePerson validatePhoneQuestion(Long personId, String numberPhone) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException{
+        try {
+            //Se obtiene el cliente
+            Query query = entityManager.createQuery("SELECT p FROM PhonePerson p WHERE p.personId.id = :personId");
+            query.setParameter("personId", personId);
+            PhonePerson phonePerson = (PhonePerson) query.getSingleResult();
+            
+            //Se valida las respuestas del Telefono en BD
+            if (!phonePerson.getNumberPhone().equals(numberPhone)) {
+                throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
+            }
+            return phonePerson;
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
+        } catch (Exception ex) {
+            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+        }
     }
 
     //PersonHasAddress
@@ -615,18 +632,14 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return (NaturalCustomer) saveEntity(naturalCustomer);
     }
 
-    public NaturalCustomer validateQuestionNatural(Long person, String identificationNumber, Date dateBirth) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
+    public NaturalCustomer validateQuestionNatural(Long personId, String identificationNumber, Date dateBirth) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
         try {
-            Query query = entityManager.createQuery("SELECT n FROM NaturalCustomer n WHERE n.personId = " + person + "");
-            query.setMaxResults(1);
-            NaturalCustomer naturalCustomer = (NaturalCustomer) query.setHint("toplink.refresh", "true").getSingleResult();
-
+            //Se obtiene el cliente
+            Query query = entityManager.createQuery("SELECT n FROM NaturalCustomer n WHERE n.personId.id = :personId");
+            query.setParameter("personId", personId);
+            NaturalCustomer naturalCustomer = (NaturalCustomer) query.getSingleResult();
             
-//            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM naturalCustomer nc WHERE nc.personId = ?1");
-//            Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-//            query.setParameter("1",person);        
-//            NaturalCustomer result = (NaturalCustomer) query.setHint("toplink.refresh", "true").getSingleResult();
-//            naturalCustomer = loadValidateNaturalCustomer(person);
+            //Se validan las respuestas en BD
             if (!naturalCustomer.getIdentificationNumber().equals(identificationNumber)) {
                 throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
             }
@@ -639,20 +652,6 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         } catch (Exception ex) {
             throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
         }
-    }
-
-    public NaturalCustomer loadValidateNaturalCustomer(Long personId) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM naturalCustomer nc WHERE nc.personId = ?1");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        query.setParameter("1",personId);        
-        NaturalCustomer result = (NaturalCustomer) query.setHint("toplink.refresh", "true").getSingleResult();
-
-            
-//            Query query = createQuery("SELECT n FROM NaturalCustomer n WHERE n.personId = :personId");
-//            query.setParameter("personId", personId);
-//            naturalCustomer = (NaturalCustomer) query.getSingleResult();
-        
-        return result;
     }
 
     //LegalCustomer
@@ -687,10 +686,15 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return (LegalCustomer) saveEntity(legalCustomer);
     }
     
-    public LegalCustomer validateQuestionLegal(Long person, String identificationNumber, Date dateInscriptionRegister) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
-        LegalCustomer legalCustomer = null;
+    
+    public LegalCustomer validateQuestionLegal(Long personId, String identificationNumber, Date dateInscriptionRegister) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
         try {
-            legalCustomer = loadLegalCustomer(person);
+            //Se obtiene el cliente
+            Query query = entityManager.createQuery("SELECT l FROM LegalCustomer l WHERE l.personId.id = :personId");
+            query.setParameter("personId", personId);
+            LegalCustomer legalCustomer = (LegalCustomer) query.getSingleResult();
+            
+            //Se validan las respuestas en BD
             if (!legalCustomer.getIdentificationNumber().equals(identificationNumber)) {
                 throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
             }
@@ -704,21 +708,39 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
         }
     }
-
-    public LegalCustomer loadLegalCustomer(Long personId) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        LegalCustomer legalCustomer = null;
-        try {
-            Query query = createQuery("SELECT l FROM LegalCustomer l WHERE l.personId.Id = :personId");
-            query.setParameter("personId", personId);
-            legalCustomer = (LegalCustomer) query.getSingleResult();
-        } catch (NoResultException ex) {
-            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
-        } catch (Exception ex) {
-            ex.getMessage();
-            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
-        }
-        return legalCustomer;
-    }
+    
+//    public LegalCustomer validateQuestionLegal(Long person, String identificationNumber, Date dateInscriptionRegister) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
+//        LegalCustomer legalCustomer = null;
+//        try {
+//            legalCustomer = loadLegalCustomer(person);
+//            if (!legalCustomer.getIdentificationNumber().equals(identificationNumber)) {
+//                throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
+//            }
+//            if (!legalCustomer.getDateInscriptionRegister().equals(dateInscriptionRegister)) {
+//                throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
+//            }
+//            return legalCustomer;
+//        } catch (NoResultException ex) {
+//            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
+//        } catch (Exception ex) {
+//            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+//        }
+//    }
+//
+//    public LegalCustomer loadLegalCustomer(Long personId) throws RegisterNotFoundException, NullParameterException, GeneralException {
+//        LegalCustomer legalCustomer = null;
+//        try {
+//            Query query = createQuery("SELECT l FROM LegalCustomer l WHERE l.personId.Id = :personId");
+//            query.setParameter("personId", personId);
+//            legalCustomer = (LegalCustomer) query.getSingleResult();
+//        } catch (NoResultException ex) {
+//            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
+//        } catch (Exception ex) {
+//            ex.getMessage();
+//            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+//        }
+//        return legalCustomer;
+//    }
     
 
     //PlasticManufacturer

@@ -431,6 +431,17 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (AccountCard) saveEntity(accountCard);
     }
 
+    @Override
+    public List<AccountCard> getAccountCardByProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountCard> accountCardList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_ID), null);
+        }
+        accountCardList = (List<AccountCard>) getNamedQueryResult(AccountCard.class, QueryConstants.ACCOUNT_CARD_BY_PRODUCT, request, getMethodName(), logger, "accountCardList");
+        return accountCardList;
+    }
+
     //StatusAccount
     @Override
     public List<StatusAccount> getStatusAccount(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -516,16 +527,19 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     //SecurityQuestion
+    @Override
     public List<SecurityQuestion> getSecurityQuestion(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<SecurityQuestion> securityQuestion = (List<SecurityQuestion>) listEntities(SecurityQuestion.class, request, logger, getMethodName());
         return securityQuestion;
     }
 
+    @Override
     public SecurityQuestion loadSecurityQuestion(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         SecurityQuestion securityQuestion = (SecurityQuestion) loadEntity(SecurityQuestion.class, request, logger, getMethodName());
         return securityQuestion;
     }
 
+    @Override
     public SecurityQuestion saveSecurityQuestion(SecurityQuestion securityQuestion) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (securityQuestion == null) {
             throw new NullParameterException("securityQuestion", null);
@@ -534,16 +548,19 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     //SystemFuncionality
+    @Override
     public List<SystemFuncionality> getSystemFuncionality(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<SystemFuncionality> systemFuncionality = (List<SystemFuncionality>) listEntities(SystemFuncionality.class, request, logger, getMethodName());
         return systemFuncionality;
     }
 
+    @Override
     public SystemFuncionality loadSystemFuncionality(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         SystemFuncionality systemFuncionality = (SystemFuncionality) loadEntity(SystemFuncionality.class, request, logger, getMethodName());
         return systemFuncionality;
     }
 
+    @Override
     public SystemFuncionality saveSystemFuncionality(SystemFuncionality systemFuncionality) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (systemFuncionality == null) {
             throw new NullParameterException("systemFuncionality", null);
@@ -552,20 +569,24 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     //SystemFuncionalityHasSecurityQuestion
+    @Override
     public List<SystemFuncionalityHasSecurityQuestion> getSystemFuncionalityHasSecurityQuestion(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<SystemFuncionalityHasSecurityQuestion> systemFuncionalityHasSecurityQuestion = (List<SystemFuncionalityHasSecurityQuestion>) listEntities(SystemFuncionalityHasSecurityQuestion.class, request, logger, getMethodName());
         return systemFuncionalityHasSecurityQuestion;
     }
 
+    @Override
     public SystemFuncionalityHasSecurityQuestion loadSystemFuncionalityHasSecurityQuestion(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         SystemFuncionalityHasSecurityQuestion systemFuncionalityHasSecurityQuestion = (SystemFuncionalityHasSecurityQuestion) loadEntity(SystemFuncionalityHasSecurityQuestion.class, request, logger, getMethodName());
         return systemFuncionalityHasSecurityQuestion;
     }
 
+    @Override
     public SystemFuncionalityHasSecurityQuestion saveSystemFuncionalityHasSecurityQuestion(SystemFuncionalityHasSecurityQuestion systemFuncionalityHasSecurityQuestion) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (systemFuncionalityHasSecurityQuestion == null) {
             throw new NullParameterException("systemFuncionalityHasSecurityQuestion", null);
         }
         return (SystemFuncionalityHasSecurityQuestion) saveEntity(systemFuncionalityHasSecurityQuestion);
     }
+
 }
