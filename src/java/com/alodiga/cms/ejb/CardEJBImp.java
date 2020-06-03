@@ -430,8 +430,8 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (AccountCard) saveEntity(accountCard);
     }
-    
-     @Override
+
+    @Override
     public List<AccountCard> getAccountCardByProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<AccountCard> accountCardList = null;
         Map<String, Object> params = request.getParams();
@@ -441,7 +441,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         accountCardList = (List<AccountCard>) getNamedQueryResult(AccountCard.class, QueryConstants.ACCOUNT_CARD_BY_PRODUCT, request, getMethodName(), logger, "accountCardList");
         return accountCardList;
     }
-    
+
     //StatusAccount
     @Override
     public List<StatusAccount> getStatusAccount(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -526,49 +526,67 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (StatusDeliveryRequest) saveEntity(statusDeliveryRequest);
     }
 
+    //SecurityQuestion
     @Override
     public List<SecurityQuestion> getSecurityQuestion(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<SecurityQuestion> securityQuestion = (List<SecurityQuestion>) listEntities(SecurityQuestion.class, request, logger, getMethodName());
+        return securityQuestion;
     }
 
     @Override
     public SecurityQuestion loadSecurityQuestion(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SecurityQuestion securityQuestion = (SecurityQuestion) loadEntity(SecurityQuestion.class, request, logger, getMethodName());
+        return securityQuestion;
     }
 
     @Override
     public SecurityQuestion saveSecurityQuestion(SecurityQuestion securityQuestion) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (securityQuestion == null) {
+            throw new NullParameterException("securityQuestion", null);
+        }
+        return (SecurityQuestion) saveEntity(securityQuestion);
     }
 
+    //SystemFuncionality
     @Override
     public List<SystemFuncionality> getSystemFuncionality(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<SystemFuncionality> systemFuncionality = (List<SystemFuncionality>) listEntities(SystemFuncionality.class, request, logger, getMethodName());
+        return systemFuncionality;
     }
 
     @Override
     public SystemFuncionality loadSystemFuncionality(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SystemFuncionality systemFuncionality = (SystemFuncionality) loadEntity(SystemFuncionality.class, request, logger, getMethodName());
+        return systemFuncionality;
     }
 
     @Override
     public SystemFuncionality saveSystemFuncionality(SystemFuncionality systemFuncionality) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (systemFuncionality == null) {
+            throw new NullParameterException("systemFuncionality", null);
+        }
+        return (SystemFuncionality) saveEntity(systemFuncionality);
     }
 
+    //SystemFuncionalityHasSecurityQuestion
     @Override
     public List<SystemFuncionalityHasSecurityQuestion> getSystemFuncionalityHasSecurityQuestion(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<SystemFuncionalityHasSecurityQuestion> systemFuncionalityHasSecurityQuestion = (List<SystemFuncionalityHasSecurityQuestion>) listEntities(SystemFuncionalityHasSecurityQuestion.class, request, logger, getMethodName());
+        return systemFuncionalityHasSecurityQuestion;
     }
 
     @Override
     public SystemFuncionalityHasSecurityQuestion loadSystemFuncionalityHasSecurityQuestion(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SystemFuncionalityHasSecurityQuestion systemFuncionalityHasSecurityQuestion = (SystemFuncionalityHasSecurityQuestion) loadEntity(SystemFuncionalityHasSecurityQuestion.class, request, logger, getMethodName());
+        return systemFuncionalityHasSecurityQuestion;
     }
 
     @Override
     public SystemFuncionalityHasSecurityQuestion saveSystemFuncionalityHasSecurityQuestion(SystemFuncionalityHasSecurityQuestion systemFuncionalityHasSecurityQuestion) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (systemFuncionalityHasSecurityQuestion == null) {
+            throw new NullParameterException("systemFuncionalityHasSecurityQuestion", null);
+        }
+        return (SystemFuncionalityHasSecurityQuestion) saveEntity(systemFuncionalityHasSecurityQuestion);
     }
 
 }
