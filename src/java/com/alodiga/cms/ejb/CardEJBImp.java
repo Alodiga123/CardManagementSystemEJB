@@ -19,6 +19,8 @@ import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.Card;
 import com.cms.commons.models.CardDeliveryRegister;
 import com.cms.commons.models.CardNumberCredential;
+import com.cms.commons.models.CardStatus;
+import com.cms.commons.models.CardStatusHasUpdateReason;
 import com.cms.commons.models.DeliveryRequest;
 import com.cms.commons.models.DeliveryRequetsHasCard;
 import com.cms.commons.models.RateByCard;
@@ -26,6 +28,7 @@ import com.cms.commons.models.SecurityQuestion;
 import com.cms.commons.models.StatusAccount;
 import com.cms.commons.models.StatusDeliveryRequest;
 import com.cms.commons.models.StatusProduct;
+import com.cms.commons.models.StatusUpdateReason;
 import com.cms.commons.models.SubAccountType;
 import com.cms.commons.models.SystemFuncionality;
 import com.cms.commons.models.SystemFuncionalityHasSecurityQuestion;
@@ -39,6 +42,7 @@ import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -587,6 +591,54 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException("systemFuncionalityHasSecurityQuestion", null);
         }
         return (SystemFuncionalityHasSecurityQuestion) saveEntity(systemFuncionalityHasSecurityQuestion);
+    }
+
+    @Override
+    public List<StatusUpdateReason> getStatusUpdateReason(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+       List<StatusUpdateReason> statusUpdateReason = (List<StatusUpdateReason>) listEntities(StatusUpdateReason.class, request, logger, getMethodName());
+        return statusUpdateReason;    }
+
+    @Override
+    public StatusUpdateReason loadStatusUpdateReason(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusUpdateReason statusUpdateReason = (StatusUpdateReason) loadEntity(StatusUpdateReason.class, request, logger, getMethodName());
+        return statusUpdateReason; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<CardStatus> getStatusCardByStatusUpdateReasonId(String id) throws EmptyListException, GeneralException, NullParameterException {
+        
+                      
+        /*    StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT n FROM Network n ");
+            sqlBuilder.append("WHERE n.name LIKE '").append(name).append("'");
+            network = (Network) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+        
+        List<CardStatus> cardStatus = null;
+         Map<String, Object> params = request.getParams();*/
+                   List<CardStatus> cardStatus = null;
+
+        try {
+              if (id == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }
+           
+            //cardStatus = (List<CardStatus>) getNamedQueryResult(CardStatus.class, QueryConstants.STATUS_UPDATE_REASON, request, getMethodName(), logger, "cardStatus");*/
+     
+            //Query query = createQuery("SELECT c FROM cardStatus c, cardStatusHasUpdateReason r WHERE  c.id=r.cardStatusId and r.statusUpdateReasonId= :statusUpdateReasonId");
+            //query.setParameter("statusUpdateReasonId", id);
+            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT c.id, c.description FROM cardStatus c join cardStatusHasUpdateReason r on c.id=r.cardStatusId and r.statusUpdateReasonId=");
+            sqlBuilder.append("'").append(id).append("'");
+            cardStatus = (List<CardStatus>) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+        
+            
+            //cardStatus = (List<CardStatus>) query.getSingleResult();
+            
+            
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(CardEJBImp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+       return cardStatus;
     }
 
 }
