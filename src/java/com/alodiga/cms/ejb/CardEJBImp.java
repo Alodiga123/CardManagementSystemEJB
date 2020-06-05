@@ -19,13 +19,15 @@ import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.Card;
 import com.cms.commons.models.CardDeliveryRegister;
 import com.cms.commons.models.CardNumberCredential;
+import com.cms.commons.models.CardRenewalRequest;
+import com.cms.commons.models.CardRenewalRequestHasCard;
 import com.cms.commons.models.DeliveryRequest;
 import com.cms.commons.models.DeliveryRequetsHasCard;
 import com.cms.commons.models.RateByCard;
 import com.cms.commons.models.SecurityQuestion;
 import com.cms.commons.models.StatusAccount;
+import com.cms.commons.models.StatusCardRenewalRequest;
 import com.cms.commons.models.StatusDeliveryRequest;
-import com.cms.commons.models.StatusProduct;
 import com.cms.commons.models.SubAccountType;
 import com.cms.commons.models.SystemFuncionality;
 import com.cms.commons.models.SystemFuncionalityHasSecurityQuestion;
@@ -277,7 +279,37 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         cardByCardNumberList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_CARDNUMBER, request, getMethodName(), logger, "cardByCardNumberList");
         return cardByCardNumberList;
     }
+    
+    @Override
+    public List<Card> getCardByIndRenewal(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+        List<Card> cardByIndRenewalList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_IND_RENEWAL)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_IND_RENEWAL), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_CARD_STATUS)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARD_STATUS), null);
+        }
+        cardByIndRenewalList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_IND_RENEWAL, request, getMethodName(), logger, "cardByIndRenewalList");
+        return cardByIndRenewalList;
+    }
 
+    @Override
+    public List<Card> getCardCountByProgram(Integer cardStatus) throws EmptyListException, GeneralException, NullParameterException {
+        List<Card> cardCountByProgramList = null; 
+        try {
+            if (cardStatus == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "renewalDate"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(c.id) as 'Cantidad de Tarjeta', i.name FROM card c, product p, issuer i ");
+            sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId=").append(cardStatus).append(" GROUP BY i.name)");
+            cardCountByProgramList = (List<Card>) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getResultList();
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return cardCountByProgramList;
+    }   
+    
     @Override
     public Card loadCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Card card = (Card) loadEntity(Card.class, request, logger, getMethodName());
@@ -431,6 +463,17 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (AccountCard) saveEntity(accountCard);
     }
 
+    @Override
+    public List<AccountCard> getAccountCardByProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountCard> accountCardList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_ID), null);
+        }
+        accountCardList = (List<AccountCard>) getNamedQueryResult(AccountCard.class, QueryConstants.ACCOUNT_CARD_BY_PRODUCT, request, getMethodName(), logger, "accountCardList");
+        return accountCardList;
+    }
+
     //StatusAccount
     @Override
     public List<StatusAccount> getStatusAccount(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -516,16 +559,19 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     //SecurityQuestion
+    @Override
     public List<SecurityQuestion> getSecurityQuestion(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<SecurityQuestion> securityQuestion = (List<SecurityQuestion>) listEntities(SecurityQuestion.class, request, logger, getMethodName());
         return securityQuestion;
     }
 
+    @Override
     public SecurityQuestion loadSecurityQuestion(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         SecurityQuestion securityQuestion = (SecurityQuestion) loadEntity(SecurityQuestion.class, request, logger, getMethodName());
         return securityQuestion;
     }
 
+    @Override
     public SecurityQuestion saveSecurityQuestion(SecurityQuestion securityQuestion) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (securityQuestion == null) {
             throw new NullParameterException("securityQuestion", null);
@@ -534,16 +580,19 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     //SystemFuncionality
+    @Override
     public List<SystemFuncionality> getSystemFuncionality(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<SystemFuncionality> systemFuncionality = (List<SystemFuncionality>) listEntities(SystemFuncionality.class, request, logger, getMethodName());
         return systemFuncionality;
     }
 
+    @Override
     public SystemFuncionality loadSystemFuncionality(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         SystemFuncionality systemFuncionality = (SystemFuncionality) loadEntity(SystemFuncionality.class, request, logger, getMethodName());
         return systemFuncionality;
     }
 
+    @Override
     public SystemFuncionality saveSystemFuncionality(SystemFuncionality systemFuncionality) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (systemFuncionality == null) {
             throw new NullParameterException("systemFuncionality", null);
@@ -552,20 +601,92 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     //SystemFuncionalityHasSecurityQuestion
+    @Override
     public List<SystemFuncionalityHasSecurityQuestion> getSystemFuncionalityHasSecurityQuestion(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<SystemFuncionalityHasSecurityQuestion> systemFuncionalityHasSecurityQuestion = (List<SystemFuncionalityHasSecurityQuestion>) listEntities(SystemFuncionalityHasSecurityQuestion.class, request, logger, getMethodName());
         return systemFuncionalityHasSecurityQuestion;
     }
 
+    @Override
     public SystemFuncionalityHasSecurityQuestion loadSystemFuncionalityHasSecurityQuestion(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         SystemFuncionalityHasSecurityQuestion systemFuncionalityHasSecurityQuestion = (SystemFuncionalityHasSecurityQuestion) loadEntity(SystemFuncionalityHasSecurityQuestion.class, request, logger, getMethodName());
         return systemFuncionalityHasSecurityQuestion;
     }
 
+    @Override
     public SystemFuncionalityHasSecurityQuestion saveSystemFuncionalityHasSecurityQuestion(SystemFuncionalityHasSecurityQuestion systemFuncionalityHasSecurityQuestion) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (systemFuncionalityHasSecurityQuestion == null) {
             throw new NullParameterException("systemFuncionalityHasSecurityQuestion", null);
         }
         return (SystemFuncionalityHasSecurityQuestion) saveEntity(systemFuncionalityHasSecurityQuestion);
     }
+
+    
+    //CardRenewalRequest
+    public List<CardRenewalRequest> getCardRenewalRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+        List<CardRenewalRequest> cardRenewalRequest = (List<CardRenewalRequest>) listEntities(CardRenewalRequest.class, request, logger, getMethodName());
+        return cardRenewalRequest;
+    }
+    
+    public CardRenewalRequest loadCardRenewalRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        CardRenewalRequest cardRenewalRequest = (CardRenewalRequest) loadEntity(CardRenewalRequest.class, request, logger, getMethodName());
+        return cardRenewalRequest;
+    }
+    
+    public CardRenewalRequest saveCardRenewalRequest(CardRenewalRequest cardRenewalRequest) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        if (cardRenewalRequest == null) {
+            throw new NullParameterException("cardRenewalRequest", null);
+        }
+        return (CardRenewalRequest) saveEntity(cardRenewalRequest);
+    }
+    
+
+    //CardRenewalRequestHasCard
+    public List<CardRenewalRequestHasCard> getCardRenewalRequestHasCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+        List<CardRenewalRequestHasCard> cardRenewalRequestHasCard = (List<CardRenewalRequestHasCard>) listEntities(CardRenewalRequestHasCard.class, request, logger, getMethodName());
+        return cardRenewalRequestHasCard;
+    }
+    
+    public List<CardRenewalRequestHasCard> getCardRenewalRequestHasCardByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+        List<CardRenewalRequestHasCard> cardRenewalByRequestList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CARD_RENEWEL_REQUEST)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARD_RENEWEL_REQUEST), null);
+        }
+        cardRenewalByRequestList = (List<CardRenewalRequestHasCard>) getNamedQueryResult(Card.class, QueryConstants.CARD_RENEWAL_BY_REQUEST, request, getMethodName(), logger, "cardRenewalByRequestList");
+        return cardRenewalByRequestList;
+    }
+    
+    
+    public CardRenewalRequestHasCard loadCardRenewalRequestHasCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        CardRenewalRequestHasCard cardRenewalRequestHasCard = (CardRenewalRequestHasCard) loadEntity(CardRenewalRequestHasCard.class, request, logger, getMethodName());
+        return cardRenewalRequestHasCard;
+    }
+    
+    public CardRenewalRequestHasCard saveCardRenewalRequestHasCard(CardRenewalRequestHasCard cardRenewalRequestHasCard) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        if (cardRenewalRequestHasCard == null) {
+            throw new NullParameterException("cardRenewalRequestHasCard", null);
+        }
+        return (CardRenewalRequestHasCard) saveEntity(cardRenewalRequestHasCard);
+    }
+    
+
+    //StatusCardRenewalRequest
+    public List<StatusCardRenewalRequest> getStatusCardRenewalRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+        List<StatusCardRenewalRequest> statusCardRenewalRequest = (List<StatusCardRenewalRequest>) listEntities(StatusCardRenewalRequest.class, request, logger, getMethodName());
+        return statusCardRenewalRequest;
+    }
+    
+    public StatusCardRenewalRequest loadStatusCardRenewalRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        StatusCardRenewalRequest statusCardRenewalRequest = (StatusCardRenewalRequest) loadEntity(StatusCardRenewalRequest.class, request, logger, getMethodName());
+        return statusCardRenewalRequest;
+    }
+    
+    public StatusCardRenewalRequest saveStatusCardRenewalRequest(StatusCardRenewalRequest statusCardRenewalRequest) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        if (statusCardRenewalRequest == null) {
+            throw new NullParameterException("statusCardRenewalRequest", null);
+        }
+        return (StatusCardRenewalRequest) saveEntity(statusCardRenewalRequest);
+    }
+
 }
