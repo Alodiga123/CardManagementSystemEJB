@@ -636,44 +636,6 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         StatusUpdateReason statusUpdateReason = (StatusUpdateReason) loadEntity(StatusUpdateReason.class, request, logger, getMethodName());
         return statusUpdateReason; //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public List<CardStatus> getStatusCardByStatusUpdateReasonId(String id) throws EmptyListException, GeneralException, NullParameterException {
-        
-                      
-        /*    StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT n FROM Network n ");
-            sqlBuilder.append("WHERE n.name LIKE '").append(name).append("'");
-            network = (Network) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-        
-        List<CardStatus> cardStatus = null;
-         Map<String, Object> params = request.getParams();*/
-                   List<CardStatus> cardStatus = null;
-
-        try {
-              if (id == null) {
-                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
-            }
-           
-            //cardStatus = (List<CardStatus>) getNamedQueryResult(CardStatus.class, QueryConstants.STATUS_UPDATE_REASON, request, getMethodName(), logger, "cardStatus");*/
-     
-            //Query query = createQuery("SELECT c FROM cardStatus c, cardStatusHasUpdateReason r WHERE  c.id=r.cardStatusId and r.statusUpdateReasonId= :statusUpdateReasonId");
-            //query.setParameter("statusUpdateReasonId", id);
-            
-            StringBuilder sqlBuilder = new StringBuilder("SELECT c.id, c.description FROM cardStatus c join cardStatusHasUpdateReason r on c.id=r.cardStatusId and r.statusUpdateReasonId=");
-            sqlBuilder.append("'").append(id).append("'");
-            cardStatus = (List<CardStatus>) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-        
-            
-            //cardStatus = (List<CardStatus>) query.getSingleResult();
-            
-            
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(CardEJBImp.class.getName()).log(Level.SEVERE, null, ex);
-        }
-       
-       return cardStatus;
-    }
-
     
     //CardRenewalRequest
     public List<CardRenewalRequest> getCardRenewalRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
@@ -721,8 +683,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException("cardRenewalRequestHasCard", null);
         }
         return (CardRenewalRequestHasCard) saveEntity(cardRenewalRequestHasCard);
-    }
-    
+    }    
 
     //StatusCardRenewalRequest
     public List<StatusCardRenewalRequest> getStatusCardRenewalRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
@@ -740,6 +701,18 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException("statusCardRenewalRequest", null);
         }
         return (StatusCardRenewalRequest) saveEntity(statusCardRenewalRequest);
+    }
+
+    //CardStatusHasUpdateReason
+    @Override
+    public List<CardStatusHasUpdateReason> getCardStatusByUpdateReason(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardStatusHasUpdateReason> cardStatusHasUpdateReasonList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_STATUS_UPDATE_REASON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATUS_UPDATE_REASON_ID), null);
+        }
+        cardStatusHasUpdateReasonList = (List<CardStatusHasUpdateReason>) getNamedQueryResult(CardStatusHasUpdateReason.class, QueryConstants.CARD_STATUS_BY_REASON_UPDATE, request, getMethodName(), logger, "cardStatusHasUpdateReasonList");
+        return cardStatusHasUpdateReasonList;
     }
 
 }
