@@ -664,7 +664,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         cardEJB = (CardEJB) EJBServiceLocator.getInstance().get(EjbConstants.CARD_EJB);
         personEJB = (PersonEJB) EJBServiceLocator.getInstance().get(EjbConstants.PERSON_EJB);
         
-        //Consulta para obtener el id del emisor para las tarjetas cuya fecha de renovación es la fecha actual y estén activas
+        //Consulta para obtener el id del emisor para las tarjetas cuya fecha de renovación es igual a la fecha actual y estén activas
         StringBuilder sqlBuilder = new StringBuilder("SELECT i.id FROM card c, issuer i, product p ");
         sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND c.automaticRenewalDate = CURDATE() GROUP BY i.id");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
@@ -700,7 +700,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             cardRenewalRequest.setStatusCardRenewalRequestId(statusCardRenewalRequest);
             cardRenewalRequest = cardEJB.saveCardRenewalRequest(cardRenewalRequest);
             
-            //Consulta para obtener la lista de tarjetas por emisor cuya fecha de renovación es la fecha actual y estn activas. 
+            //Consulta para obtener la lista de tarjetas por emisor cuya fecha de renovación es igual a la fecha actual y estén activas. 
             sqlBuilder = new StringBuilder("SELECT c.* FROM card c, issuer i, product p ");
             sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND c.automaticRenewalDate = CURDATE()");
             query = entityManager.createNativeQuery(sqlBuilder.toString(),Card.class);
@@ -721,7 +721,16 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
 
         return cardRenewalRequestList;
-    }     
+    }  
+    
+    @Override
+    public List<CardRenewalRequest> getCardRenewalRequestByCurrentDate(Integer cardStatus) throws EmptyListException, GeneralException, NullParameterException {
+        //Consulta para verificar si hay solicitudes de renovación generadas en la fecha actual
+        StringBuilder sqlBuilder = new StringBuilder("SELECT c.* FROM cardRenewalRequest c WHERE DATE_FORMAT(c.createDate, '%Y-%m-%d') = CURDATE()");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString(),CardRenewalRequest.class);
+        List<CardRenewalRequest> result = (List<CardRenewalRequest>) query.getResultList();
+        return result;
+    }
 
     //CardRenewalRequestHasCard
     public List<CardRenewalRequestHasCard> getCardRenewalRequestHasCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
