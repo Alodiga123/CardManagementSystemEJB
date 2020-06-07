@@ -2,6 +2,10 @@ package com.alodiga.cms.ejb;
 
 import com.alodiga.cms.commons.ejb.CardEJB;
 import com.alodiga.cms.commons.ejb.CardEJBLocal;
+import com.alodiga.cms.commons.ejb.PersonEJB;
+import com.alodiga.cms.commons.ejb.ProgramEJB;
+import com.alodiga.cms.commons.ejb.RequestEJB;
+import com.alodiga.cms.commons.ejb.UtilsEJB;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
 import com.alodiga.cms.commons.exception.InvalidQuestionException;
@@ -25,8 +29,11 @@ import com.cms.commons.models.CardRenewalRequest;
 import com.cms.commons.models.CardRenewalRequestHasCard;
 import com.cms.commons.models.DeliveryRequest;
 import com.cms.commons.models.DeliveryRequetsHasCard;
+import com.cms.commons.models.Issuer;
+import com.cms.commons.models.Program;
 import com.cms.commons.models.RateByCard;
 import com.cms.commons.models.SecurityQuestion;
+import com.cms.commons.models.Sequences;
 import com.cms.commons.models.StatusAccount;
 import com.cms.commons.models.StatusCardRenewalRequest;
 import com.cms.commons.models.StatusDeliveryRequest;
@@ -35,6 +42,8 @@ import com.cms.commons.models.StatusUpdateReason;
 import com.cms.commons.models.SubAccountType;
 import com.cms.commons.models.SystemFuncionality;
 import com.cms.commons.models.SystemFuncionalityHasSecurityQuestion;
+import com.cms.commons.util.Constants;
+import com.cms.commons.util.EJBServiceLocator;
 import java.util.Map;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -43,7 +52,10 @@ import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import javax.persistence.NoResultException;
@@ -61,6 +73,9 @@ import javax.persistence.Query;
 public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal, CardEJB {
 
     private static final Logger logger = Logger.getLogger(CardEJBImp.class);
+    private PersonEJB personEJB = null;
+    private UtilsEJB utilsEJB = null;
+    private CardEJB cardEJB = null;
 
     //AccountProperties
     @Override
@@ -297,23 +312,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         cardByIndRenewalList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_IND_RENEWAL, request, getMethodName(), logger, "cardByIndRenewalList");
         return cardByIndRenewalList;
-    }
-
-    @Override
-    public List<Card> getCardCountByProgram(Integer cardStatus) throws EmptyListException, GeneralException, NullParameterException {
-        List<Card> cardCountByProgramList = null; 
-        try {
-            if (cardStatus == null) {
-                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "renewalDate"), null);
-            }            
-            StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(c.id) as 'Cantidad de Tarjeta', i.name FROM card c, product p, issuer i ");
-            sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId=").append(cardStatus).append(" GROUP BY i.name)");
-            cardCountByProgramList = (List<Card>) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getResultList();
-        } catch (Exception ex) {
-            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
-        }
-        return cardCountByProgramList;
-    }   
+    }  
     
     @Override
     public Card loadCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -636,44 +635,6 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         StatusUpdateReason statusUpdateReason = (StatusUpdateReason) loadEntity(StatusUpdateReason.class, request, logger, getMethodName());
         return statusUpdateReason; //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public List<CardStatus> getStatusCardByStatusUpdateReasonId(String id) throws EmptyListException, GeneralException, NullParameterException {
-        
-                      
-        /*    StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT n FROM Network n ");
-            sqlBuilder.append("WHERE n.name LIKE '").append(name).append("'");
-            network = (Network) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-        
-        List<CardStatus> cardStatus = null;
-         Map<String, Object> params = request.getParams();*/
-                   List<CardStatus> cardStatus = null;
-
-        try {
-              if (id == null) {
-                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
-            }
-           
-            //cardStatus = (List<CardStatus>) getNamedQueryResult(CardStatus.class, QueryConstants.STATUS_UPDATE_REASON, request, getMethodName(), logger, "cardStatus");*/
-     
-            //Query query = createQuery("SELECT c FROM cardStatus c, cardStatusHasUpdateReason r WHERE  c.id=r.cardStatusId and r.statusUpdateReasonId= :statusUpdateReasonId");
-            //query.setParameter("statusUpdateReasonId", id);
-            
-            StringBuilder sqlBuilder = new StringBuilder("SELECT c.id, c.description FROM cardStatus c join cardStatusHasUpdateReason r on c.id=r.cardStatusId and r.statusUpdateReasonId=");
-            sqlBuilder.append("'").append(id).append("'");
-            cardStatus = (List<CardStatus>) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-        
-            
-            //cardStatus = (List<CardStatus>) query.getSingleResult();
-            
-            
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(CardEJBImp.class.getName()).log(Level.SEVERE, null, ex);
-        }
-       
-       return cardStatus;
-    }
-
     
     //CardRenewalRequest
     public List<CardRenewalRequest> getCardRenewalRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
@@ -693,6 +654,74 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (CardRenewalRequest) saveEntity(cardRenewalRequest);
     }
     
+    @Override
+    public List<CardRenewalRequest> createCardRenewalRequestByIssuer(Integer cardStatus) throws RegisterNotFoundException, EmptyListException, GeneralException, NullParameterException {
+        //Se declara la lista de solicitudes a retornar
+        List<CardRenewalRequest> cardRenewalRequestList = new ArrayList<CardRenewalRequest>();
+        
+        //Se instancian los EJB
+        utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
+        cardEJB = (CardEJB) EJBServiceLocator.getInstance().get(EjbConstants.CARD_EJB);
+        personEJB = (PersonEJB) EJBServiceLocator.getInstance().get(EjbConstants.PERSON_EJB);
+        
+        //Consulta para obtener el id del emisor para las tarjetas cuya fecha de renovación es la fecha actual y estén activas
+        StringBuilder sqlBuilder = new StringBuilder("SELECT i.id FROM card c, issuer i, product p ");
+        sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND c.automaticRenewalDate = CURDATE() GROUP BY i.id");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        query.setParameter("1", cardStatus);
+        List result = (List) query.getResultList();
+        
+        //Obtener el estatus de la solicitud PENDIENTE
+        EJBRequest request1 = new EJBRequest();
+        request1.setParam(Constants.STATUS_CARD_RENEWAL_REQUEST_PENDING);
+        StatusCardRenewalRequest statusCardRenewalRequest = cardEJB.loadStatusCardRenewalRequest(request1);
+        
+        //Se crean automáticamente las solicitudes de renovación de tarjeta por emisor
+        for (int i = 0; i < result.size(); i++) {
+            //Obtener el emisor
+            request1 = new EJBRequest();
+            request1.setParam(result.get(i));
+            Issuer issuer = personEJB.loadIssuer(request1);
+            
+            //Obtiene el numero de secuencia para documento Request
+            request1 = new EJBRequest();
+            Map params = new HashMap();
+            params.put(Constants.DOCUMENT_TYPE_KEY, Constants.DOCUMENT_TYPE_RENEWAL_REQUEST);
+            request1.setParams(params);
+            List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
+            String numberRequest = utilsEJB.generateNumberSequence(sequence, Constants.ORIGIN_APPLICATION_CMS_ID);
+            
+            //Se crea la solicitud de Renovación de Tarjeta y se guarda en BD
+            CardRenewalRequest cardRenewalRequest = new CardRenewalRequest();
+            cardRenewalRequest.setIssuerId(issuer);
+            cardRenewalRequest.setRequestNumber(numberRequest);
+            cardRenewalRequest.setCreateDate(new Timestamp(new Date().getTime()));
+            cardRenewalRequest.setRequestDate(new Date());
+            cardRenewalRequest.setStatusCardRenewalRequestId(statusCardRenewalRequest);
+            cardRenewalRequest = cardEJB.saveCardRenewalRequest(cardRenewalRequest);
+            
+            //Consulta para obtener la lista de tarjetas por emisor cuya fecha de renovación es la fecha actual y estn activas. 
+            sqlBuilder = new StringBuilder("SELECT c.* FROM card c, issuer i, product p ");
+            sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND c.automaticRenewalDate = CURDATE()");
+            query = entityManager.createNativeQuery(sqlBuilder.toString(),Card.class);
+            query.setParameter("1", cardStatus);
+            List<Card> cardList = query.getResultList();
+            
+            //Asocia las tarjetas a la solicitud
+            for (Card c: cardList) {
+                CardRenewalRequestHasCard cardRenewalRequestHasCard = new CardRenewalRequestHasCard();
+                cardRenewalRequestHasCard.setCardId(c);
+                cardRenewalRequestHasCard.setCardRenewalRequestId(cardRenewalRequest);
+                cardRenewalRequestHasCard.setCreateDate(new Timestamp(new Date().getTime()));
+                cardRenewalRequestHasCard = cardEJB.saveCardRenewalRequestHasCard(cardRenewalRequestHasCard);
+            }
+            
+            //Agregas la solicitud a la lista que retorna el servicio
+            cardRenewalRequestList.add(cardRenewalRequest);
+        }
+
+        return cardRenewalRequestList;
+    }     
 
     //CardRenewalRequestHasCard
     public List<CardRenewalRequestHasCard> getCardRenewalRequestHasCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
@@ -721,8 +750,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException("cardRenewalRequestHasCard", null);
         }
         return (CardRenewalRequestHasCard) saveEntity(cardRenewalRequestHasCard);
-    }
-    
+    }    
 
     //StatusCardRenewalRequest
     public List<StatusCardRenewalRequest> getStatusCardRenewalRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
@@ -740,6 +768,18 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException("statusCardRenewalRequest", null);
         }
         return (StatusCardRenewalRequest) saveEntity(statusCardRenewalRequest);
+    }
+
+    //CardStatusHasUpdateReason
+    @Override
+    public List<CardStatusHasUpdateReason> getCardStatusByUpdateReason(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardStatusHasUpdateReason> cardStatusHasUpdateReasonList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_STATUS_UPDATE_REASON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATUS_UPDATE_REASON_ID), null);
+        }
+        cardStatusHasUpdateReasonList = (List<CardStatusHasUpdateReason>) getNamedQueryResult(CardStatusHasUpdateReason.class, QueryConstants.CARD_STATUS_BY_REASON_UPDATE, request, getMethodName(), logger, "cardStatusHasUpdateReasonList");
+        return cardStatusHasUpdateReasonList;
     }
 
 }
