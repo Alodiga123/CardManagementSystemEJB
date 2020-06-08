@@ -293,9 +293,6 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         if (!params.containsKey(EjbConstants.PARAM_CARDNUMBER)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARDHOLDER), null);
         }
-        if (!params.containsKey(EjbConstants.PARAM_CARD_STATUS)) {
-            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARDHOLDER), null);
-        }
         cardByCardNumberList = (List<Card>) getNamedQueryResult(Card.class, QueryConstants.CARD_BY_CARDNUMBER, request, getMethodName(), logger, "cardByCardNumberList");
         return cardByCardNumberList;
     }
