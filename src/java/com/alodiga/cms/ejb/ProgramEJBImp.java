@@ -15,6 +15,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.AverageCargeUsage;
 import com.cms.commons.models.DaysWeek;
 import com.cms.commons.models.DaysWeekHasProgramLoyalty;
 import com.cms.commons.models.LegalPerson;
@@ -452,6 +453,39 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         projectAnnualVolumeByProgram = (List<ProjectAnnualVolume>) getNamedQueryResult(ProjectAnnualVolume.class, QueryConstants.PROJECT_ANNUAL_VOLUME_BY_PROGRAM, request, getMethodName(), logger, "projectAnnualVolumeByProgram");
         return projectAnnualVolumeByProgram;
+   
+    }
+    
+    //AverageCargeUsage
+    @Override
+    public List<AverageCargeUsage> getAverageCargeUsage(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<AverageCargeUsage> averageCargeUsage = (List<AverageCargeUsage>) listEntities(AverageCargeUsage.class, request, logger, getMethodName());
+        return averageCargeUsage;
+    }
+
+    @Override
+    public AverageCargeUsage loadAverageCargeUsage(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        AverageCargeUsage averageCargeUsage = (AverageCargeUsage) loadEntity(AverageCargeUsage.class, request, logger, getMethodName());
+        return averageCargeUsage;
+    }
+
+    @Override
+    public AverageCargeUsage saveAverageCargeUsage(AverageCargeUsage averageCargeUsage) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (averageCargeUsage == null) {
+            throw new NullParameterException("averageCargeUsage", null);
+        }
+        return (AverageCargeUsage) saveEntity(averageCargeUsage);
+    }
+    
+    @Override
+    public List<AverageCargeUsage> getAverageCargeUsageByProgram(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<AverageCargeUsage> averageCargeUsageByProgram = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        averageCargeUsageByProgram = (List<AverageCargeUsage>) getNamedQueryResult(AverageCargeUsage.class, QueryConstants.AVERAGE_CARGE_USAGE_BY_PROGRAM, request, getMethodName(), logger, "averageCargeUsageByProgram");
+        return averageCargeUsageByProgram;
    
     }
 
