@@ -658,6 +658,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     public List<CardRenewalRequest> createCardRenewalRequestByIssuer(Integer cardStatus) throws RegisterNotFoundException, EmptyListException, GeneralException, NullParameterException {
         //Se declara la lista de solicitudes a retornar
         List<CardRenewalRequest> cardRenewalRequestList = new ArrayList<CardRenewalRequest>();
+        int issuerId = 0;
         
         //Se instancian los EJB
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
@@ -682,6 +683,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             request1 = new EJBRequest();
             request1.setParam(result.get(i));
             Issuer issuer = personEJB.loadIssuer(request1);
+            issuerId = issuer.getId();
             
             //Obtiene el numero de secuencia para documento Request
             request1 = new EJBRequest();
@@ -702,9 +704,10 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             
             //Consulta para obtener la lista de tarjetas por emisor cuya fecha de renovación es igual a la fecha actual y estén activas. 
             sqlBuilder = new StringBuilder("SELECT c.* FROM card c, issuer i, product p ");
-            sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND c.automaticRenewalDate = CURDATE()");
+            sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND i.id = ?2 AND c.automaticRenewalDate = CURDATE()");
             query = entityManager.createNativeQuery(sqlBuilder.toString(),Card.class);
             query.setParameter("1", cardStatus);
+            query.setParameter("2", issuerId);
             List<Card> cardList = query.getResultList();
             
             //Asocia las tarjetas a la solicitud
