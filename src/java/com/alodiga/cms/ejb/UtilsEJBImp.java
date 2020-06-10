@@ -1223,6 +1223,23 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public UserHasProfile loadUserHasProfile(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public List<UserHasProfile> getUserHasProfileByUser(UserHasProfile userHasProfile) throws EmptyListException, GeneralException, NullParameterException {
+      List<UserHasProfile> userHasProfileList = null;
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM user_has_profile where userId=")
+                .append(userHasProfile.getUserId().getId().toString())
+                .append(" and profileId=")
+                .append(userHasProfile.getProfileId().getId().toString());
+        try {
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        userHasProfileList = (List<UserHasProfile>) query.setHint("toplink.refresh", "true").getResultList();
+       
+        } catch (Exception e) {
+            e.getMessage();
+        }
+          return userHasProfileList;      
+    }
     
 }    
 
