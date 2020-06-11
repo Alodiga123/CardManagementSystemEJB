@@ -29,6 +29,7 @@ import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalPersonHasLegalRepresentatives;
 import com.cms.commons.models.NaturalCustomer;
 import com.cms.commons.models.NaturalPerson;
+import com.cms.commons.models.PasswordChangeRequest;
 import com.cms.commons.models.Person;
 import com.cms.commons.models.PersonHasAddress;
 import com.cms.commons.models.PersonType;
@@ -869,6 +870,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (User) saveEntity(user);
     }
+    
+    @Override
+    public List<User> validatePassword(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<User> userList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CURRENT_PASSWORD)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CURRENT_PASSWORD), null);
+        }
+        userList = (List<User>) getNamedQueryResult(User.class, QueryConstants.VALIDATE_PASSWORD, request, getMethodName(), logger, "userList");
+        return userList;
+    }
 
     //Employee
     @Override
@@ -953,6 +965,28 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         legalPersonList = (List<LegalPerson>) getNamedQueryResult(LegalPerson.class, QueryConstants.LEGAL_PERSON_BY_PERSON_CLASSIFICATION, request, getMethodName(), logger, "legalPersonList");
         return legalPersonList;
+    }
+    
+    //PasswordChangeRequest
+    
+    @Override
+    public List<PasswordChangeRequest> getPasswordChangeRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<PasswordChangeRequest> passwordChangeRequestList = (List<PasswordChangeRequest>) listEntities(PasswordChangeRequest.class, request, logger, getMethodName());
+        return passwordChangeRequestList;
+    }
+
+    @Override
+    public PasswordChangeRequest loadPasswordChangeRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        PasswordChangeRequest passwordChangeRequest = (PasswordChangeRequest) loadEntity(PasswordChangeRequest.class, request, logger, getMethodName());
+        return passwordChangeRequest;
+    }
+
+    @Override
+    public PasswordChangeRequest savePasswordChangeRequest(PasswordChangeRequest passwordChangeRequest) throws RegisterNotFoundException, NullParameterException, GeneralException {
+       if (passwordChangeRequest == null) {
+            throw new NullParameterException("passwordChangeRequest", null);
+        }
+        return (PasswordChangeRequest) saveEntity(passwordChangeRequest);
     }
 
 }
