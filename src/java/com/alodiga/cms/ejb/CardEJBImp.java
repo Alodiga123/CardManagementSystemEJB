@@ -21,7 +21,6 @@ import com.cms.commons.models.AccountSegment;
 import com.cms.commons.models.AccountType;
 import com.cms.commons.models.AccountTypeHasProductType;
 import com.cms.commons.models.Card;
-import com.cms.commons.models.CardDeliveryRegister;
 import com.cms.commons.models.CardNumberCredential;
 import com.cms.commons.models.CardStatus;
 import com.cms.commons.models.CardStatusHasUpdateReason;
@@ -58,6 +57,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -393,24 +393,6 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (CardNumberCredential) saveEntity(cardNumberCredential);
     }
 
-    //CardDeliveryRegister
-    public List< CardDeliveryRegister> getCardDeliveryRegister(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<CardDeliveryRegister> cardDeliveryRegister = (List<CardDeliveryRegister>) listEntities(CardDeliveryRegister.class, request, logger, getMethodName());
-        return cardDeliveryRegister;
-    }
-
-    public CardDeliveryRegister loadCardDeliveryRegister(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        CardDeliveryRegister cardDeliveryRegister = (CardDeliveryRegister) loadEntity(CardDeliveryRegister.class, request, logger, getMethodName());
-        return cardDeliveryRegister;
-    }
-
-    public CardDeliveryRegister saveCardDeliveryRegister(CardDeliveryRegister cardDeliveryRegister) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        if (cardDeliveryRegister == null) {
-            throw new NullParameterException("cardDeliveryRegister", null);
-        }
-        return (CardDeliveryRegister) saveEntity(cardDeliveryRegister);
-    }
-
     //RateByCard
     @Override
     public List<RateByCard> getRateByCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -522,6 +504,17 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     public List<DeliveryRequetsHasCard> getDeliveryRequestHasCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<DeliveryRequetsHasCard> deliveryRequetsHasCard = (List<DeliveryRequetsHasCard>) listEntities(DeliveryRequetsHasCard.class, request, logger, getMethodName());
         return deliveryRequetsHasCard;
+    }
+    
+    @Override
+    public List<DeliveryRequetsHasCard> getCardByDeliveryRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<DeliveryRequetsHasCard> deliveryRequetsHasCardList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_DELIVERY_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_DELIVERY_REQUEST_ID), null);
+        }
+        deliveryRequetsHasCardList = (List<DeliveryRequetsHasCard>) getNamedQueryResult(DeliveryRequetsHasCard.class, QueryConstants.CARD_BY_DELIVERY_REQUEST, request, getMethodName(), logger, "deliveryRequetsHasCardList");
+        return deliveryRequetsHasCardList;
     }
 
     @Override
@@ -789,6 +782,23 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         cardStatusHasUpdateReasonList = (List<CardStatusHasUpdateReason>) getNamedQueryResult(CardStatusHasUpdateReason.class, QueryConstants.CARD_STATUS_BY_REASON_UPDATE, request, getMethodName(), logger, "cardStatusHasUpdateReasonList");
         return cardStatusHasUpdateReasonList;
+    }
+
+    @Override
+    public int updateCardStatus(Card card) throws EmptyListException, GeneralException, NullParameterException {
+            
+        StringBuilder sqlBuilder = new StringBuilder("UPDATE card SET statusUpdateReasonDate=CURDATE(),");      
+        sqlBuilder.append("userResponsibleStatusUpdateId=").append(card.getUserResponsibleStatusUpdateId().getId().toString()).append(",");
+        sqlBuilder.append("statusUpdateReasonId=").append(card.getStatusUpdateReasonId().getId().toString()).append(",");
+        sqlBuilder.append("observations='").append(card.getObservations()).append("'");
+        sqlBuilder.append(" WHERE id=").append(card.getId());
+       
+        entityManager.getTransaction().begin();
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+
+        Integer result  = (Integer) query.executeUpdate();
+        entityManager.getTransaction().commit();
+        return result;  
     }
 
 }
