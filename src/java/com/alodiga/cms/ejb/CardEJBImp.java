@@ -784,21 +784,4 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return cardStatusHasUpdateReasonList;
     }
 
-    @Override
-    public int updateCardStatus(Card card) throws EmptyListException, GeneralException, NullParameterException {
-            
-        StringBuilder sqlBuilder = new StringBuilder("UPDATE card SET statusUpdateReasonDate=CURDATE(),");      
-        sqlBuilder.append("userResponsibleStatusUpdateId=").append(card.getUserResponsibleStatusUpdateId().getId().toString()).append(",");
-        sqlBuilder.append("statusUpdateReasonId=").append(card.getStatusUpdateReasonId().getId().toString()).append(",");
-        sqlBuilder.append("observations='").append(card.getObservations()).append("'");
-        sqlBuilder.append(" WHERE id=").append(card.getId());
-       
-        entityManager.getTransaction().begin();
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-
-        Integer result  = (Integer) query.executeUpdate();
-        entityManager.getTransaction().commit();
-        return result;  
-    }
-
 }
