@@ -870,6 +870,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (User) saveEntity(user);
     }
+    
+    @Override
+    public List<User> validatePassword(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<User> userList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CURRENT_PASSWORD)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CURRENT_PASSWORD), null);
+        }
+        userList = (List<User>) getNamedQueryResult(User.class, QueryConstants.VALIDATE_PASSWORD, request, getMethodName(), logger, "userList");
+        return userList;
+    }
 
     //Employee
     @Override
