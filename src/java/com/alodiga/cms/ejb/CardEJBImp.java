@@ -785,39 +785,19 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     @Override
-    public List<StatusUpdateReason> getStatusUpdateReasonByStatus(String CardStatus) throws EmptyListException, GeneralException, NullParameterException {
-       List<StatusUpdateReason> statusUpdateReasonList = null;
-        StringBuilder sqlBuilder = new StringBuilder("SELECT c.* FROM cardStatusHasUpdateReason r join statusUpdateReason c on r.statusUpdateReasonId= c.id where r.cardStatusId=")
-                .append(CardStatus)
-                .append(" and r.indAllowTable=1");
-                
-        try {
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        statusUpdateReasonList = (List<StatusUpdateReason>) query.setHint("toplink.refresh", "true").getResultList();
-       
-        } catch (Exception e) {
-            e.getMessage();
-        }  
-        return statusUpdateReasonList;
-    }
-
-    @Override
     public List<CardStatusHasUpdateReason> getUpdateReasonByCardStatus(String cardStatusId) throws EmptyListException, GeneralException, NullParameterException {
     List<CardStatusHasUpdateReason> cardStatusHasUpdateReasonList = null;
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM cardStatusHasUpdateReason where cardStatusId=")
                 .append(cardStatusId)
-                .append(" and indAllowTable=1");
-                
+                .append(" and indAllowTable=0");                
         try {
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString(),CardStatusHasUpdateReason.class);
         cardStatusHasUpdateReasonList = (List<CardStatusHasUpdateReason>) query.setHint("toplink.refresh", "true").getResultList();
        
         } catch (Exception e) {
             e.getMessage();
         }  
         return cardStatusHasUpdateReasonList;  
-    }
+    }   
 
-    
-    
 }
