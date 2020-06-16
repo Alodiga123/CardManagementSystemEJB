@@ -554,6 +554,16 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<Issuer> issuer = (List<Issuer>) listEntities(Issuer.class, request, logger, getMethodName());
         return issuer;
     }
+    
+    public List<Issuer> getIssuerByCountry(EJBRequest request)throws EmptyListException, GeneralException, NullParameterException{
+        List<Issuer> issuerByCountry = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        issuerByCountry = (List<Issuer>) getNamedQueryResult(Issuer.class, QueryConstants.ISSUER_BY_COUNTRY, request, getMethodName(), logger, "issuerByCountry");
+        return issuerByCountry;
+    }
 
     @Override
     public Issuer loadIssuer(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
