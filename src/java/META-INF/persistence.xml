@@ -140,6 +140,9 @@
     <class>com.cms.commons.models.CardDeliveryRegister</class>
     <class>com.cms.commons.models.StatusUpdateReason</class>
     <class>com.cms.commons.models.CardStatusHasUpdateReason</class>
+    <class>com.cms.commons.models.PasswordChangeRequest</class>
+    <class>com.cms.commons.models.NewCardIssueRequest</class>
+    <class>com.cms.commons.models.StatusNewCardIssueRequest</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
