@@ -865,7 +865,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
 
     @Override
-    public List<NewCardIssueRequest> createCardNewCardIssueRequest(Card card) throws RegisterNotFoundException, EmptyListException, GeneralException, NullParameterException {
+    public List<NewCardIssueRequest> createCardNewCardIssueRequest(Card cardId) throws RegisterNotFoundException, EmptyListException, GeneralException, NullParameterException {
         //Se declara la lista de solicitudes a retornar
         List<NewCardIssueRequest> newCardIssueRequestList = new ArrayList<NewCardIssueRequest>();
         int issuerId = 0;
@@ -875,16 +875,15 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
             cardEJB = (CardEJB) EJBServiceLocator.getInstance().get(EjbConstants.CARD_EJB);
 
-//        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(p.id) FROM newCardIssueRequest p ");
             StringBuilder sqlBuilder = new StringBuilder("SELECT p.* FROM newCardIssueRequest p ");
             sqlBuilder.append("WHERE p.cardId = ?1");
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), NewCardIssueRequest.class);
-            query.setParameter("1", card.getId());
+            query.setParameter("1", cardId.getId());
             List<NewCardIssueRequest> resultList = (List<NewCardIssueRequest>) query.getResultList();
 
             //Se crea automáticamente la solicitude
             //Si la tarjeta no tiene solicitud anterior se agrega a la lista de tarjetas a retornar
-            if (resultList.size() == 0) {
+            if (resultList.isEmpty()) {
                 //Obtener el estatus de la solicitud PENDIENTE
                 EJBRequest request1 = new EJBRequest();
                 request1.setParam(Constants.STATUS_NEW_CARD_ISSUE_PENDING);
@@ -903,7 +902,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
                 newCardIssueRequest.setRequestDate(new Date());
                 newCardIssueRequest.setStatusNewCardIssueRequestId(statusNewCardIssueRequest);
                 newCardIssueRequest.setNewCardIssueDate(new Timestamp(new Date().getTime()));
-                newCardIssueRequest.setCardId(card);
+                newCardIssueRequest.setCardId(cardId);
                 newCardIssueRequest.setCreateDate(new Timestamp(new Date().getTime()));
                 newCardIssueRequest = cardEJB.saveNewCardIssueRequest(newCardIssueRequest);
                 newCardIssueRequestList.add(newCardIssueRequest);
