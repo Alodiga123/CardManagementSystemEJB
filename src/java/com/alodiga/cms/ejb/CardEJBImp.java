@@ -870,11 +870,13 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         List<NewCardIssueRequest> newCardIssueRequestList = new ArrayList<NewCardIssueRequest>();
         int issuerId = 0;
         String numberRequest = "";
+        
         try {
             //Se instancian los EJB
             utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
             cardEJB = (CardEJB) EJBServiceLocator.getInstance().get(EjbConstants.CARD_EJB);
 
+            //Se verifica si la tarjeta a emitir ya tiene asociada una solicitud de emisón de tarjeta
             StringBuilder sqlBuilder = new StringBuilder("SELECT p.* FROM newCardIssueRequest p ");
             sqlBuilder.append("WHERE p.cardId = ?1");
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), NewCardIssueRequest.class);
@@ -897,6 +899,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
                 List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request2);
                 numberRequest = utilsEJB.generateNumberSequence(sequence, Constants.ORIGIN_APPLICATION_CMS_ID);
 
+                //Se guarda la solicitud de emisión de tarjeta en la BD
                 NewCardIssueRequest newCardIssueRequest = new NewCardIssueRequest();
                 newCardIssueRequest.setRequestNumber(numberRequest);
                 newCardIssueRequest.setRequestDate(new Date());
@@ -907,19 +910,16 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
                 newCardIssueRequest = cardEJB.saveNewCardIssueRequest(newCardIssueRequest);
                 newCardIssueRequestList.add(newCardIssueRequest);
             } else {
-
                 for (NewCardIssueRequest r : resultList) {
                     newCardIssueRequestList.add(r);
                 }
             }
-           
-            return newCardIssueRequestList;
         } catch (NoResultException ex) {
             throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
         } catch (Exception ex) {
             throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
         }
-
+        return newCardIssueRequestList;
     }
 
     public NewCardIssueRequest loadNewCardIssueRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {

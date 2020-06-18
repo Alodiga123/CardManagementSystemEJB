@@ -96,6 +96,15 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return phonePersonList;
     }
     
+    @Override
+    public Long havePhonesByPerson(Long personId) throws GeneralException {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(p.personId) FROM phonePerson p WHERE p.personId = ?1");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        query.setParameter("1", personId);
+        List result = (List) query.setHint("toplink.refresh", "true").getResultList();
+        return result.get(0) != null ? (Long) result.get(0) : 0l;
+    }
+    
     public PhonePerson validatePhoneQuestion(Long personId, String numberPhone) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException{
         try {
             //Se obtiene el cliente
