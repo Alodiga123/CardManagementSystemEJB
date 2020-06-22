@@ -122,6 +122,25 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (Request) saveEntity(request);
     }
+    
+    @Override
+    public Request searchCardRequest(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Request request = new Request(); 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT r FROM Request r ");
+            sqlBuilder.append("WHERE r.requestNumber LIKE '%").append(name).append("%'");
+            request = (Request) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Request.class.getSimpleName(), "loadRequestByName", Request.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return request;
+    }
 
     @Override
     public Long saveRequestPersonData(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
@@ -1151,7 +1170,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
         }
         return collectionType;
-    }
+    }    
     
     
 }
