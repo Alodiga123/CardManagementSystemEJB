@@ -14,6 +14,7 @@ import com.cms.commons.models.Address;
 import com.cms.commons.models.AddressType;
 import com.cms.commons.models.BinSponsor;
 import com.cms.commons.models.CardIssuanceType;
+import com.cms.commons.models.CardRenewalRequest;
 import com.cms.commons.models.CardStatus;
 import com.cms.commons.models.City;
 import com.cms.commons.models.StatusRequest;
@@ -53,6 +54,7 @@ import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -195,6 +197,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return personclassification;
 
     }
+
     @Override
     public PersonClassification savePersonClassification(PersonClassification personclassification) throws NullParameterException, GeneralException {
         if (personclassification == null) {
@@ -202,8 +205,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (PersonClassification) saveEntity(personclassification);
     }
-
-    
 
     //ProductType
     @Override
@@ -373,18 +374,18 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (Network) saveEntity(network);
     }
-    
+
     @Override
     public Network searchNetwork(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Network network = new Network(); 
+        Network network = new Network();
         try {
             if (name == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
-            }            
+            }
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT n FROM Network n ");
             sqlBuilder.append("WHERE n.name LIKE '").append(name).append("'");
             network = (Network) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-            
+
         } catch (NoResultException ex) {
             throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Network.class.getSimpleName(), "loadNetworkByName", Network.class.getSimpleName(), null), ex);
         } catch (Exception ex) {
@@ -395,11 +396,11 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public List<Network> searchNetworkByCountry(String name) throws EmptyListException, GeneralException, NullParameterException {
-        List<Network> network = null; 
+        List<Network> network = null;
         try {
             if (name == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
-            }            
+            }
             StringBuilder sqlBuilder = new StringBuilder("SELECT n FROM Network n ");
             sqlBuilder.append("WHERE n.countryId IN (SELECT c.id FROM Country WHERE c.name LIKE '").append(name).append("')");
             network = (List<Network>) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getResultList();
@@ -407,7 +408,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
         }
         return network;
-    }   
+    }
 
     //ProgramHasNetwork
     @Override
@@ -478,7 +479,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         personTypes = (List<PersonType>) getNamedQueryResult(PersonType.class, QueryConstants.PERSON_TYPE_BY_COUNTRY_BY_IND_NATURAL_PERSON, request, getMethodName(), logger, "personTypes");
         return personTypes;
     }
-    
+
     @Override
     public List<PersonType> getPersonTypeByCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PersonType> personTypes = null;
@@ -889,12 +890,11 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public KindCard saveKindCard(KindCard kindCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
     //PermissionGroup
     @Override
     public List<PermissionGroup> getPermissionGroup(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-         List<PermissionGroup> permissionGroupList = (List<PermissionGroup>) listEntities(PermissionGroup.class, request, logger, getMethodName());
+        List<PermissionGroup> permissionGroupList = (List<PermissionGroup>) listEntities(PermissionGroup.class, request, logger, getMethodName());
         return permissionGroupList;
     }
 
@@ -906,20 +906,19 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public PermissionGroup savePermissionGroup(PermissionGroup permissionGroup) throws RegisterNotFoundException, NullParameterException, GeneralException {
-         if (permissionGroup == null) {
+        if (permissionGroup == null) {
             throw new NullParameterException("permissionGroup", null);
         }
         return (PermissionGroup) saveEntity(permissionGroup);
     }
-    
-    
+
     //PermissionGroupData
     @Override
     public List<PermissionGroupData> getPermissionGroupData(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PermissionGroupData> permissionGroupDataList = (List<PermissionGroupData>) listEntities(PermissionGroupData.class, request, logger, getMethodName());
         return permissionGroupDataList;
     }
-    
+
     @Override
     public PermissionGroupData loadPermissionGroupData(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         PermissionGroupData permissionGroupData = (PermissionGroupData) loadEntity(PermissionGroupData.class, request, logger, getMethodName());
@@ -933,7 +932,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (PermissionGroupData) saveEntity(permissionGroupData);
     }
-    
+
     //Language
     @Override
     public List<Language> getLanguage(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -949,7 +948,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public Language saveLanguage(Language language) throws RegisterNotFoundException, NullParameterException, GeneralException {
-         if (language == null) {
+        if (language == null) {
             throw new NullParameterException("language", null);
         }
         return (Language) saveEntity(language);
@@ -975,7 +974,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (Permission) saveEntity(permission);
     }
-    
+
     //PermissionData
     @Override
     public List<PermissionData> getPermissionData(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -996,29 +995,29 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (PermissionData) saveEntity(permissionData);
     }
-    
+
     //Profile    
     public List<Profile> getProfile(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-         List<Profile> profileList = (List<Profile>) listEntities(Profile.class, request, logger, getMethodName());
+        List<Profile> profileList = (List<Profile>) listEntities(Profile.class, request, logger, getMethodName());
         return profileList;
     }
-    
+
     public Profile loadProfile(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         Profile profile = (Profile) loadEntity(Profile.class, request, logger, getMethodName());
         return profile;
     }
-    
+
     public Profile saveProfile(Profile profile) throws RegisterNotFoundException, NullParameterException, GeneralException {
-       if (profile == null) {
+        if (profile == null) {
             throw new NullParameterException("profile", null);
         }
         return (Profile) saveEntity(profile);
     }
-    
+
     //ProfileData
     @Override
     public List<ProfileData> getProfileData(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-         List<ProfileData> profileDataList = (List<ProfileData>) listEntities(ProfileData.class, request, logger, getMethodName());
+        List<ProfileData> profileDataList = (List<ProfileData>) listEntities(ProfileData.class, request, logger, getMethodName());
         return profileDataList;
     }
 
@@ -1027,19 +1026,18 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         ProfileData profileData = (ProfileData) loadEntity(ProfileData.class, request, logger, getMethodName());
         return profileData;
     }
-    
-     @Override
+
+    @Override
     public ProfileData saveProfileData(ProfileData profileData) throws RegisterNotFoundException, NullParameterException, GeneralException {
         if (profileData == null) {
             throw new NullParameterException("profileData", null);
         }
         return (ProfileData) saveEntity(profileData);
     }
-    
-    
+
     @Override
     public List<LegalPerson> getLegalPersonByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<LegalPerson> legalPersonList = null;        
+        List<LegalPerson> legalPersonList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
@@ -1050,15 +1048,15 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public Country searchCountry(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Country country = new Country(); 
+        Country country = new Country();
         try {
             if (name == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
-            }            
+            }
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
             sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
             country = (Country) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-            
+
         } catch (NoResultException ex) {
             throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Country.class.getSimpleName(), "loadCountryByName", Country.class.getSimpleName(), null), ex);
         } catch (Exception ex) {
@@ -1066,31 +1064,39 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return country;
     }
-
+    
     @Override
     public List<Country> getSearchCountry(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<Country> countryList = null;
         if (name == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
         }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM country c WHERE c.name LIKE '%name%'");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        countryList = (List<Country>) query.setHint("toplink.refresh", "true").getResultList();
-        return countryList;        
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
+            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            countryList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return countryList;
     }
-    
-    
+
     @Override
     public State searchState(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        State state = new State(); 
+        State state = new State();
         try {
             if (name == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
-            }            
+            }
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT s FROM State s ");
             sqlBuilder.append("WHERE s.name LIKE '").append(name).append("'");
             state = (State) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-            
+
         } catch (NoResultException ex) {
             throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, State.class.getSimpleName(), "loadStateByName", State.class.getSimpleName(), null), ex);
         } catch (Exception ex) {
@@ -1098,7 +1104,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return state;
     }
-    
+
     @Override
     public List<State> getSearchState(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<State> stateList = null;
@@ -1108,20 +1114,20 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM state s WHERE s.name LIKE '%name%'");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         stateList = (List<State>) query.setHint("toplink.refresh", "true").getResultList();
-        return stateList;        
+        return stateList;
     }
 
     @Override
     public PersonClassification searchPersonClassification(String description) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        PersonClassification personclassification = new PersonClassification(); 
+        PersonClassification personclassification = new PersonClassification();
         try {
             if (description == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
-            }            
+            }
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT p FROM PersonClassification p ");
             sqlBuilder.append("WHERE p.description LIKE '").append(description).append("'");
             personclassification = (PersonClassification) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-            
+
         } catch (NoResultException ex) {
             throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, PersonClassification.class.getSimpleName(), "loadPersonClassificationByDescription", PersonClassification.class.getSimpleName(), null), ex);
         } catch (Exception ex) {
@@ -1132,27 +1138,27 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public List<PersonClassification> getSearchPersonClassification(String description) throws EmptyListException, GeneralException, NullParameterException {
-         List<PersonClassification> personclassificationList = null;
+        List<PersonClassification> personclassificationList = null;
         if (description == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
         }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM personClassification p WHERE p.description LIKE '%description%'"); 
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM personClassification p WHERE p.description LIKE '%description%'");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         personclassificationList = (List<PersonClassification>) query.setHint("toplink.refresh", "true").getResultList();
-        return personclassificationList;        
+        return personclassificationList;
     }
 
     @Override
     public Currency searchCurrency(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Currency currency = new Currency(); 
+        Currency currency = new Currency();
         try {
             if (name == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
-            }            
+            }
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Currency c ");
             sqlBuilder.append("WHERE c.name LIKE '").append(name).append("'");
             currency = (Currency) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-            
+
         } catch (NoResultException ex) {
             throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Currency.class.getSimpleName(), "loadCurrencyByName", Currency.class.getSimpleName(), null), ex);
         } catch (Exception ex) {
@@ -1161,30 +1167,49 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return currency;
     }
 
+//    @Override
+//    public List<Currency> getSearchCurrenc(String name) throws EmptyListException, GeneralException, NullParameterException {
+//        List<Currency> currencyList = null;
+//        if (name == null) {
+//            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+//        }
+//        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c WHERE c.name LIKE '%name%'");
+//        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+//        currencyList = (List<Currency>) query.setHint("toplink.refresh", "true").getResultList();
+//        return currencyList;
+//    }
+    
     @Override
     public List<Currency> getSearchCurrency(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<Currency> currencyList = null;
         if (name == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
         }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c WHERE c.name LIKE '%name%'"); 
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        currencyList = (List<Currency>) query.setHint("toplink.refresh", "true").getResultList();
-        return currencyList;        
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c ");
+            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(),Currency.class);
+            currencyList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return currencyList;
     }
 
-   
     @Override
     public RequestType searchRequestType(String description) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        RequestType requestType = new RequestType(); 
+        RequestType requestType = new RequestType();
         try {
             if (description == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
-            }            
+            }
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT r FROM RequestType r ");
             sqlBuilder.append("WHERE r.description LIKE '").append(description).append("'");
             requestType = (RequestType) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-            
+
         } catch (NoResultException ex) {
             throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, RequestType.class.getSimpleName(), "loadRequestTypeByDescription", RequestType.class.getSimpleName(), null), ex);
         } catch (Exception ex) {
@@ -1195,14 +1220,14 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public List<RequestType> getSearchRequestType(String description) throws EmptyListException, GeneralException, NullParameterException {
-         List<RequestType> requestsTypeList = null;
+        List<RequestType> requestsTypeList = null;
         if (description == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
         }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM requestType r WHERE r.description LIKE '%description%'"); 
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM requestType r WHERE r.description LIKE '%description%'");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         requestsTypeList = (List<RequestType>) query.setHint("toplink.refresh", "true").getResultList();
-        return requestsTypeList;        
+        return requestsTypeList;
     }
 
     @Override
@@ -1216,7 +1241,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         if (userHasProfile == null) {
             throw new NullParameterException("userHasProfile", null);
         }
-        return (UserHasProfile) saveEntity(userHasProfile);  
+        return (UserHasProfile) saveEntity(userHasProfile);
     }
 
     @Override
@@ -1226,20 +1251,19 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public List<UserHasProfile> getUserHasProfileByUser(UserHasProfile userHasProfile) throws EmptyListException, GeneralException, NullParameterException {
-      List<UserHasProfile> userHasProfileList = null;
+        List<UserHasProfile> userHasProfileList = null;
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM user_has_profile where userId=")
                 .append(userHasProfile.getUserId().getId().toString())
                 .append(" and profileId=")
                 .append(userHasProfile.getProfileId().getId().toString());
         try {
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        userHasProfileList = (List<UserHasProfile>) query.setHint("toplink.refresh", "true").getResultList();
-       
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+            userHasProfileList = (List<UserHasProfile>) query.setHint("toplink.refresh", "true").getResultList();
+
         } catch (Exception e) {
             e.getMessage();
         }
-          return userHasProfileList;      
+        return userHasProfileList;
     }
-    
-}    
 
+}
