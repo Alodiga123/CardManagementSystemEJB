@@ -54,6 +54,7 @@ import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -1063,25 +1064,25 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return country;
     }
-
-//    @Override
-//    public List<CardRenewalRequest> getCardRenewalRequestByCurrentDate(Integer cardStatus) throws EmptyListException, GeneralException, NullParameterException {
-//        //Consulta para verificar si hay solicitudes de renovación generadas en la fecha actual
-//        StringBuilder sqlBuilder = new StringBuilder("SELECT c.* FROM cardRenewalRequest c WHERE DATE_FORMAT(c.createDate, '%Y-%m-%d') = CURDATE()");
-//        Query query = entityManager.createNativeQuery(sqlBuilder.toString(), CardRenewalRequest.class);
-//        List<CardRenewalRequest> result = (List<CardRenewalRequest>) query.getResultList();
-//        return result;
-//    }
-
+    
     @Override
     public List<Country> getSearchCountry(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<Country> countryList = null;
         if (name == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
         }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM country c WHERE c.name LIKE '%name%'");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        countryList = (List<Country>) query.setHint("toplink.refresh", "true").getResultList();
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
+            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            countryList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
         return countryList;
     }
 
@@ -1166,15 +1167,35 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return currency;
     }
 
+//    @Override
+//    public List<Currency> getSearchCurrenc(String name) throws EmptyListException, GeneralException, NullParameterException {
+//        List<Currency> currencyList = null;
+//        if (name == null) {
+//            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+//        }
+//        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c WHERE c.name LIKE '%name%'");
+//        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+//        currencyList = (List<Currency>) query.setHint("toplink.refresh", "true").getResultList();
+//        return currencyList;
+//    }
+    
     @Override
     public List<Currency> getSearchCurrency(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<Currency> currencyList = null;
         if (name == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
         }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c WHERE c.name LIKE '%name%'");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        currencyList = (List<Currency>) query.setHint("toplink.refresh", "true").getResultList();
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c ");
+            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(),Currency.class);
+            currencyList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
         return currencyList;
     }
 
