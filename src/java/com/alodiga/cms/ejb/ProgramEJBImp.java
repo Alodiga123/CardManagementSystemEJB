@@ -76,22 +76,24 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
     }
     
      @Override
-    public Program searchProgram(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Program program = new Program(); 
+    public List<Program> searchProgram(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        List<Program> programList= null; 
         try {
             if (name == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
             }            
-            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Program c ");
-            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
-            program = (Program) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            StringBuilder sqlBuilder = new StringBuilder("select * from program p where p.name like '%");
+            sqlBuilder.append(name);
+            sqlBuilder.append("%'");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Program.class);
+            programList = (List<Program>) query.setHint("toplink.refresh", "true").getResultList();
             
         } catch (NoResultException ex) {
             throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Program.class.getSimpleName(), "loadProgramByName", Program.class.getSimpleName(), null), ex);
         } catch (Exception ex) {
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
         }
-        return program;
+        return programList;
     }
 
     @Override
