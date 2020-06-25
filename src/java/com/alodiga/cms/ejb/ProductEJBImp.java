@@ -28,6 +28,7 @@ import com.cms.commons.models.ProductHasChannelHasTransaction;
 import com.cms.commons.models.ProductHasCommerceCategory;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.ProductUse;
+import com.cms.commons.models.Program;
 import com.cms.commons.models.RateApplicationType;
 import com.cms.commons.models.RateByProduct;
 import com.cms.commons.models.RateByProgram;
@@ -39,6 +40,8 @@ import com.cms.commons.models.Transaction;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import java.util.List;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 /**
  *
@@ -571,5 +574,26 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (ApprovalProductRate) saveEntity(approvalProductRate);
     }
+
+    @Override
+    public List<Product> searchProduct(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<Product> productList= null; 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }      //To change body of generated methods, choose Tools | Templates.
+            
+            StringBuilder sqlBuilder = new StringBuilder("select * from product p where p.name like '%");
+            sqlBuilder.append(name);
+            sqlBuilder.append("%'");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Product.class);
+            productList = (List<Product>) query.setHint("toplink.refresh", "true").getResultList();
+            
+                } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return productList;
+    }
+        
     
 }
