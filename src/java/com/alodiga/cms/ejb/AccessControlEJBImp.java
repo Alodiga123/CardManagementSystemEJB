@@ -9,6 +9,7 @@ import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
 import com.alodiga.cms.commons.ejb.AccessControlEJB;
 import com.alodiga.cms.commons.ejb.AccessControlEJBLocal;
+import com.alodiga.cms.commons.ejb.UserEJB;
 import com.alodiga.cms.commons.exception.DisabledAccountException;
 import com.alodiga.cms.commons.exception.DisabledUserException;
 import com.alodiga.cms.commons.exception.EmptyListException;
@@ -25,6 +26,7 @@ import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import com.cms.commons.util.EJBServiceLocator;
 
 
 @Interceptors({DistributionLoggerInterceptor.class, DistributionContextInterceptor.class})
@@ -34,6 +36,7 @@ import javax.persistence.Query;
 public class AccessControlEJBImp extends AbstractDistributionEJB implements AccessControlEJB, AccessControlEJBLocal {
 
     private static final Logger logger = Logger.getLogger(AccessControlEJBImp.class);
+    private UserEJB userEJB = null;
 
     
     public User loadUserByLogin(String login) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -53,9 +56,10 @@ public class AccessControlEJBImp extends AbstractDistributionEJB implements Acce
 
     @Override
     public User validateUser(String login, String password) throws RegisterNotFoundException, NullParameterException, GeneralException, DisabledUserException, InvalidPasswordException {
-        User user = null;
+        User user = new User();
+        userEJB = (UserEJB) EJBServiceLocator.getInstance().get(EjbConstants.USER_EJB);
         try {
-            user = loadUserByLogin(login);
+            user = userEJB.loadUserByLogin(login);
             if (!user.getPassword().equals(password)) {
                 throw new InvalidPasswordException(com.cms.commons.util.Constants.INVALID_PASSWORD_EXCEPTION);
             }
