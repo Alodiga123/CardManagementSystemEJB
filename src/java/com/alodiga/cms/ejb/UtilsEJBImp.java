@@ -1142,8 +1142,10 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         if (description == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
         }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM personClassification p WHERE p.description LIKE '%description%'");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM personClassification p WHERE p.description LIKE '%");
+        sqlBuilder.append(description);
+        sqlBuilder.append("%'");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString(), PersonClassification.class);
         personclassificationList = (List<PersonClassification>) query.setHint("toplink.refresh", "true").getResultList();
         return personclassificationList;
     }
@@ -1167,18 +1169,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return currency;
     }
 
-//    @Override
-//    public List<Currency> getSearchCurrenc(String name) throws EmptyListException, GeneralException, NullParameterException {
-//        List<Currency> currencyList = null;
-//        if (name == null) {
-//            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
-//        }
-//        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c WHERE c.name LIKE '%name%'");
-//        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-//        currencyList = (List<Currency>) query.setHint("toplink.refresh", "true").getResultList();
-//        return currencyList;
-//    }
-    
+
     @Override
     public List<Currency> getSearchCurrency(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<Currency> currencyList = null;
