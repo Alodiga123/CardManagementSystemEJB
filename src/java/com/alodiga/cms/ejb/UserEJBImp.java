@@ -108,6 +108,22 @@ public class UserEJBImp extends AbstractDistributionEJB implements UserEJB, User
         userList = (List<User>) getNamedQueryResult(User.class, QueryConstants.VALIDATE_PASSWORD, request, getMethodName(), logger, "userList");
         return userList;
     }
+    
+    @Override
+    public User loadUserByLogin(String login) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        User user = null;
+        try {
+            Query query = createQuery("SELECT u FROM User u WHERE u.login =:login AND u.enabled=TRUE");
+            query.setParameter("login", login);
+            user = (User) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
+        } catch (Exception ex) {
+            ex.getMessage();
+            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+        }
+        return user;
+    }
 
     //Employee
     @Override
@@ -426,6 +442,6 @@ public class UserEJBImp extends AbstractDistributionEJB implements UserEJB, User
             e.getMessage();
         }
           return userHasProfileList;      
-    }    
+    }
 
 }
