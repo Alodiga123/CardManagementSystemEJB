@@ -36,6 +36,7 @@ import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
 import com.cms.commons.models.PlasticManufacturer;
+import com.cms.commons.models.Product;
 import com.cms.commons.models.Profession;
 import com.cms.commons.models.StatusCustomer;
 import com.cms.commons.models.User;
@@ -1009,6 +1010,26 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("passwordChangeRequest", null);
         }
         return (PasswordChangeRequest) saveEntity(passwordChangeRequest);
+    }
+
+    @Override
+    public List<Issuer> searchIssuer(String name) throws EmptyListException, GeneralException, NullParameterException {
+                List<Issuer> issuerList= null; 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }
+            
+            StringBuilder sqlBuilder = new StringBuilder("select * from issuer p where p.name like '%");
+            sqlBuilder.append(name);
+            sqlBuilder.append("%'");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Issuer.class);
+            issuerList = (List<Issuer>) query.setHint("toplink.refresh", "true").getResultList();
+            
+                } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return issuerList;
     }
 
 }
