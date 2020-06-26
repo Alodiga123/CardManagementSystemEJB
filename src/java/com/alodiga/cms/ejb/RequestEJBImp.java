@@ -124,22 +124,24 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }
 
     @Override
-    public Request searchCardRequest(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        Request request = new Request();
+    public List<Request> searchCardRequest(String name) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        List<Request> requestList= null; 
         try {
             if (name == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
             }
-            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT r FROM Request r ");
+            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM request r ");
             sqlBuilder.append("WHERE r.requestNumber LIKE '%").append(name).append("%'");
-            request = (Request) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
-
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Request.class);
+            requestList = (List<Request>) query.setHint("toplink.refresh", "true").getResultList();
+   
         } catch (NoResultException ex) {
             throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Request.class.getSimpleName(), "loadRequestByName", Request.class.getSimpleName(), null), ex);
         } catch (Exception ex) {
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
         }
-        return request;
+        return requestList;
     }
 
     @Override

@@ -36,6 +36,7 @@ import com.cms.commons.models.PersonType;
 import com.cms.commons.models.PhonePerson;
 import com.cms.commons.models.PhoneType;
 import com.cms.commons.models.PlasticManufacturer;
+import com.cms.commons.models.Product;
 import com.cms.commons.models.Profession;
 import com.cms.commons.models.StatusCustomer;
 import com.cms.commons.models.User;
@@ -1009,6 +1010,102 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("passwordChangeRequest", null);
         }
         return (PasswordChangeRequest) saveEntity(passwordChangeRequest);
+    }
+
+    @Override
+    public List<Issuer> searchIssuer(String name) throws EmptyListException, GeneralException, NullParameterException {
+                List<Issuer> issuerList= null; 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }
+            
+            StringBuilder sqlBuilder = new StringBuilder("select * from issuer p where p.name like '%");
+            sqlBuilder.append(name);
+            sqlBuilder.append("%'");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Issuer.class);
+            issuerList = (List<Issuer>) query.setHint("toplink.refresh", "true").getResultList();
+            
+                } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return issuerList;
+    }
+
+    @Override
+    public List<LegalPerson> searchLegalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+    
+        List<LegalPerson> legalPersonList = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_CLASSIFICATION_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
+        }
+         if (!params.containsKey(EjbConstants.PARAM_PERSON_ENTERPRISE_NAME)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ENTERPRISE_NAME), null);
+        }
+         try {
+           legalPersonList = (List<LegalPerson>) getNamedQueryResult(LegalPerson.class, QueryConstants.LEGAL_PERSON_BY_PERSON_CLASSIFICATION_LIKE , request, getMethodName(), logger, "legalPersonList");
+
+        } catch (Exception e) {
+            e.getMessage();
+            e.getLocalizedMessage();
+            e.printStackTrace();
+        }
+        return legalPersonList;
+    }
+
+    @Override
+    public List<Person> searchPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<Person> personList= null; 
+               
+        Map<String, Object> params = request.getParams();       
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_CLASSIFICATION_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
+        }  
+        
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_NAME)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_NAME), null);
+        }  
+        
+          try {
+              
+            StringBuilder sqlBuilder = new StringBuilder("select u.id, u.countryId, u.email, u.createDate, u.updateDate, u.personClassificationId, u.personTypeId ");
+            sqlBuilder.append("from (SELECT p.*, lp.enterpriseName as name FROM person p join legalPerson lp on p.id=lp.personId and p.personClassificationId=");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_PERSON_CLASSIFICATION_ID));
+            sqlBuilder.append(" union SELECT p.*, concat(np.firstNames, ' ', np.lastNames) as name  FROM person p join naturalPerson np on p.id = np.personId and p.personClassificationId=");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_PERSON_CLASSIFICATION_ID));
+            sqlBuilder.append(") u where u.name like '%");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_PERSON_NAME));
+            sqlBuilder.append("%'");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Person.class);
+            personList = (List<Person>) query.setHint("toplink.refresh", "true").getResultList();
+                          
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return personList;   
+    }
+
+    @Override
+    public List<User> searchUser(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+            
+        List<User> userList = null;        
+        Map<String, Object> params = request.getParams();
+      
+        if (!params.containsKey(EjbConstants.PARAM_USER)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_USER), null);
+        }
+        
+        try {
+           userList = (List<User>) getNamedQueryResult(User.class, QueryConstants.USER_LIKE , request, getMethodName(), logger, "userList");
+
+        } catch (Exception e) {
+            e.getMessage();
+            e.getLocalizedMessage();
+            e.printStackTrace();
+        }
+        return userList;
+        
     }
 
 }
