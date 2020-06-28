@@ -622,6 +622,16 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
         return addresses;
     }
+    
+    public List<Address> getAddressesById(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+         List<Address> addressById = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_ADDRESS_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_ADDRESS_ID), null);
+        }
+        addressById = (List<Address>) getNamedQueryResult(UtilsEJB.class, QueryConstants.PERSON_HAS_ADDRESS_BY_PERSON, request, getMethodName(), logger, "addressById");
+        return addressById;
+    }
 
     @Override
     public Address loadAddress(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -1257,4 +1267,10 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return userHasProfileList;
     }
 
+    //PersonType
+    @Override
+    public List<PersonType> getPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonType> personTypeList = (List<PersonType>) listEntities(PersonType.class, request, logger, getMethodName());
+        return personTypeList;
+    }
 }
