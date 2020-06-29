@@ -1267,4 +1267,10 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return userHasProfileList;
     }
 
+    //PersonType
+    @Override
+    public List<PersonType> getPersonType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonType> personTypeList = (List<PersonType>) listEntities(PersonType.class, request, logger, getMethodName());
+        return personTypeList;
+    }
 }
