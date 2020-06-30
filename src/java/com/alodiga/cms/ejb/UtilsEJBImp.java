@@ -1273,4 +1273,39 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<PersonType> personTypeList = (List<PersonType>) listEntities(PersonType.class, request, logger, getMethodName());
         return personTypeList;
     }
+    
+    
+    //DocumentsPersonType
+    @Override
+    public DocumentsPersonType searchDocumentsPersonType(String description) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        DocumentsPersonType documentsPersonType = new DocumentsPersonType();
+        try {
+            if (description == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+            }
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT d FROM DocumentsPersonType d ");
+            sqlBuilder.append("WHERE d.description LIKE '").append(description).append("'");
+            documentsPersonType = (DocumentsPersonType) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, DocumentsPersonType.class.getSimpleName(), "loadDocumentsPersonTypeByDescription", DocumentsPersonType.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return documentsPersonType;
+    }
+
+    @Override
+    public List<DocumentsPersonType> getSearchDocumentsPersonType(String description) throws EmptyListException, GeneralException, NullParameterException {
+        List<DocumentsPersonType> documentsPersonTypeList = null;
+        if (description == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+        }
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM documentsPersonType d WHERE d.description LIKE '%");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        documentsPersonTypeList = (List<DocumentsPersonType>) query.setHint("toplink.refresh", "true").getResultList();
+        return documentsPersonTypeList;
+    }
+    
+
 }
