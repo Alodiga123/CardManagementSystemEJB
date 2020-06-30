@@ -252,6 +252,77 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         cardComplementaryByApplicantList = (List<ApplicantNaturalPerson>) getNamedQueryResult(UtilsEJB.class, QueryConstants.CARD_COMPLEMENTARY_BY_APPLICANT, request, getMethodName(), logger, "cardComplementaryByApplicantList");
         return cardComplementaryByApplicantList;
     }
+    
+    @Override
+    public List<ApplicantNaturalPerson> searchCardComplementaryByApplicant(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApplicantNaturalPerson> applicantNaturalPersonList= null; 
+               
+        Map<String, Object> params = request.getParams();       
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID), null);
+        }
+        
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_NAME)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_NAME), null);
+        }
+          
+        try {
+              
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM applicantNaturalPerson a WHERE a.applicantParentId=");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID));
+            sqlBuilder.append(" and (a.firstNames");
+            sqlBuilder.append(" like '%");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_NAME));
+            sqlBuilder.append("%' or a.lastNames");
+            sqlBuilder.append(" like '%");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_NAME));
+            sqlBuilder.append("%')");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), ApplicantNaturalPerson.class);
+            applicantNaturalPersonList = (List<ApplicantNaturalPerson>) query.setHint("toplink.refresh", "true").getResultList();
+                          
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        
+        return applicantNaturalPersonList;   
+     }
+    
+    
+        @Override
+    public List<ApplicantNaturalPerson> searchCardComplementaryByApplicantOFAC(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApplicantNaturalPerson> applicantNaturalPersonList= null; 
+               
+        Map<String, Object> params = request.getParams();       
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID), null);
+        }
+        
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_NAME)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_NAME), null);
+        }
+          
+        try {
+              
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM applicantNaturalPerson a WHERE (a.applicantParentId=");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID));
+            sqlBuilder.append(" or a.id=");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID));
+            sqlBuilder.append(") and (a.firstNames");
+            sqlBuilder.append(" like '%");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_NAME));
+            sqlBuilder.append("%' or a.lastNames");
+            sqlBuilder.append(" like '%");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_NAME));
+            sqlBuilder.append("%')");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), ApplicantNaturalPerson.class);
+            applicantNaturalPersonList = (List<ApplicantNaturalPerson>) query.setHint("toplink.refresh", "true").getResultList();
+                          
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        
+        return applicantNaturalPersonList;   
+     }
 
     @Override
     public List<ApplicantNaturalPerson> getApplicantByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
