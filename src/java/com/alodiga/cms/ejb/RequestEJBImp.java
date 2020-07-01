@@ -108,6 +108,20 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         requestByStatusList = (List<Request>) getNamedQueryResult(Request.class, QueryConstants.STATUS_REQUEST, request, getMethodName(), logger, "requestByStatusList");
         return requestByStatusList;
     }
+    
+        @Override
+    public List<Request> searchRequestsByStatus(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Request> requestByStatusList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_STATUS_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATUS_REQUEST_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_NAME)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_NAME), null);
+        }
+        requestByStatusList = (List<Request>) getNamedQueryResult(Request.class, QueryConstants.STATUS_REQUEST_LIKE, request, getMethodName(), logger, "requestByStatusList");
+        return requestByStatusList;
+    }
 
     @Override
     public Request loadRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
