@@ -1301,8 +1301,9 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         if (description == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
         }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM documentsPersonType d WHERE d.description LIKE '%");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM documentsPersonType d ");
+        sqlBuilder.append("WHERE d.description LIKE '%").append(description).append("%'");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString(),DocumentsPersonType.class);
         documentsPersonTypeList = (List<DocumentsPersonType>) query.setHint("toplink.refresh", "true").getResultList();
         return documentsPersonTypeList;
     }
