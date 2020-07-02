@@ -583,6 +583,28 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         CollectionsRequestByrequestsList = (List<CollectionsRequest>) getNamedQueryResult(CollectionsRequest.class, QueryConstants.COLLECTIONS_BY_REQUEST, request, getMethodName(), logger, "CollectionsRequestByrequestsList");
         return CollectionsRequestByrequestsList;
     }
+    
+    public List<CollectionsRequest> getCollectionsRequestsUnique(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+        List<CollectionsRequest> CollectionsRequestUniqueList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_TYPE_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PROGRAM_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PROGRAM_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_TYPE_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_COLLECTION_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COLLECTION_TYPE_ID), null);
+        }
+        CollectionsRequestUniqueList = (List<CollectionsRequest>) getNamedQueryResult(CollectionsRequest.class, QueryConstants.COLLECTIONS_REQUEST_UNIQUE, request, getMethodName(), logger, "CollectionsRequestUniqueList");
+        return CollectionsRequestUniqueList;
+    }
 
     @Override
     public CollectionsRequest loadCollectionsRequest(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
