@@ -15,6 +15,7 @@ import com.cms.commons.models.ApprovalProductRate;
 import com.cms.commons.models.ApprovalProgramRate;
 import com.cms.commons.models.Channel;
 import com.cms.commons.models.CommerceCategory;
+import com.cms.commons.models.Country;
 import com.cms.commons.models.GeneralRate;
 import com.cms.commons.models.LevelProduct;
 import java.util.Map;
@@ -626,6 +627,26 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         return generalRateList;
 
     }
-        
-    
-}
+
+    @Override
+    public List<GeneralRate> getGeneralRateByCountry(Country country) throws EmptyListException, GeneralException, NullParameterException {
+    List<GeneralRate> generalRateList= null; 
+        try {
+            if (country == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "country"), null);
+            }      //To change body of generated methods, choose Tools | Templates.
+            
+            StringBuilder sqlBuilder = new StringBuilder("select * from generalRate where countryId=");
+            sqlBuilder.append(country.getId());
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), GeneralRate.class);
+            generalRateList = (List<GeneralRate>) query.setHint("toplink.refresh", "true").getResultList();
+            
+                } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return generalRateList;
+
+    }
+
+            
+        }
