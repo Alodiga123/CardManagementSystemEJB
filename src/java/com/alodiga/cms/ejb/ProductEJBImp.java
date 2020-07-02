@@ -291,10 +291,16 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
 
     @Override
     public GeneralRate saveGeneralRate(GeneralRate generalRate) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        GeneralRate general = null;
         if (generalRate == null) {
             throw new NullParameterException("generalRate", null);
         }
-        return (GeneralRate) saveEntity(generalRate);
+        try {
+            general = (GeneralRate) saveEntity(generalRate);
+        } catch (Exception e) {
+            e.getMessage();
+        }
+        return general;
     }
     @Override
     public List<RateApplicationType> getRateApplicationType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -593,6 +599,32 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
         }
         return productList;
+    }
+
+    @Override
+    public List<GeneralRate> getGeneralRateBy4field(GeneralRate generalRate) throws EmptyListException, GeneralException, NullParameterException {
+        List<GeneralRate> generalRateList= null; 
+        try {
+            if (generalRate == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "generalRate"), null);
+            }      //To change body of generated methods, choose Tools | Templates.
+            
+            StringBuilder sqlBuilder = new StringBuilder("select * from generalRate where countryId=");
+            sqlBuilder.append(generalRate.getCountryId().getId());
+            sqlBuilder.append(" and transactionId=");
+            sqlBuilder.append(generalRate.getTransactionId().getId());
+            sqlBuilder.append(" and productTypeId=");
+            sqlBuilder.append(generalRate.getProductTypeId().getId());
+            sqlBuilder.append(" and channelId=");
+            sqlBuilder.append(generalRate.getChannelId().getId());
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), GeneralRate.class);
+            generalRateList = (List<GeneralRate>) query.setHint("toplink.refresh", "true").getResultList();
+            
+                } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return generalRateList;
+
     }
         
     
