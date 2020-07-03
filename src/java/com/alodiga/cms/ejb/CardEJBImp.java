@@ -651,6 +651,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (SystemFuncionalityHasSecurityQuestion) saveEntity(systemFuncionalityHasSecurityQuestion);
     }
 
+    //StatusUpdateReason
     @Override
     public List<StatusUpdateReason> getStatusUpdateReason(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<StatusUpdateReason> statusUpdateReason = (List<StatusUpdateReason>) listEntities(StatusUpdateReason.class, request, logger, getMethodName());
@@ -661,6 +662,14 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     public StatusUpdateReason loadStatusUpdateReason(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         StatusUpdateReason statusUpdateReason = (StatusUpdateReason) loadEntity(StatusUpdateReason.class, request, logger, getMethodName());
         return statusUpdateReason; //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public StatusUpdateReason saveStatusUpdateReason(StatusUpdateReason statusUpdateReason) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        if (statusUpdateReason == null) {
+            throw new NullParameterException("statusUpdateReason", null);
+        }
+        return (StatusUpdateReason) saveEntity(statusUpdateReason);
     }
 
     //CardRenewalRequest
