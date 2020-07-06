@@ -805,6 +805,17 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (LegalRepresentatives) saveEntity(legalRepresentatives);
     }
+    
+    @Override
+    public List<LegalRepresentatives> getLegalRepresentativesByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<LegalRepresentatives> legalRepresentatives = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
+        }
+        legalRepresentatives = (List<LegalRepresentatives>) getNamedQueryResult(LegalRepresentatives.class, QueryConstants.LEGAL_REPRESENTATIVES_BY_PERSON, request, getMethodName(), logger, "legalRepresentatives");
+        return legalRepresentatives;
+    }
 
     //Sequences
     @Override
@@ -1318,6 +1329,5 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         documentsPersonTypeList = (List<DocumentsPersonType>) query.setHint("toplink.refresh", "true").getResultList();
         return documentsPersonTypeList;
     }
-    
 
 }

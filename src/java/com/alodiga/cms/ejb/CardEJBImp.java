@@ -651,6 +651,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (SystemFuncionalityHasSecurityQuestion) saveEntity(systemFuncionalityHasSecurityQuestion);
     }
 
+    //StatusUpdateReason
     @Override
     public List<StatusUpdateReason> getStatusUpdateReason(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<StatusUpdateReason> statusUpdateReason = (List<StatusUpdateReason>) listEntities(StatusUpdateReason.class, request, logger, getMethodName());
@@ -661,6 +662,14 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     public StatusUpdateReason loadStatusUpdateReason(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         StatusUpdateReason statusUpdateReason = (StatusUpdateReason) loadEntity(StatusUpdateReason.class, request, logger, getMethodName());
         return statusUpdateReason; //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public StatusUpdateReason saveStatusUpdateReason(StatusUpdateReason statusUpdateReason) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        if (statusUpdateReason == null) {
+            throw new NullParameterException("statusUpdateReason", null);
+        }
+        return (StatusUpdateReason) saveEntity(statusUpdateReason);
     }
 
     //CardRenewalRequest
@@ -819,6 +828,12 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
 
     //CardStatusHasUpdateReason
     @Override
+    public List<CardStatusHasUpdateReason> getCardStatusHasUpdateReason(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+        List<CardStatusHasUpdateReason> cardStatusHasUpdateReason = (List<CardStatusHasUpdateReason>) listEntities(CardStatusHasUpdateReason.class, request, logger, getMethodName());
+        return cardStatusHasUpdateReason;
+    }
+    
+    @Override
     public List<CardStatusHasUpdateReason> getCardStatusByUpdateReason(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<CardStatusHasUpdateReason> cardStatusHasUpdateReasonList = null;
         Map<String, Object> params = request.getParams();
@@ -843,6 +858,34 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             e.getMessage();
         }
         return cardStatusHasUpdateReasonList;
+    }
+    
+    public List<CardStatusHasUpdateReason> getCardStatusHasUpdateReasonUnique(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
+        List<CardStatusHasUpdateReason> cardStatusHasUpdateReasonUniqueList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_STATUS_UPDATE_REASON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATUS_UPDATE_REASON_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_CARD_STATUS)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CARD_STATUS), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_IND_ALLOW_TABLE)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_IND_ALLOW_TABLE), null);
+        }
+        cardStatusHasUpdateReasonUniqueList = (List<CardStatusHasUpdateReason>) getNamedQueryResult(CardStatusHasUpdateReason.class, QueryConstants.CARD_STATUS_BY_REASON_UNIQUE, request, getMethodName(), logger, "cardStatusHasUpdateReasonUniqueList");
+        return cardStatusHasUpdateReasonUniqueList;
+    }
+    
+    public CardStatusHasUpdateReason loadCardStatusHasUpdateReason(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        CardStatusHasUpdateReason cardStatusHasUpdateReason = (CardStatusHasUpdateReason) loadEntity(CardStatusHasUpdateReason.class, request, logger, getMethodName());
+        return cardStatusHasUpdateReason;
+    }
+
+    public CardStatusHasUpdateReason saveCardStatusHasUpdateReason(CardStatusHasUpdateReason cardStatusHasUpdateReason) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        if (cardStatusHasUpdateReason == null) {
+            throw new NullParameterException("cardStatusHasUpdateReason", null);
+        }
+        return (CardStatusHasUpdateReason) saveEntity(cardStatusHasUpdateReason);
     }
 
     //NewCardIssueRequest
