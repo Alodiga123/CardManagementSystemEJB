@@ -584,7 +584,26 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (EconomicActivity) saveEntity(economicActivity);
     }
+    
+    public List<EconomicActivity> SearchDescription(String description) throws EmptyListException, GeneralException, NullParameterException {
+        List<EconomicActivity> economicList = null;
+        if (description == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM economicActivity e ");
+            sqlBuilder.append("WHERE e.description LIKE").append(description).append("'%'");
 
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            economicList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return economicList;
+    }
     //Issuer
     @Override
     public List<Issuer> getIssuers(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -1329,5 +1348,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         documentsPersonTypeList = (List<DocumentsPersonType>) query.setHint("toplink.refresh", "true").getResultList();
         return documentsPersonTypeList;
     }
+
+    
 
 }
