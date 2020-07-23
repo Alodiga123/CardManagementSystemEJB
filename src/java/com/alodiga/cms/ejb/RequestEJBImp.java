@@ -1186,8 +1186,13 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
         }
         try {
-            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM collectionsRequest c, collectionType t ");
-            sqlBuilder.append("WHERE c.collectionTypeId = t.id AND t.description LIKE '%").append(name).append("%'");
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM collectionsRequest c, collectionType t WHERE c.collectionTypeId = t.id AND t.description LIKE '");
+            if (name.equals("")) {
+                sqlBuilder.append("%' "); 
+            } else {
+                sqlBuilder.append(name);
+                sqlBuilder.append("%' ");
+            }
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), CollectionsRequest.class);
             collectionRequestList = query.setHint("toplink.refresh", "true").getResultList();
 

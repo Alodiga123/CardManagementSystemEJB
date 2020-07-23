@@ -209,6 +209,33 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         return (ProgramHasNetwork) saveEntity(programHasNetwork);
     }
+    
+    @Override
+    public List<ProgramHasNetwork> searchProgramHasNetwork(String name, Program program) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        List<ProgramHasNetwork> programHasNetworkList = null; 
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }            
+            StringBuilder sqlBuilder = new StringBuilder("select phn.* from programHasNetwork phn, country c, network n where c.name like '");
+            if (name.equals("")) {
+                sqlBuilder.append("%' "); 
+            } else {
+                sqlBuilder.append(name);
+                sqlBuilder.append("%' ");
+            }
+            sqlBuilder.append("AND n.id = phn.networkId AND n.countryId = c.id AND phn.programId = ");
+            sqlBuilder.append(program.getId());
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), ProgramHasNetwork.class);
+            programHasNetworkList = (List<ProgramHasNetwork>) query.setHint("toplink.refresh", "true").getResultList();
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Program.class.getSimpleName(), "loadProgramByName", Program.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return programHasNetworkList;
+    }
 
     //ProgramLoyalty
     @Override
