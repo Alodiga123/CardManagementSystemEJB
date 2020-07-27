@@ -832,41 +832,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         } catch (Exception ex) {
             throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
         }
-    }
-    
-//    public LegalCustomer validateQuestionLegal(Long person, String identificationNumber, Date dateInscriptionRegister) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
-//        LegalCustomer legalCustomer = null;
-//        try {
-//            legalCustomer = loadLegalCustomer(person);
-//            if (!legalCustomer.getIdentificationNumber().equals(identificationNumber)) {
-//                throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
-//            }
-//            if (!legalCustomer.getDateInscriptionRegister().equals(dateInscriptionRegister)) {
-//                throw new InvalidQuestionException(com.cms.commons.util.Constants.INVALID_QUESTION_EXCEPTION);
-//            }
-//            return legalCustomer;
-//        } catch (NoResultException ex) {
-//            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
-//        } catch (Exception ex) {
-//            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
-//        }
-//    }
-//
-//    public LegalCustomer loadLegalCustomer(Long personId) throws RegisterNotFoundException, NullParameterException, GeneralException {
-//        LegalCustomer legalCustomer = null;
-//        try {
-//            Query query = createQuery("SELECT l FROM LegalCustomer l WHERE l.personId.Id = :personId");
-//            query.setParameter("personId", personId);
-//            legalCustomer = (LegalCustomer) query.getSingleResult();
-//        } catch (NoResultException ex) {
-//            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
-//        } catch (Exception ex) {
-//            ex.getMessage();
-//            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
-//        }
-//        return legalCustomer;
-//    }
-    
+    }    
 
     //PlasticManufacturer
     @Override
@@ -1007,6 +973,35 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }        
         userList = (List<User>) getNamedQueryResult(User.class, QueryConstants.VALIDATE_PASSWORD, request, getMethodName(), logger, "userList");
         return userList;
+    }
+    
+    @Override
+    public List<User> getUserByLogin(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<User> userList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_USER)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_USER), null);
+        }       
+        userList = (List<User>) getNamedQueryResult(User.class, QueryConstants.LOGIN_EXIST_IN_BD, request, getMethodName(), logger, "userList");
+        return userList;
+    }
+    
+    @Override
+    public List<User> searchUser(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {          
+        List<User> userList = null;        
+        Map<String, Object> params = request.getParams();      
+        if (!params.containsKey(EjbConstants.PARAM_USER)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_USER), null);
+        }        
+        try {
+           userList = (List<User>) getNamedQueryResult(User.class, QueryConstants.USER_LIKE , request, getMethodName(), logger, "userList");
+        } catch (Exception e) {
+            e.getMessage();
+            e.getLocalizedMessage();
+            e.printStackTrace();
+        }
+        return userList;
+        
     }
 
     //Employee
@@ -1188,28 +1183,6 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
         }
         return personList;   
-    }
-
-    @Override
-    public List<User> searchUser(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-            
-        List<User> userList = null;        
-        Map<String, Object> params = request.getParams();
-      
-        if (!params.containsKey(EjbConstants.PARAM_USER)) {
-            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_USER), null);
-        }
-        
-        try {
-           userList = (List<User>) getNamedQueryResult(User.class, QueryConstants.USER_LIKE , request, getMethodName(), logger, "userList");
-
-        } catch (Exception e) {
-            e.getMessage();
-            e.getLocalizedMessage();
-            e.printStackTrace();
-        }
-        return userList;
-        
     }
 
 }
