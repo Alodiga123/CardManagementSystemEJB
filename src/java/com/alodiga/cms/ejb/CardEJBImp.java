@@ -924,7 +924,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             query.setParameter("1", cardId.getId());
             List<NewCardIssueRequest> resultList = (List<NewCardIssueRequest>) query.getResultList();
 
-            //Se crea automáticamente la solicitude
+            //Se crea automáticamente la solicitud
             //Si la tarjeta no tiene solicitud anterior se agrega a la lista de tarjetas a retornar
             if (resultList.isEmpty()) {
                 //Obtener el estatus de la solicitud PENDIENTE
@@ -935,7 +935,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
                 //Obtiene el numero de secuencia para documento Request
                 EJBRequest request2 = new EJBRequest();
                 Map params = new HashMap();
-                params.put(Constants.DOCUMENT_TYPE_KEY, Constants.DOCUMENT_TYPE_CANCELED_REQUEST);
+                params.put(Constants.DOCUMENT_TYPE_KEY, Constants.DOCUMENT_TYPE_NEW_CARD_ISSUE_REQUEST);
                 request2.setParams(params);
                 List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request2);
                 numberRequest = utilsEJB.generateNumberSequence(sequence, Constants.ORIGIN_APPLICATION_CMS_ID);
