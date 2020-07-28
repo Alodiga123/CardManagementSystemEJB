@@ -987,6 +987,17 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
     
     @Override
+    public List<User> getValidateEmployee(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<User> userList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_EMPLOYEE)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_EMPLOYEE), null);
+        }       
+        userList = (List<User>) getNamedQueryResult(User.class, QueryConstants.EMPLOYEE_EXIST_IN_BD, request, getMethodName(), logger, "userList");
+        return userList;
+    }
+    
+    @Override
     public List<User> searchUser(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {          
         List<User> userList = null;        
         Map<String, Object> params = request.getParams();      
