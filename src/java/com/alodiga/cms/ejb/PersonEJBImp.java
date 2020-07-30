@@ -19,6 +19,7 @@ import com.cms.commons.models.CivilStatus;
 import com.cms.commons.models.ComercialAgency;
 import com.cms.commons.models.DocumentsPersonType;
 import com.cms.commons.models.Employee;
+import com.cms.commons.models.EmployedPosition;
 import com.cms.commons.models.FamilyReferences;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.IssuerType;
@@ -1196,4 +1197,10 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return personList;   
     }
 
+    //EmployedPosition
+        @Override
+        public List<EmployedPosition> getEmployedPosition(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<EmployedPosition> employedPosition = (List<EmployedPosition>) listEntities(EmployedPosition.class, request, logger, getMethodName());
+        return employedPosition;
+    }
 }
