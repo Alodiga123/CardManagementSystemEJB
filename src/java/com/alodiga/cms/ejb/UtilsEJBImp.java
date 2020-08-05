@@ -729,6 +729,26 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (City) saveEntity(city);
     }
+    
+    public List<City> getSearchCity(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<City> cityList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM City c ");
+            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            cityList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return cityList;
+    }
 
     //StreetType
     @Override
