@@ -183,6 +183,23 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         Currency currency = (Currency) loadEntity(Currency.class, request, logger, getMethodName());
         return currency;
     }
+    
+    @Override
+    public Currency loadCurrencyByCountry(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        List<Currency> currencyList = null;
+        Currency currency = null;        
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        try {
+            currencyList = (List<Currency>) getNamedQueryResult(Country.class, QueryConstants.CURRENCY_BY_COUNTRY, request, getMethodName(), logger, "currencyList");
+        } catch (EmptyListException e) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_EMPTY_LIST_EXCEPTION, this.getClass(), getMethodName(), "country"), null);
+        }
+        currency = currencyList.get(0);
+        return currency;
+    }
 
     //PersonClassification
     @Override
@@ -1348,7 +1365,5 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         documentsPersonTypeList = (List<DocumentsPersonType>) query.setHint("toplink.refresh", "true").getResultList();
         return documentsPersonTypeList;
     }
-
-    
 
 }
