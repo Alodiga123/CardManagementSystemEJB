@@ -107,7 +107,28 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (AccountProperties) saveEntity(accountProperties);
     }
+    
+    public List<AccountProperties> getSearchAccountProperties(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountProperties> accountPropertiesList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT a FROM AccountProperties a ");
+            sqlBuilder.append("WHERE a.identifier LIKE '").append(name).append("%'");
 
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            accountPropertiesList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return accountPropertiesList;
+    }
+
+    
     //AccountType
     @Override
     public List<AccountType> getAccountType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -129,6 +150,27 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         return (AccountType) saveEntity(accountType);
     }
 
+    public List<AccountType> getSearchAccountType(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<AccountType> accountTypeList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT a FROM AccountType a ");
+            sqlBuilder.append("WHERE a.description LIKE '").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            accountTypeList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return accountTypeList;
+    }
+    
+    
     //AccountTypeHasProductType
     @Override
     public List<AccountTypeHasProductType> getAccountTypeHasProductType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -190,6 +232,26 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_ACCOUNT_TYPE_ID), null);
         }
         subAccountTypeList = (List<SubAccountType>) getNamedQueryResult(SubAccountType.class, QueryConstants.SUB_ACCOUNT_TYPE_BY_ACCOUNT_TYPE, request, getMethodName(), logger, "subAccountTypeList");
+        return subAccountTypeList;
+    }
+    
+    public List<SubAccountType> getSearchSubAccountType(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<SubAccountType> subAccountTypeList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT s FROM SubAccountType s ");
+            sqlBuilder.append("WHERE s.name LIKE '").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            subAccountTypeList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
         return subAccountTypeList;
     }
 
@@ -534,6 +596,26 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (DeliveryRequest) saveEntity(deliveryRequest);
     }
+    
+    public List<DeliveryRequest> getSearchDeliveryRequest(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<DeliveryRequest> deliveryRequestList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT d FROM DeliveryRequest d ");
+            sqlBuilder.append("WHERE d.requestNumber LIKE '%").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            deliveryRequestList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return deliveryRequestList;
+    }
 
     //DeliveryRequestHasCard
     @Override
@@ -769,6 +851,26 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         Query query = entityManager.createNativeQuery(sqlBuilder.toString(), CardRenewalRequest.class);
         List<CardRenewalRequest> result = (List<CardRenewalRequest>) query.getResultList();
         return result;
+    }
+    
+    public List<CardRenewalRequest> getSearchCardRenewalRequest(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<CardRenewalRequest> cardRenewalRequestList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM CardRenewalRequest c");
+            sqlBuilder.append("WHERE c.requestNumber LIKE '%").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            cardRenewalRequestList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return cardRenewalRequestList;
     }
 
     //CardRenewalRequestHasCard
