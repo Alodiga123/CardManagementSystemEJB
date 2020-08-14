@@ -1018,6 +1018,26 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (PlasticCustomizingRequest) saveEntity(plasticCustomizingRequest);
     }
+    
+    public List<PlasticCustomizingRequest> getSearchPlasticCustomizingRequest(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<PlasticCustomizingRequest> plasticCustomizingRequestList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT p FROM PlasticCustomizingRequest p ");
+            sqlBuilder.append("WHERE p.requestNumber LIKE '%").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            plasticCustomizingRequestList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return plasticCustomizingRequestList;
+    }
 
     //PlastiCustomizingRequestHasCard
     @Override

@@ -257,7 +257,27 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         }
         return (ProgramLoyalty) saveEntity(programLoyalty);
     }
+    
+    public List<ProgramLoyalty> getSearchProgramLoyalty(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<ProgramLoyalty> programLoyaltyList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT p FROM ProgramLoyalty p ");
+            sqlBuilder.append("WHERE p.description LIKE '").append(name).append("%'");
 
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            programLoyaltyList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return programLoyaltyList;
+    }
+    
     //ProgramLoyaltyType
     @Override
     public List<ProgramLoyaltyType> getProgramLoyaltyType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {

@@ -1050,6 +1050,26 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (Employee) saveEntity(employee);
     }
+    
+    public List<Employee> getSearchEmployee(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<Employee> employeeList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT e FROM Employee e ");
+            sqlBuilder.append("WHERE e.lastNames LIKE '").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            employeeList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return employeeList;
+    }
 
     //ComercialAgency
     @Override
@@ -1135,6 +1155,26 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("passwordChangeRequest", null);
         }
         return (PasswordChangeRequest) saveEntity(passwordChangeRequest);
+    }
+    
+    public List<PasswordChangeRequest> getSearchPasswordChange(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<PasswordChangeRequest> passwordChangeRequestList = null;
+        if (name == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+        }
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT p FROM PasswordChangeRequest p ");
+            sqlBuilder.append("WHERE p.requestNumber LIKE '%").append(name).append("%'");
+
+            Query query = entityManager.createQuery(sqlBuilder.toString());
+            passwordChangeRequestList = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return passwordChangeRequestList;
     }
 
     @Override
