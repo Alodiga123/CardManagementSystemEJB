@@ -1,3 +1,4 @@
+//PersonEJB
 package com.alodiga.cms.ejb;
 
 import com.alodiga.cms.commons.ejb.PersonEJB;
@@ -99,8 +100,8 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
     
     @Override
-    public Long havePhonesByPerson(Long personId) throws GeneralException {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(p.personId) FROM phonePerson p WHERE p.personId = ?1");
+    public Long havePhonesByPerson(Long personId) throws GeneralException, NullParameterException {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(p.id) FROM phonePerson p WHERE p.personId = ?1");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         query.setParameter("1", personId);
         List result = (List) query.setHint("toplink.refresh", "true").getResultList();
@@ -743,7 +744,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
         }
-        naturalCustomerByPerson = (List<NaturalCustomer>) getNamedQueryResult(NaturalCustomer.class, QueryConstants.NATURAL_PERSON_BY_CUSTOMER, request, getMethodName(), logger, "naturalCustomerByPerson");
+        naturalCustomerByPerson = (List<NaturalCustomer>) getNamedQueryResult(NaturalCustomer.class, QueryConstants.NATURAL_CUSTOMER_BY_PERSON, request, getMethodName(), logger, "naturalCustomerByPerson");
         return naturalCustomerByPerson;
     }
 
@@ -1257,4 +1258,5 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<EmployedPosition> employedPosition = (List<EmployedPosition>) listEntities(EmployedPosition.class, request, logger, getMethodName());
         return employedPosition;
     }
+
 }
