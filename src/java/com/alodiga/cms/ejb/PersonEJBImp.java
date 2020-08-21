@@ -1,3 +1,4 @@
+//PersonEJB
 package com.alodiga.cms.ejb;
 
 import com.alodiga.cms.commons.ejb.PersonEJB;
@@ -99,8 +100,8 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
     
     @Override
-    public Long havePhonesByPerson(Long personId) throws GeneralException {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(p.personId) FROM phonePerson p WHERE p.personId = ?1");
+    public Long havePhonesByPerson(Long personId) throws GeneralException, NullParameterException {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(p.id) FROM phonePerson p WHERE p.personId = ?1");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         query.setParameter("1", personId);
         List result = (List) query.setHint("toplink.refresh", "true").getResultList();
@@ -170,6 +171,21 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
             throw new NullParameterException("personHasAddress", null);
         }
         return (PersonHasAddress) saveEntity(personHasAddress);
+    }
+    
+    @Override
+    public Long countAddressByPerson(long personId) throws GeneralException, NullParameterException {
+        List result = null;
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(pha.id) FROM personHasAddress pha WHERE pha.personId = ?1");
+        Query query = null;
+        try {
+            query = entityManager.createNativeQuery(sqlBuilder.toString());
+            query.setParameter("1", personId);
+            result = (List) query.setHint("toplink.refresh", "true").getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result.get(0) != null ? (Long) result.get(0) : 0l;
     }
 
     //FamilyReferences
@@ -743,7 +759,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_ID), null);
         }
-        naturalCustomerByPerson = (List<NaturalCustomer>) getNamedQueryResult(NaturalCustomer.class, QueryConstants.NATURAL_PERSON_BY_CUSTOMER, request, getMethodName(), logger, "naturalCustomerByPerson");
+        naturalCustomerByPerson = (List<NaturalCustomer>) getNamedQueryResult(NaturalCustomer.class, QueryConstants.NATURAL_CUSTOMER_BY_PERSON, request, getMethodName(), logger, "naturalCustomerByPerson");
         return naturalCustomerByPerson;
     }
 
@@ -1257,4 +1273,5 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         List<EmployedPosition> employedPosition = (List<EmployedPosition>) listEntities(EmployedPosition.class, request, logger, getMethodName());
         return employedPosition;
     }
+
 }
