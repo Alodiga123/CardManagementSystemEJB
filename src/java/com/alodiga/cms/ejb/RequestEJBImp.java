@@ -980,6 +980,15 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return (ReviewOFAC) saveEntity(reviewOFAC);
     }
+    
+    @Override
+    public Long haveReviewOFACByPerson(Long personId) throws GeneralException, NullParameterException {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(r.id) FROM reviewOFAC r WHERE r.personId = ?1");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        query.setParameter("1", personId);
+        List result = (List) query.setHint("toplink.refresh", "true").getResultList();
+        return result.get(0) != null ? (Long) result.get(0) : 0l;
+    }
 
     //StatusRequest
     @Override
