@@ -11,6 +11,7 @@ import com.alodiga.cms.commons.ejb.ProgramEJB;
 import com.alodiga.cms.commons.ejb.RequestEJB;
 import com.alodiga.cms.commons.ejb.RequestEJBLocal;
 import com.alodiga.cms.commons.ejb.UtilsEJB;
+import com.cms.commons.enumeraciones.StatusRequestE;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
 import com.alodiga.cms.commons.exception.NullParameterException;
@@ -1007,6 +1008,17 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public List<StatusRequest> getStatusRequestByCode(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<StatusRequest> statusRequestList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CODE)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CODE), null);
+        }
+        statusRequestList = (List<StatusRequest>) getNamedQueryResult(Program.class, QueryConstants.STATUS_REQUEST_BY_CODE, request, getMethodName(), logger, "statusRequestList");
+        return statusRequestList;
+    }
+    
     //PlasticCustomizingRequest
     @Override
     public List<PlasticCustomizingRequest> getPlasticCustomizingRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
