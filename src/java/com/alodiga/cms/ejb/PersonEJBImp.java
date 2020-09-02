@@ -1299,6 +1299,45 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return personList;   
     }
+    
+    public List<Person> searchPersonByLegalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<Person> personList= null; 
+               
+        Map<String, Object> params = request.getParams();       
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
+        } 
+        
+        if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
+        }
+        
+        if (!params.containsKey(EjbConstants.PARAM_PERSON_NAME)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_NAME), null);
+        }    
+          try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT u.* ");
+            sqlBuilder.append("FROM (SELECT p.*, lp.enterpriseName as name ");
+            sqlBuilder.append("FROM person p join legalPerson lp on p.id = lp.personId join request r on p.id = r.personId and r.id = ");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_REQUEST_ID));
+            sqlBuilder.append(" union SELECT p.*, concat(lr.firstNames, ' ', lr.lastNames) as name "); 
+            sqlBuilder.append("FROM person p join legalRepresentatives lr on p.id = lr.personId join legalPersonHasLegalRepresentatives lphlr on "); 
+            sqlBuilder.append("lr.id = lphlr.legalRepresentatives_id and lphlr.legalPersonId = ");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_PERSON_ID));
+            sqlBuilder.append(" union SELECT p.*, concat(crn.firstNames, ' ', crn.lastNames) as name "); 
+            sqlBuilder.append("FROM person p join cardRequestNaturalPerson crn on p.id = crn.person_id join legalPerson lp on crn.legalPerson_id = "); 
+            sqlBuilder.append(params.get(EjbConstants.PARAM_PERSON_ID));
+            sqlBuilder.append(") u where u.name like '");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_PERSON_NAME));
+            sqlBuilder.append("%'");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Person.class);
+            personList = (List<Person>) query.setHint("toplink.refresh", "true").getResultList();
+                          
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return personList;   
+    }
 
 
     //EmployedPosition
