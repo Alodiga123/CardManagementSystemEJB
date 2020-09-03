@@ -1265,35 +1265,31 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     
     @Override
     public List<Person> searchPersonByApplicantNaturalPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-         List<Person> personList= null; 
-               
+        List<Person> personList= null;                
         Map<String, Object> params = request.getParams();       
-        if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+        if (!params.containsKey(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
-        } 
-        
+        }         
         if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
-        }
-        
+        }        
         if (!params.containsKey(EjbConstants.PARAM_PERSON_NAME)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_NAME), null);
-        }         
+        }        
           try {
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT u.* ");
             sqlBuilder.append("FROM (SELECT p.*, concat(ap.firstNames, ' ', ap.lastNames) as name ");
             sqlBuilder.append("FROM person p join applicantNaturalPerson ap on p.id = ap.personId ");
             sqlBuilder.append("join request r on p.id = r.personId and r.id = "); 
-            sqlBuilder.append(params.get(EjbConstants.PARAM_PERSON_ID));
+            sqlBuilder.append(params.get(EjbConstants.PARAM_REQUEST_ID));
             sqlBuilder.append(" union SELECT p.*, concat(ap.firstNames, ' ', ap.lastNames) as name "); 
             sqlBuilder.append("FROM person p join applicantNaturalPerson ap on p.id = ap.personId and ap.applicantParentId = ");
-            sqlBuilder.append(params.get(EjbConstants.PARAM_REQUEST_ID));
+            sqlBuilder.append(params.get(EjbConstants.PARAM_APPLICANT_NATURAL_PERSON_ID));
             sqlBuilder.append(") u where u.name like '");
             sqlBuilder.append(params.get(EjbConstants.PARAM_PERSON_NAME));
             sqlBuilder.append("%'");
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Person.class);
-            personList = (List<Person>) query.setHint("toplink.refresh", "true").getResultList();
-                          
+            personList = (List<Person>) query.setHint("toplink.refresh", "true").getResultList();                          
         } catch (Exception ex) {
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
         }
