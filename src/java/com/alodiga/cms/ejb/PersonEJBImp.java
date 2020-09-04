@@ -9,6 +9,7 @@ import com.alodiga.cms.commons.exception.GeneralException;
 import com.alodiga.cms.commons.exception.InvalidQuestionException;
 import com.alodiga.cms.commons.exception.NullParameterException;
 import com.alodiga.cms.commons.exception.RegisterNotFoundException;
+import com.cms.commons.enumeraciones.StatusApplicantE;
 import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
@@ -362,6 +363,19 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         return applicantByPersonList;
     }
     
+    public List<ApplicantNaturalPerson> getApplicantByRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApplicantNaturalPerson> cardComplementaryByApplicantList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_REQUEST_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_REQUEST_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_STATUS_APPLICANT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATUS_APPLICANT_ID), null);
+        }
+        cardComplementaryByApplicantList = (List<ApplicantNaturalPerson>) getNamedQueryResult(UtilsEJB.class, QueryConstants.APPLICANT_BY_REQUEST, request, getMethodName(), logger, "applicantByRequest");
+        return cardComplementaryByApplicantList;
+    }
+    
     @Override
     public Long countCardComplementaryByApplicant(long applicantNaturalPersonId) throws GeneralException, NullParameterException {
         List result = null;
@@ -590,7 +604,18 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (CardRequestNaturalPerson) saveEntity(cardRequestNaturalPerson);
     }
-
+    
+    public Long cardRequestNaturalPersonBlackList(Long legalpersonId) throws GeneralException, NullParameterException {
+        int statusApplicantBlackList = StatusApplicantE.LISNEG.getId();
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(cr.id) FROM cardRequestNaturalPerson cr WHERE cr.statusApplicantId = ?1 AND cr.legalPersonid = ?2");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        query.setParameter("1", statusApplicantBlackList);
+        query.setParameter("2", legalpersonId);
+        List result = (List) query.setHint("toplink.refresh", "true").getResultList();
+        return result.get(0) != null ? (Long) result.get(0) : 0l;
+    }
+    
+    
     //Person
     @Override
     public List<Person> getPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
