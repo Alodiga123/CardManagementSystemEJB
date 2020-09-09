@@ -1182,7 +1182,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         try {
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
-            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
+            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("%'");
 
             Query query = entityManager.createQuery(sqlBuilder.toString());
             countryList = query.setHint("toplink.refresh", "true").getResultList();
