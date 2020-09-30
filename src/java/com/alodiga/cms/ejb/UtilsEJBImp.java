@@ -521,6 +521,21 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         personTypes = (List<PersonType>) getNamedQueryResult(PersonType.class, QueryConstants.PERSON_TYPE_BY_COUNTRY, request, getMethodName(), logger, "personTypes");
         return personTypes;
     }
+    
+    @Override
+    public List<PersonType> getPersonTypeByCountryByOriginApplication(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<PersonType> personTypes = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_ORIGIN_APPLICATION_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_ORIGIN_APPLICATION_ID), null);
+        }
+       
+        personTypes = (List<PersonType>) getNamedQueryResult(PersonType.class, QueryConstants.PERSON_TYPE_BY_COUNTRY_BY_ORIGIN_APPLICATION, request, getMethodName(), logger, "personTypeByCountryByOriginApplication");
+        return personTypes;
+    }
 
     //LegalPerson
     @Override
@@ -1182,7 +1197,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         try {
             StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT c FROM Country c ");
-            sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
+            sqlBuilder.append("WHERE c.name LIKE '").append(name).append("%'");
 
             Query query = entityManager.createQuery(sqlBuilder.toString());
             countryList = query.setHint("toplink.refresh", "true").getResultList();
