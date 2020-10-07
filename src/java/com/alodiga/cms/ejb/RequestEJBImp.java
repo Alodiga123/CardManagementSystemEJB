@@ -12,6 +12,7 @@ import com.alodiga.cms.commons.ejb.RequestEJB;
 import com.alodiga.cms.commons.ejb.RequestEJBLocal;
 import com.alodiga.cms.commons.ejb.UtilsEJB;
 import com.cms.commons.enumeraciones.StatusRequestE;
+import com.cms.commons.enumeraciones.StatusApplicantE;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
 import com.alodiga.cms.commons.exception.NullParameterException;
@@ -63,6 +64,7 @@ import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EJBServiceLocator;
 import com.cms.commons.util.QueryConstants;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -205,6 +207,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicant.setEmail(email);
             applicant.setPersonClassificationId(personClassification);
             applicant.setPersonTypeId(personTypeApp);
+            applicant.setCreateDate(new Timestamp(new Date().getTime()));
             applicant = personEJB.savePerson(applicant);
 
             //2. Solicitud de tarjeta         
@@ -245,6 +248,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request.setProductTypeId(productType);
             request.setRequestTypeId(requestType);
             request.setStatusRequestId(statusRequest);
+            request.setCreateDate(new Timestamp(new Date().getTime()));
             request = requestEJB.saveRequest(request);
 
             //3. Datos basicos del solicitante
@@ -261,7 +265,11 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             request1.setParam(professionId);
             Profession profession = personEJB.loadProfession(request1);
-
+            //Obtener el estatus Activo del solicitante
+            String statusApplicantActiv = StatusApplicantE.ACTIV.getStatusApplicantCode();
+            request1 = new EJBRequest();
+            StatusApplicant statusApplicant = requestEJB.loadStatusApplicantByCode(statusApplicantActiv);
+            
             //Guarda en BD el applicantNaturalPerson
             ApplicantNaturalPerson applicantNatural = new ApplicantNaturalPerson();
             applicantNatural.setPersonId(applicant);
@@ -277,23 +285,38 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantNatural.setCivilStatusId(civilStatus);
             applicantNatural.setProfessionId(profession);
             applicantNatural.setDocumentsPersonTypeId(documentPersonType);
+            applicantNatural.setStatusApplicantId(statusApplicant);
+            applicantNatural.setCreateDate(new Timestamp(new Date().getTime()));
             applicantNatural = personEJB.saveApplicantNaturalPerson(applicantNatural);
             idApplicantNaturalPerson = applicantNatural.getId();
 
             //4. Telefonos del solicitante
+            Boolean indMainCellPhone = true;
+            
+            //Obtener el countryCode
+            String countryCode = country.getCode();
+
             //Guarda el telf. Celular en BD
             PhonePerson cellPhoneApplicant = new PhonePerson();
             cellPhoneApplicant.setNumberPhone(cellPhone);
             cellPhoneApplicant.setPersonId(applicant);
+            cellPhoneApplicant.setCountryId(country);
+            cellPhoneApplicant.setCountryCode(countryCode);
+            cellPhoneApplicant.setIndMainPhone(indMainCellPhone);
             request1 = new EJBRequest();
             request1.setParam(Constants.PHONE_TYPE_MOBILE);
             PhoneType mobilePhoneType = personEJB.loadPhoneType(request1);
             cellPhoneApplicant.setPhoneTypeId(mobilePhoneType);
             cellPhoneApplicant = personEJB.savePhonePerson(cellPhoneApplicant);
+            
             //Guarda el telf. Habitacion en BD
+            Boolean indMainRoomPhone = false;
             PhonePerson roomPhoneApplicant = new PhonePerson();
             roomPhoneApplicant.setNumberPhone(roomPhone);
             roomPhoneApplicant.setPersonId(applicant);
+            cellPhoneApplicant.setCountryId(country);
+            cellPhoneApplicant.setCountryCode(countryCode);
+            cellPhoneApplicant.setIndMainPhone(indMainRoomPhone);
             request1 = new EJBRequest();
             request1.setParam(Constants.PHONE_TYPE_ROOM);
             PhoneType roomPhoneType = personEJB.loadPhoneType(request1);
@@ -326,6 +349,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             request1.setParam(streetType);
             StreetType streetTypeAddress = utilsEJB.loadStreetType(request1);
+            //dirección de entrega
+            Boolean IndAddressDelivery = true;
 
             //Guarda la direccion en BD
             addressApplicant.setCityId(cityAddress);
@@ -338,6 +363,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             addressApplicant.setTower(tower);
             addressApplicant.setUrbanization(Urbanization);
             addressApplicant.setZipZoneId(zipZoneAddress);
+            addressApplicant.setIndAddressDelivery(IndAddressDelivery);
+            addressApplicant.setCreateDate(new Timestamp(new Date().getTime()));
             addressApplicant = utilsEJB.saveAddress(addressApplicant);
             PersonHasAddress personHasAddress = new PersonHasAddress();
             personHasAddress.setAddressId(addressApplicant);
@@ -750,6 +777,21 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         return (StatusApplicant) saveEntity(statusApplicant);
     }
 
+    public StatusApplicant loadStatusApplicantByCode(String code)  throws RegisterNotFoundException, NullParameterException, GeneralException {
+        StatusApplicant statusApplicant = null;
+        try {
+            Query query = createQuery("SELECT s FROM StatusApplicant s WHERE s.code = :code");
+            query.setParameter("code", code);
+            statusApplicant = (StatusApplicant) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(com.cms.commons.util.Constants.REGISTER_NOT_FOUND_EXCEPTION);
+        } catch (Exception ex) {
+            ex.getMessage();
+            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+        }
+        return statusApplicant;
+    }
+    
     @Override
     public List<ReviewRequestType> getReviewRequestType(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<ReviewRequestType> reviewRequestTypeList = (List<ReviewRequestType>) listEntities(ReviewRequestType.class, request, logger, getMethodName());
@@ -881,6 +923,11 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request.setCreateDate(dateRequest);
             request.setIndPersonNaturalRequest(true);
             request = requestEJB.saveRequest(request);
+            
+            //Obtener el estatus Activo del solicitante
+            String statusApplicantActiv = StatusApplicantE.ACTIV.getStatusApplicantCode();
+            request1 = new EJBRequest();
+            StatusApplicant statusApplicant = requestEJB.loadStatusApplicantByCode(statusApplicantActiv);
 
             //Guarda en BD el applicantNaturalPerson
             applicantNatural = new ApplicantNaturalPerson();
@@ -897,18 +944,29 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantNatural.setRecommendation(recommendation);
             applicantNatural.setCitizen(citizen);
             applicantNatural.setDateBirth(dateBirth);
+            applicantNatural.setStatusApplicantId(statusApplicant);
+            applicantNatural.setCreateDate(new Timestamp(new Date().getTime()));
             applicantNatural = personEJB.saveApplicantNaturalPerson(applicantNatural);
             applicantNatural.setRequest(request);
 
             //4. Telefonos del solicitante
+            
+            //Obtener tipo de telefono
+            request1 = new EJBRequest();
+            request1.setParam(Constants.PHONE_TYPE_MOBILE);
+            PhoneType mobilePhoneType = personEJB.loadPhoneType(request1);
+            
+            //Obtener el countryCode y si es telefono principal
+            Boolean indMainCellPhone = true;
+            String countryCode = country.getCode();
+            
             //Guarda el telf. Celular en BD
             PhonePerson cellPhoneApplicant = new PhonePerson();
             cellPhoneApplicant.setNumberPhone(cellPhone);
             cellPhoneApplicant.setPersonId(applicant);
-            request1 = new EJBRequest();
-            request1.setParam(Constants.PHONE_TYPE_MOBILE);
-            PhoneType mobilePhoneType = personEJB.loadPhoneType(request1);
+            cellPhoneApplicant.setCountryCode(countryCode);
             cellPhoneApplicant.setPhoneTypeId(mobilePhoneType);
+            cellPhoneApplicant.setIndMainPhone(indMainCellPhone); 
             cellPhoneApplicant = personEJB.savePhonePerson(cellPhoneApplicant);
             //5. Direccion del solicitante
             Address addressApplicant = new Address();
@@ -928,6 +986,9 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1 = new EJBRequest();
             request1.setParam(Constants.ADDRESS_TYPE_DELIVERY);
             AddressType addressType = utilsEJB.loadAddressType(request1);
+            //dirección de entrega
+            Boolean IndAddressDelivery = true;
+            
             //Guarda la direccion en BD
             addressApplicant.setCityId(cityAddress);
             addressApplicant.setCountryId(countryAddressApplicant);
@@ -936,6 +997,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             addressApplicant.setNumber(number);
             addressApplicant.setZipZoneId(postalZone);
             addressApplicant.setAddressTypeId(addressType);
+            addressApplicant.setIndAddressDelivery(IndAddressDelivery);
+            addressApplicant.setCreateDate(new Timestamp(new Date().getTime()));
             addressApplicant = utilsEJB.saveAddress(addressApplicant);
             PersonHasAddress personHasAddress = new PersonHasAddress();
             personHasAddress.setAddressId(addressApplicant);
