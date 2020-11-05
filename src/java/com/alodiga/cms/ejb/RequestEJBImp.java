@@ -266,7 +266,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1.setParam(professionId);
             Profession profession = personEJB.loadProfession(request1);
             //Obtener el estatus Activo del solicitante
-            String statusApplicantActiv = "ACTIVO";//StatusApplicantE.ACTIV.getStatusApplicantCode();
+            String statusApplicantActiv = StatusApplicantE.ACTIVO.getStatusApplicantCode();
             request1 = new EJBRequest();
             StatusApplicant statusApplicant = requestEJB.loadStatusApplicantByCode(statusApplicantActiv);
             
@@ -936,7 +936,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request = requestEJB.saveRequest(request);
             
             //Obtener el estatus Activo del solicitante
-            String statusApplicantActiv = "ACTIVO";//StatusApplicantE.ACTIV.getStatusApplicantCode();
+            String statusApplicantActiv = StatusApplicantE.ACTIVO.getStatusApplicantCode();
             request1 = new EJBRequest();
             StatusApplicant statusApplicant = requestEJB.loadStatusApplicantByCode(statusApplicantActiv);
 
