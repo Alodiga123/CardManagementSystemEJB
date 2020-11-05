@@ -266,7 +266,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1.setParam(professionId);
             Profession profession = personEJB.loadProfession(request1);
             //Obtener el estatus Activo del solicitante
-            String statusApplicantActiv = StatusApplicantE.ACTIV.getStatusApplicantCode();
+            String statusApplicantActiv = "ACTIVO";//StatusApplicantE.ACTIV.getStatusApplicantCode();
             request1 = new EJBRequest();
             StatusApplicant statusApplicant = requestEJB.loadStatusApplicantByCode(statusApplicantActiv);
             
@@ -400,8 +400,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     @Override
     public ApplicantNaturalPerson saveCardComplementary(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
             String firstNames, String lastNames, String gender, Date dateBirth, int civilStatusId,
-            String cellPhone, int countryAddress, int state, int city, int zipZone,
-            String nameStreet, String nameStreet2, Long applicantId, int kinShipApplicantId)
+             String areaCode,String cellPhone, int countryAddress, int state, int city, String zipZone,
+            String nameStreet, String nameStreet2, Long applicantId, int kinShipApplicantId,String taxInformationRegistry)
             throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
 
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
@@ -429,6 +429,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             cardComplementaryPerson.setEmail(email);
             cardComplementaryPerson.setPersonClassificationId(personClassification);
             cardComplementaryPerson.setPersonTypeId(personTypeApp);
+            cardComplementaryPerson.setCreateDate(dueDateIdentification);
             cardComplementaryPerson = personEJB.savePerson(cardComplementaryPerson);
 
             //3. Datos basicos de persona asociada a tarjeta complementaria
@@ -462,13 +463,19 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantCardComplementary.setIdentificationNumber(identificationNumber);
             applicantCardComplementary.setKinShipApplicantId(kinShipApplicant);
             applicantCardComplementary.setPersonId(cardComplementaryPerson);
+            applicantCardComplementary.setCreateDate(new Timestamp(new Date().getTime()));
+            applicantCardComplementary.setTaxInformationRegistry(taxInformationRegistry);
             applicantCardComplementary = personEJB.saveApplicantNaturalPerson(applicantCardComplementary);
 
             //4. Telefonos del solicitante de tarjeta complementaria
             //Guarda el telf. Celular en BD
             PhonePerson cellPhoneCardComplementary = new PhonePerson();
+            cellPhoneCardComplementary.setCountryId(country);
+            cellPhoneCardComplementary.setCountryCode(country.getCode());
+            cellPhoneCardComplementary.setAreaCode(areaCode);
             cellPhoneCardComplementary.setNumberPhone(cellPhone);
             cellPhoneCardComplementary.setPersonId(cardComplementaryPerson);
+            cellPhoneCardComplementary.setIndMainPhone(true);
             request1 = new EJBRequest();
             request1.setParam(Constants.PHONE_TYPE_MOBILE);
             PhoneType mobilePhoneType = personEJB.loadPhoneType(request1);
@@ -490,9 +497,9 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request1.setParam(city);
             City cityAddress = utilsEJB.loadCity(request1);
             //zona postal
-            request1 = new EJBRequest();
-            request1.setParam(zipZone);
-            ZipZone zipZoneAddress = utilsEJB.loadZipZone(request1);
+//            request1 = new EJBRequest();
+//            request1.setParam(zipZone);
+//            ZipZone zipZoneAddress = utilsEJB.loadZipZone(request1);
             //addressType
             request1 = new EJBRequest();
             request1.setParam(Constants.ADDRESS_TYPE_DELIVERY);
@@ -502,7 +509,10 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             addressCardComplementary.setCountryId(countryAddressCardComplementary);
             addressCardComplementary.setAddressLine1(nameStreet);
             addressCardComplementary.setAddressLine2(nameStreet2);
-            addressCardComplementary.setZipZoneId(zipZoneAddress);
+//            addressCardComplementary.setZipZoneId(zipZoneAddress);
+            addressCardComplementary.setZipZoneCode(zipZone);
+            addressCardComplementary.setCreateDate(dueDateIdentification);
+            addressCardComplementary.setIndAddressDelivery(true);
             addressCardComplementary.setAddressTypeId(addressType);
             addressCardComplementary = utilsEJB.saveAddress(addressCardComplementary);
             PersonHasAddress personHasAddress = new PersonHasAddress();
@@ -541,14 +551,15 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }
 
     @Override
-    public boolean existsApplicantNaturalPersonByPhoneNumber(String numberPhone) throws EmptyListException, GeneralException, NullParameterException {
+    public boolean existsApplicantNaturalPersonByPhoneNumber(String numberPhone , String areaCode, String countryCode) throws EmptyListException, GeneralException, NullParameterException {
         List<ApplicantNaturalPerson> applicantNaturalPersons = new ArrayList<ApplicantNaturalPerson>();
         boolean exists = false;
         System.out.println("llego a validar numero");
         if (numberPhone == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "numberPhone"), null);
-        }
-        StringBuilder sqlBuilder = new StringBuilder("SELECT a FROM ApplicantNaturalPerson a, PhonePerson p WHERE a.personId.id = p.personId.id AND p.numberPhone ='" + numberPhone + "'");
+        }else if(areaCode==null)
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "areaCode"), null);
+        StringBuilder sqlBuilder = new StringBuilder("SELECT a FROM ApplicantNaturalPerson a, PhonePerson p WHERE a.personId.id = p.personId.id AND p.numberPhone ='" + numberPhone + "'AND p.areaCode ='" + areaCode + "'AND p.countryCode ='" + countryCode + "'");
         Query query = null;
         try {
             query = createQuery(sqlBuilder.toString());
@@ -682,7 +693,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         collectionTypeByCountry = (List<CollectionType>) getNamedQueryResult(UtilsEJB.class, QueryConstants.COLLECTION_TYPE_BY_COUNTRY, request, getMethodName(), logger, "collectionTypeByCountry");
         return collectionTypeByCountry;
     }
-
+    
     @Override
     public CollectionType loadCollectionType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         CollectionType collectionType = (CollectionType) loadEntity(CollectionType.class, request, logger, getMethodName());
@@ -840,8 +851,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     }
 
     @Override
-    public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String cellPhone, int countryAddress, int state, int city, ZipZone postalZone, boolean recommendation, boolean promotion, boolean citizen, DocumentsPersonType documentsPersonType,
-        String documentNumber, String gender, CivilStatus civilStatus, String street, String street2, String number) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
+    public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String areaCode,String cellPhone, int countryAddress, int state, int city, String postalZone, boolean recommendation, boolean promotion, boolean citizen, DocumentsPersonType documentsPersonType,
+        String documentNumber, String gender, CivilStatus civilStatus, String street, String street2, String number, String taxInformationRegistry) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
         PersonType personTypeApp = new PersonType();
         ApplicantNaturalPerson applicantNatural = null;
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
@@ -925,7 +936,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request = requestEJB.saveRequest(request);
             
             //Obtener el estatus Activo del solicitante
-            String statusApplicantActiv = StatusApplicantE.ACTIV.getStatusApplicantCode();
+            String statusApplicantActiv = "ACTIVO";//StatusApplicantE.ACTIV.getStatusApplicantCode();
             request1 = new EJBRequest();
             StatusApplicant statusApplicant = requestEJB.loadStatusApplicantByCode(statusApplicantActiv);
 
@@ -946,6 +957,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicantNatural.setDateBirth(dateBirth);
             applicantNatural.setStatusApplicantId(statusApplicant);
             applicantNatural.setCreateDate(new Timestamp(new Date().getTime()));
+            applicantNatural.setTaxInformationRegistry(taxInformationRegistry);
             applicantNatural = personEJB.saveApplicantNaturalPerson(applicantNatural);
             applicantNatural.setRequest(request);
 
@@ -962,6 +974,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             
             //Guarda el telf. Celular en BD
             PhonePerson cellPhoneApplicant = new PhonePerson();
+            cellPhoneApplicant.setAreaCode(areaCode);
+            cellPhoneApplicant.setCountryId(country);
             cellPhoneApplicant.setNumberPhone(cellPhone);
             cellPhoneApplicant.setPersonId(applicant);
             cellPhoneApplicant.setCountryCode(countryCode);
@@ -995,7 +1009,8 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             addressApplicant.setAddressLine1(street);
             addressApplicant.setAddressLine2(street2);
             addressApplicant.setNumber(number);
-            addressApplicant.setZipZoneId(postalZone);
+//            addressApplicant.setZipZoneId(postalZone);
+            addressApplicant.setZipZoneCode(postalZone);
             addressApplicant.setAddressTypeId(addressType);
             addressApplicant.setIndAddressDelivery(IndAddressDelivery);
             addressApplicant.setCreateDate(new Timestamp(new Date().getTime()));
