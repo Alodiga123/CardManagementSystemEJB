@@ -1094,5 +1094,79 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return (StatusNewCardIssueRequest) saveEntity(statusNewCardIssueRequest);
     }
+    
+    @Override
+    public List<Card> getCardByEmail(String email) throws EmptyListException, GeneralException, NullParameterException {    
+        List<Card> cards = new ArrayList<Card>();
+        
+        if(email == null){
+           throw new NullParameterException("email", null); 
+        } 
+        
+        try{
+            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
+            sqlBuilder.append("WHERE c.personCustomerId IN ");
+            sqlBuilder.append("(SELECT n.id FROM person n WHERE n.email = '").append(email).append("')");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+            cards = query.setHint("toplink.refresh", "true").getResultList();
+            
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+
+       return cards; 
+    }
+    
+     @Override
+    public List<Card> getCardByPhone(String phoneNumber) throws EmptyListException, GeneralException, NullParameterException {    
+        List<Card> cards = new ArrayList<Card>();
+        
+        if(phoneNumber == null){
+           throw new NullParameterException("phoneNumber ", null); 
+        } 
+        
+        try{
+            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
+            sqlBuilder.append("WHERE c.personCustomerId IN ");
+            sqlBuilder.append("(SELECT p.personId FROM phonePerson p WHERE p.numberPhone = '").append(phoneNumber).append("')");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+            cards = query.setHint("toplink.refresh", "true").getResultList();
+            
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+
+       return cards; 
+    }
+    
+      public List<Card> getCardByIdentificationNumber(String identificationNumber) throws EmptyListException, GeneralException, NullParameterException {    
+        List<Card> cards = new ArrayList<Card>();
+        
+        if(identificationNumber == null){
+           throw new NullParameterException("phoneNumber ", null); 
+        } 
+        
+        try{  
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
+            sqlBuilder.append("WHERE c.personCustomerId IN ");
+            sqlBuilder.append("(SELECT n.personId FROM naturalPerson n WHERE n.identificationNumber = '").append(identificationNumber).append("')");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+            cards = query.setHint("toplink.refresh", "true").getResultList();
+            
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+
+       return cards; 
+    }
+
 
 }
