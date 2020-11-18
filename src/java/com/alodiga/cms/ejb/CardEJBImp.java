@@ -1097,26 +1097,21 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     
     @Override
     public List<Card> getCardByEmail(String email) throws EmptyListException, GeneralException, NullParameterException {    
-        List<Card> cards = new ArrayList<Card>();
-        
+        List<Card> cards = new ArrayList<Card>();        
         if(email == null){
            throw new NullParameterException("email", null); 
-        } 
-        
-        try{
-            
+        }         
+        try{            
             StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
             sqlBuilder.append("WHERE c.personCustomerId IN ");
             sqlBuilder.append("(SELECT n.id FROM person n WHERE n.email = '").append(email).append("')");
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
             cards = query.setHint("toplink.refresh", "true").getResultList();
-            
         } catch (NoResultException ex) {
             throw new EmptyListException("No distributions found");
         } catch (Exception e) {
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
         }
-
        return cards; 
     }
     
