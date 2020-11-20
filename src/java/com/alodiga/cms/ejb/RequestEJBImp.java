@@ -833,6 +833,15 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         requestHasCollectionsRequestList = (List<RequestHasCollectionsRequest>) getNamedQueryResult(RequestHasCollectionsRequest.class, QueryConstants.REQUEST_HAS_COLLECTION_REQUEST_BY_REQUEST, request, getMethodName(), logger, "requestHasCollectionsRequestList");
         return requestHasCollectionsRequestList;
     }
+    
+    @Override
+    public Long getRequestsHasCollectionsRequestCheck(Long requestId) throws GeneralException, NullParameterException {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(r.id) FROM requestHasCollectionsRequest r WHERE r.request_id = ?1 AND r.indApproved = 0 OR r.indApproved IS NULL");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        query.setParameter("1", requestId);
+        List result = (List) query.setHint("toplink.refresh", "true").getResultList();
+        return result.get(0) != null ? (Long) result.get(0) : 0l;
+    }
 
     @Override
     public List<ReasonRejectionRequest> getReasonRejectionRequest(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
