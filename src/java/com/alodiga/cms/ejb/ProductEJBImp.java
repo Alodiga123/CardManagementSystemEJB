@@ -10,6 +10,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.ApprovalCardRate;
 import com.cms.commons.models.ApprovalGeneralRate;
 import com.cms.commons.models.ApprovalProductRate;
 import com.cms.commons.models.ApprovalProgramRate;
@@ -648,5 +649,24 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
 
     }
 
-            
+    @Override
+    public List<ApprovalCardRate> getApprovalCardRate(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ApprovalCardRate> approvalCardRateList = (List<ApprovalCardRate>) listEntities(ApprovalCardRate.class, request, logger, getMethodName());
+        return approvalCardRateList;
+    }
+
+    @Override
+    public ApprovalCardRate loadApprovalCardRate(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        ApprovalCardRate approvalProductRate = (ApprovalCardRate) loadEntity(ApprovalCardRate.class, request, logger, getMethodName());
+        return approvalProductRate;
+    }
+
+    @Override
+    public ApprovalCardRate saveApprovalCardRate(ApprovalCardRate approvalCardRate) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (approvalCardRate == null) {
+            throw new NullParameterException("approvalCardRate", null);
         }
+        return (ApprovalCardRate) saveEntity(approvalCardRate);
+    }
+        
+}
