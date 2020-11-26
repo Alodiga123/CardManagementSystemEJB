@@ -160,6 +160,32 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         }
         return requestList;
     }
+    
+    public List<Request> searchCardRequestFromAppByPersonId(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        List<Request> requestList = new ArrayList<Request>();
+        try{
+            Map<String, Object> params = request.getParams();
+            
+            if (!params.containsKey(EjbConstants.PARAM_PERSON_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_STATUS_REQUEST_ID), null);
+            }
+            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM request r WHERE r.requestNumber LIKE 'APP%'");
+            sqlBuilder.append(" AND r.personId = ").append(params.get(QueryConstants.PARAM_PERSON_ID));
+            
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Request.class);
+            requestList = (List<Request>) query.setHint("toplink.refresh", "true").getResultList();
+        
+            
+        } catch (NoResultException ex) {
+            throw new RegisterNotFoundException(logger, sysError.format(EjbConstants.ERR_REGISTER_NOT_FOUND_EXCEPTION, Request.class.getSimpleName(), "searchCardRequestFromAppByPersonId", Request.class.getSimpleName(), null), ex);
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        
+        
+        return requestList;
+    }
 
     @Override
     public Long saveRequestPersonData(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
