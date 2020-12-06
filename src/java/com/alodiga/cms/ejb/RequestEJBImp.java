@@ -862,7 +862,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     
     @Override
     public Long getRequestsHasCollectionsRequestCheck(Long requestId) throws GeneralException, NullParameterException {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(r.id) FROM requestHasCollectionsRequest r WHERE r.request_id = ?1 AND r.indApproved = 0 OR r.indApproved IS NULL");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT COUNT(r.id) FROM requestHasCollectionsRequest r WHERE r.request_id = ?1 AND r.indApproved = 0");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         query.setParameter("1", requestId);
         List result = (List) query.setHint("toplink.refresh", "true").getResultList();
