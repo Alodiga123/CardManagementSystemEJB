@@ -1141,16 +1141,14 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
     
       public List<Card> getCardByIdentificationNumber(String identificationNumber) throws EmptyListException, GeneralException, NullParameterException {    
-        List<Card> cards = new ArrayList<Card>();
-        
+        List<Card> cards = new ArrayList<Card>();        
         if(identificationNumber == null){
            throw new NullParameterException("phoneNumber ", null); 
-        } 
-        
+        }         
         try{  
             StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
             sqlBuilder.append("WHERE c.personCustomerId IN ");
-            sqlBuilder.append("(SELECT n.personId FROM naturalPerson n WHERE n.identificationNumber = '").append(identificationNumber).append("')");
+            sqlBuilder.append("(SELECT n.personId FROM naturalCustomer n WHERE n.identificationNumber = '").append(identificationNumber).append("')");
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
             cards = query.setHint("toplink.refresh", "true").getResultList();
             
