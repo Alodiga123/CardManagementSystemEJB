@@ -889,6 +889,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
     public ApplicantNaturalPerson saveRequestPersonData(int countryId, String email, Date dueDateIdentification, String firstNames, String lastNames, Date dateBirth, String areaCode,String cellPhone, int countryAddress, int state, int city, String postalZone, boolean recommendation, boolean promotion, boolean citizen, DocumentsPersonType documentsPersonType,
         String documentNumber, String gender, CivilStatus civilStatus, String street, String street2, String number, String taxInformationRegistry) throws EmptyListException, RegisterNotFoundException, NullParameterException, GeneralException {
         PersonType personTypeApp = new PersonType();
+        Program programByCountry = new Program();
         ApplicantNaturalPerson applicantNatural = null;
         utilsEJB = (UtilsEJB) EJBServiceLocator.getInstance().get(EjbConstants.UTILS_EJB);
         programEJB = (ProgramEJB) EJBServiceLocator.getInstance().get(EjbConstants.PROGRAM_EJB);
@@ -929,10 +930,14 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             applicant = personEJB.savePerson(applicant);
 
             //2. Solicitud de tarjeta         
-            //programa asociado a la solicitud
+            //programa asociado al país de la solicitud
             request1 = new EJBRequest();
-            request1.setParam(Constants.PROGRAM_WALLET_APP_ID);
-            Program program = programEJB.loadProgram(request1);
+            params.put(Constants.COUNTRY_KEY, countryId);
+            request1.setParams(params);
+            List<Program> program = programEJB.getProgramByIssuerCountry(request1);
+            for(Program p : program){
+                programByCountry = p;
+            }
             //tipo de solicitud
             request1 = new EJBRequest();
             request1.setParam(Constants.REQUEST_TYPE_WALLET_APP_ID);
@@ -962,7 +967,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             request.setCountryId(country);
             request.setPersonId(applicant);
             request.setPersonTypeId(personTypeApp);
-            request.setProgramId(program);
+            request.setProgramId(programByCountry);
             request.setProductTypeId(productType);
             request.setRequestTypeId(requestType);
             request.setStatusRequestId(statusRequest);
