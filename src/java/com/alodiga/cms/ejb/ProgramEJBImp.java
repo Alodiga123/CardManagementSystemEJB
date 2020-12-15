@@ -128,6 +128,17 @@ public class ProgramEJBImp extends AbstractDistributionEJB implements ProgramEJB
         programList = (List<Program>) getNamedQueryResult(Program.class, QueryConstants.PROGRAM_BY_COUNTRY, request, getMethodName(), logger, "programList");
         return programList;
     }
+    
+    @Override
+    public List<Program> getProgramByIssuerCountry(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Program> programList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
+        programList = (List<Program>) getNamedQueryResult(Program.class, QueryConstants.PROGRAM_BY_ISSUER_COUNTRY, request, getMethodName(), logger, "programList");
+        return programList;
+    }
 
     //NaturalPerson
     @Override
