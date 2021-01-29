@@ -374,6 +374,17 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (Transaction) saveEntity(transaction);
     }
+    
+    @Override
+    public List<Transaction> getTransactionByCode(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Transaction> transactionList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CODE)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CODE), null);
+        }       
+        transactionList = (List<Transaction>) getNamedQueryResult(Transaction.class, QueryConstants.TRANSACTION_BY_CODE, request, getMethodName(), logger, "transactionList");
+        return transactionList;
+    }
 
     //Channel
     @Override
