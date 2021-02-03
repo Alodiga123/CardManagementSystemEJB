@@ -143,6 +143,14 @@
     <class>com.cms.commons.models.PasswordChangeRequest</class>
     <class>com.cms.commons.models.NewCardIssueRequest</class>
     <class>com.cms.commons.models.StatusNewCardIssueRequest</class>
+    <class>com.cms.commons.models.CommisionTransaction</class>
+    <class>com.cms.commons.models.CommisionsReceived</class>
+    <class>com.cms.commons.models.StatusTransactionManagement</class>
+    <class>com.cms.commons.models.BalanceHistoryCard</class>
+    <class>com.cms.commons.models.TransactionsManagement</class>
+    <class>com.cms.commons.models.TransactionsManagementHistory</class>
+    <class>com.cms.commons.models.SubTypeTransaction</class>
+    <class>com.cms.commons.models.BonusCard</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
