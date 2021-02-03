@@ -39,6 +39,7 @@ import com.cms.commons.models.StatusUpdateReason;
 import com.cms.commons.models.SubAccountType;
 import com.cms.commons.models.SystemFuncionality;
 import com.cms.commons.models.SystemFuncionalityHasSecurityQuestion;
+import com.cms.commons.enumeraciones.StatusCardE;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EJBServiceLocator;
 import java.util.Map;
@@ -1159,6 +1160,30 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
 
        return cards; 
+    }
+      
+    public List<Card> getCardByProgramAndTransactionalStatus(Long programId) throws EmptyListException, GeneralException, NullParameterException {
+        List<Card> cardList = null;
+        if (programId == null) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "programId"), null);
+        }
+        try {            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
+            sqlBuilder.append("WHERE c.programId = ").append(programId);
+            sqlBuilder.append(" AND c.cardStatusId= ").append(StatusCardE.PERSON.getId());
+            sqlBuilder.append(" OR c.cardStatusId= ").append(StatusCardE.PENPER.getId());
+            sqlBuilder.append(" OR c.cardStatusId= ").append(StatusCardE.ENTREG.getId());
+            sqlBuilder.append(" OR c.cardStatusId= ").append(StatusCardE.ACTIVA.getId());
+            sqlBuilder.append(" OR c.cardStatusId= ").append(StatusCardE.BLOQUE.getId());
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+            cardList = (List<Card>) query.setHint("toplink.refresh", "true").getResultList();
+        
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+        return cardList;
     }
 
 
