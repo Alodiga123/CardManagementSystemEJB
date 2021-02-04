@@ -932,6 +932,7 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             //2. Solicitud de tarjeta         
             //Obtener el programa asociado al país de la solicitud
             request1 = new EJBRequest();
+            params = new HashMap();
             params.put(Constants.COUNTRY_KEY, countryId);
             request1.setParams(params);
             List<Program> programList = programEJB.getProgramByCountryByWallet(request1);

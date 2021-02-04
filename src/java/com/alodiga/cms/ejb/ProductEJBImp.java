@@ -39,8 +39,12 @@ import com.cms.commons.models.SegmentMarketing;
 import com.cms.commons.models.StatusProduct;
 import com.cms.commons.models.StorageMedio;
 import com.cms.commons.models.Transaction;
+import com.cms.commons.models.TransactionsManagement;
 import com.cms.commons.util.EjbConstants;
+import com.cms.commons.util.EjbUtils;
 import com.cms.commons.util.QueryConstants;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -374,6 +378,17 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
         return (Transaction) saveEntity(transaction);
     }
+    
+    @Override
+    public List<Transaction> getTransactionByCode(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Transaction> transactionList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_CODE)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CODE), null);
+        }       
+        transactionList = (List<Transaction>) getNamedQueryResult(Transaction.class, QueryConstants.TRANSACTION_BY_CODE, request, getMethodName(), logger, "transactionList");
+        return transactionList;
+    }
 
     //Channel
     @Override
@@ -667,6 +682,65 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
             throw new NullParameterException("approvalCardRate", null);
         }
         return (ApprovalCardRate) saveEntity(approvalCardRate);
+    }
+    
+    @Override
+    public List<TransactionsManagement> getTransactionsManagement(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<TransactionsManagement> transactionsManagementList = (List<TransactionsManagement>) listEntities(TransactionsManagement.class, request, logger, getMethodName());
+        return transactionsManagementList;
+    }
+
+    @Override
+    public TransactionsManagement loadTransactionsManagement(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        TransactionsManagement transactionsManagement = (TransactionsManagement) loadEntity(TransactionsManagement.class, request, logger, getMethodName());
+        return transactionsManagement;
+    }
+
+    @Override
+    public TransactionsManagement saveTransactionsManagement(TransactionsManagement transactionsManagement) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (transactionsManagement == null) {
+            throw new NullParameterException("transactionsManagement", null);
+        }
+        return (TransactionsManagement) saveEntity(transactionsManagement);
+    }
+    
+    @Override
+    public List<TransactionsManagement> searchTransactionsManagementByParams(EJBRequest request) throws GeneralException, NullParameterException, EmptyListException {
+        List<TransactionsManagement> results = new ArrayList<TransactionsManagement>();
+        Map<String, Object> params = request.getParams();
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.dateTransaction BETWEEN ?1 AND ?2");
+            if (!params.containsKey(QueryConstants.PARAM_BEGINNING_DATE) || !params.containsKey(QueryConstants.PARAM_ENDING_DATE)) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "beginningDate & endingDate"), null);
+            }
+            if (params.containsKey(QueryConstants.PARAM_CARD_NUMBER)) {
+                sqlBuilder.append(" AND t.cardNumber=").append(params.get(QueryConstants.PARAM_CARD_NUMBER));
+            }
+            if (params.containsKey(QueryConstants.PARAM_TRANSACTION)) {
+                sqlBuilder.append(" AND t.transactionTypeId=").append(params.get(QueryConstants.PARAM_TRANSACTION));
+            }
+            if (params.containsKey(QueryConstants.PARAM_CHANNEL_ID )) {
+                sqlBuilder.append(" AND t.channelId=").append(params.get(QueryConstants.PARAM_CHANNEL_ID));
+            }
+            if (params.containsKey(QueryConstants.PARAM_RESPONSE_CODE )) {
+                sqlBuilder.append(" AND t.responseCode like '").append(params.get(QueryConstants.PARAM_RESPONSE_CODE)).append("'");
+            }
+                      
+            Query query = null;
+            try {
+                System.out.println("query:********"+sqlBuilder.toString());
+                query = entityManager.createNativeQuery(sqlBuilder.toString(), TransactionsManagement.class);
+                query.setParameter("1", EjbUtils.getBeginningDate((Date) params.get(QueryConstants.PARAM_BEGINNING_DATE)));
+                query.setParameter("2", EjbUtils.getEndingDate((Date) params.get(QueryConstants.PARAM_ENDING_DATE)));
+                results = (List<TransactionsManagement>) query.setHint("toplink.refresh", "true").getResultList();
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+            }
+            if (results.isEmpty()) {
+                results = null;
+            }
+            return results;
     }
         
 }
