@@ -151,6 +151,13 @@
     <class>com.cms.commons.models.TransactionsManagementHistory</class>
     <class>com.cms.commons.models.SubTypeTransaction</class>
     <class>com.cms.commons.models.BonusCard</class>
+    <class>com.cms.commons.models.CodeErrorTransactionLog</class>
+    <class>com.cms.commons.models.DailyClosing</class>
+    <class>com.cms.commons.models.KeyProperties</class>
+    <class>com.cms.commons.models.CalendarDays</class>
+    <class>com.cms.commons.models.TransactionLog</class>
+    <class>com.cms.commons.models.StatusTransactionLog</class>
+    <class>com.cms.commons.models.TransactionPoint</class>
     <properties>
       <property name="eclipselink.cache.shared.default" value="false"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
