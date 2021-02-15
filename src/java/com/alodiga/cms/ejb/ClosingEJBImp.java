@@ -13,6 +13,8 @@ import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.models.CalendarDays;
 import com.cms.commons.models.DailyClosing;
 import com.cms.commons.models.OriginApplication;
+import com.cms.commons.models.Transaction;
+import com.cms.commons.models.TotalTransactionsAmountByDailyClosing;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.EjbUtils;
@@ -44,26 +46,40 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         DailyClosing dailyClosing = new DailyClosing();
         try {
             if (!isHoliday(closingDate) && !EjbUtils.isWeekEnd(closingDate)) {
-                    dailyClosing.setClosingDate(new Date());// corresponde a la Fecha del Cierre
-                    dailyClosing.setClosingStartTime(new Date());// es la hora en que comienza el proceso de cierre.
-                    EJBRequest request = new EJBRequest();
-                    request.setParam(Constants.ORIGIN_APPLICATION_CMS_AUTHORIZE);
-                    OriginApplication originApplicationId = utilsEJB.loadOriginApplication(request);
-                    dailyClosing.setOriginApplicationId(originApplicationId);// Origen de Cierre: Billetera Móvil, Portal deNegocios, Alodiga Wallet Web
-                    Date oldClosingDate = OldClosingDate(closingDate);
-                    int totalTrasactions = TotalTransactionsCurrentDate(oldClosingDate, closingDate);
-                    Float transactionsAmount = TotalAmountCurrentDate(oldClosingDate, closingDate).floatValue();
-                    dailyClosing.setTotalTransactions(totalTrasactions);// cantidad total de transacciones del cierre diario
-                    dailyClosing.setTransactionsAmount(transactionsAmount);// Monto Total de las transacciones del cierre diario
-                    dailyClosing = saveDailyClosing(dailyClosing);
-                    addDailyClosingInTransaction(oldClosingDate, closingDate, dailyClosing);
-                    dailyClosing.setClosingEndTime(new Date());// es la hora en que finaliza el proceso de cierre
-                    dailyClosing = saveDailyClosing(dailyClosing);// actualizo el cierre con la hora de finalizacion
-//                    SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions,"", "", Constants.SEND_TYPE_EMAIL_DAILY_CLOSING_WALLET);
-//                    sendMailTherad.run();
+                dailyClosing.setClosingDate(new Date());// corresponde a la Fecha del Cierre
+                dailyClosing.setClosingStartTime(new Date());// es la hora en que comienza el proceso de cierre.
+                EJBRequest request = new EJBRequest();
+                request.setParam(Constants.ORIGIN_APPLICATION_CMS_AUTHORIZE);
+                OriginApplication originApplicationId = utilsEJB.loadOriginApplication(request);
+                dailyClosing.setOriginApplicationId(originApplicationId);// Origen de Cierre: Billetera Móvil, Portal deNegocios, Alodiga Wallet Web
+                Date oldClosingDate = OldClosingDate(closingDate);
+                int totalTrasactions = TotalTransactionsCurrentDate(oldClosingDate, closingDate);
+                Float transactionsAmount = TotalAmountCurrentDate(oldClosingDate, closingDate).floatValue();
+                dailyClosing.setTotalTransactions(totalTrasactions);// cantidad total de transacciones del cierre diario
+                dailyClosing.setTransactionsAmount(transactionsAmount);// Monto Total de las transacciones del cierre diario
+                dailyClosing = saveDailyClosing(dailyClosing);
+                request = new EJBRequest();
+                List<Transaction> transactionTypes = utilsEJB.getTransaction(request);
+                for (Transaction transaction : transactionTypes) {
+                    int totalTrasactionsByTransactionType = TotalTransactionsCurrentDatebyTransactionType(oldClosingDate, closingDate, transaction.getId());  
+                    Float transactionsAmountByTransactionType = TotalAmountCurrentDateByTransaction(oldClosingDate, closingDate, transaction.getId()).floatValue();
+                    TotalTransactionsAmountByDailyClosing totalTransactionsAmountByDailyClosing = new TotalTransactionsAmountByDailyClosing();
+                    totalTransactionsAmountByDailyClosing.setCreateDate(new Date());
+                    totalTransactionsAmountByDailyClosing.setDailyClosingId(dailyClosing);
+                    totalTransactionsAmountByDailyClosing.setTotalTransactions(totalTrasactionsByTransactionType);
+                    totalTransactionsAmountByDailyClosing.setTransactionsAmount(transactionsAmountByTransactionType);
+                    totalTransactionsAmountByDailyClosing.setTransactionId(transaction);
+                    //Guarda TotalTransactionsAmountByDailyClosing
+                    saveTotalTransactionsAmountByDailyClosing(totalTransactionsAmountByDailyClosing);
+                }
+                addDailyClosingInTransaction(oldClosingDate, closingDate, dailyClosing);
+                dailyClosing.setClosingEndTime(new Date());// es la hora en que finaliza el proceso de cierre
+                dailyClosing = saveDailyClosing(dailyClosing);// actualizo el cierre con la hora de finalizacion
+                // SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions,"", "", Constants.SEND_TYPE_EMAIL_DAILY_CLOSING_WALLET);
+                // sendMailTherad.run();
+                    
             }
         } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
         }
         return dailyClosing;
@@ -78,6 +94,16 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         List result = (List) query.setHint("toplink.refresh", "true").getResultList();
         return result.size();
     }
+    
+     private int TotalTransactionsCurrentDatebyTransactionType(Date begginingDateTime, Date endingDateTime, Integer transactionTypeId) {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.creationDate between ?1 AND ?2 AND t.transactionTypeId=?3 AND t.dailyClosingId IS NULL AND t.indClosed = 0");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        query.setParameter("1", begginingDateTime);
+        query.setParameter("2", endingDateTime);
+        query.setParameter("3", transactionTypeId);
+        List result = (List) query.setHint("toplink.refresh", "true").getResultList();
+        return result.size();
+    }
 
 
     private Double TotalAmountCurrentDate(Date begginingDateTime, Date endingDateTime) {
@@ -85,6 +111,16 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         query.setParameter("1", begginingDateTime);
         query.setParameter("2", endingDateTime);
+        List result = (List) query.setHint("toplink.refresh", "true").getResultList();
+        return result.get(0) != null ? (Double) result.get(0) : 0f;
+    }
+    
+    private Double TotalAmountCurrentDateByTransaction(Date begginingDateTime, Date endingDateTime,Integer transactionTypeId) {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT SUM(t.settlementTransactionAmount) FROM transactionsManagement t WHERE t.creationDate between ?1 AND ?2 AND t.transactionTypeId = ?3 AND t.dailyClosingId IS NULL AND t.indClosed = 0");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        query.setParameter("1", begginingDateTime);
+        query.setParameter("2", endingDateTime);
+        query.setParameter("3", transactionTypeId);
         List result = (List) query.setHint("toplink.refresh", "true").getResultList();
         return result.get(0) != null ? (Double) result.get(0) : 0f;
     }
@@ -149,7 +185,14 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
             throw new NullParameterException("dailyClosing", null);
         }
         return (DailyClosing) saveEntity(dailyClosing);
-    }    
+    }  
+    
+    private TotalTransactionsAmountByDailyClosing saveTotalTransactionsAmountByDailyClosing(TotalTransactionsAmountByDailyClosing totalTransactionsAmountByDailyClosing) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (totalTransactionsAmountByDailyClosing == null) {
+            throw new NullParameterException("totalTransactionsAmountByDailyClosing", null);
+        }
+        return (TotalTransactionsAmountByDailyClosing) saveEntity(totalTransactionsAmountByDailyClosing);
+    }  
 
   
 }
