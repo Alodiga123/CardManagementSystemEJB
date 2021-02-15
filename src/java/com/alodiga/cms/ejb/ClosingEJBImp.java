@@ -19,6 +19,7 @@ import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.EjbUtils;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -60,6 +61,7 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
                 dailyClosing = saveDailyClosing(dailyClosing);
                 request = new EJBRequest();
                 List<Transaction> transactionTypes = utilsEJB.getTransaction(request);
+                List<TotalTransactionsAmountByDailyClosing> details = new ArrayList<TotalTransactionsAmountByDailyClosing>();
                 for (Transaction transaction : transactionTypes) {
                     int totalTrasactionsByTransactionType = TotalTransactionsCurrentDatebyTransactionType(oldClosingDate, closingDate, transaction.getId());  
                     Float transactionsAmountByTransactionType = TotalAmountCurrentDateByTransaction(oldClosingDate, closingDate, transaction.getId()).floatValue();
@@ -70,11 +72,13 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
                     totalTransactionsAmountByDailyClosing.setTransactionsAmount(transactionsAmountByTransactionType);
                     totalTransactionsAmountByDailyClosing.setTransactionId(transaction);
                     //Guarda TotalTransactionsAmountByDailyClosing
-                    saveTotalTransactionsAmountByDailyClosing(totalTransactionsAmountByDailyClosing);
+                    totalTransactionsAmountByDailyClosing = saveTotalTransactionsAmountByDailyClosing(totalTransactionsAmountByDailyClosing);
+                    details.add(totalTransactionsAmountByDailyClosing);
                 }
                 addDailyClosingInTransaction(oldClosingDate, closingDate, dailyClosing);
                 dailyClosing.setClosingEndTime(new Date());// es la hora en que finaliza el proceso de cierre
                 dailyClosing = saveDailyClosing(dailyClosing);// actualizo el cierre con la hora de finalizacion
+                //faltan enviar correo de notificacion con la informacion del cierre
                 // SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions,"", "", Constants.SEND_TYPE_EMAIL_DAILY_CLOSING_WALLET);
                 // sendMailTherad.run();
                     
