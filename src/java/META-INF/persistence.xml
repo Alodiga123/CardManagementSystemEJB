@@ -157,6 +157,7 @@
     <class>com.cms.commons.models.CalendarDays</class>
     <class>com.cms.commons.models.TransactionLog</class>
     <class>com.cms.commons.models.StatusTransactionLog</class>
+    <class>com.cms.commons.models.TransactionPoint</class>
     <class>com.cms.commons.models.TotalTransactionsAmountByDailyClosing</class>
     <class>com.cms.commons.models.HistoryCardStatusChanges</class>
     <properties>
