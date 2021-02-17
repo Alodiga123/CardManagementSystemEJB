@@ -48,6 +48,7 @@ import com.cms.commons.models.ResponsibleNetworkReporting;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StreetType;
+import com.cms.commons.models.Transaction;
 import com.cms.commons.models.User;
 import com.cms.commons.models.UserHasProfile;
 import com.cms.commons.models.ZipZone;
@@ -1420,6 +1421,13 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         Query query = entityManager.createNativeQuery(sqlBuilder.toString(),DocumentsPersonType.class);
         documentsPersonTypeList = (List<DocumentsPersonType>) query.setHint("toplink.refresh", "true").getResultList();
         return documentsPersonTypeList;
+    }
+    
+     //Transaction
+    @Override
+    public List<Transaction> getTransaction(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Transaction> transactions = (List<Transaction>) listEntities(Transaction.class, request, logger, getMethodName());
+        return transactions;
     }
 
 }
