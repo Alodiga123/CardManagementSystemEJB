@@ -708,7 +708,7 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
     public List<TransactionsManagement> searchTransactionsManagementByParams(EJBRequest request) throws GeneralException, NullParameterException, EmptyListException {
         List<TransactionsManagement> results = new ArrayList<TransactionsManagement>();
         Map<String, Object> params = request.getParams();
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.dateTransaction BETWEEN ?1 AND ?2");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.transactionDateIssuer BETWEEN ?1 AND ?2");
             if (!params.containsKey(QueryConstants.PARAM_BEGINNING_DATE) || !params.containsKey(QueryConstants.PARAM_ENDING_DATE)) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "beginningDate & endingDate"), null);
             }
