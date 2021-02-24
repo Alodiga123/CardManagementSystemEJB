@@ -24,7 +24,6 @@ import com.cms.commons.models.Sequences;
 import com.cms.commons.models.StatusCardRenewalRequest;
 import com.cms.commons.models.Transaction;
 import com.cms.commons.models.TotalTransactionsAmountByDailyClosing;
-import com.cms.commons.models.TransactionsManagement;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.EjbUtils;
@@ -136,12 +135,14 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
     }
 
     private void executeHistory(Date begginingDateTime, Date endingDateTime) {
+        entityManager.getTransaction().begin();
         StringBuilder sqlBuilder = new StringBuilder("{call pasarTransactionesAHistoricos(?,?)}");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         query.setParameter("1", begginingDateTime);
         query.setParameter("2", endingDateTime);
         query.executeUpdate();
-
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     private Double TotalAmountCurrentDate(Date begginingDateTime, Date endingDateTime) {
