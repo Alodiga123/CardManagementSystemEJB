@@ -1,12 +1,9 @@
 package com.alodiga.cms.ejb;
 
-import com.alodiga.cms.commons.ejb.CardEJB;
 import com.alodiga.cms.commons.ejb.CardEJBLocal;
 import com.alodiga.cms.commons.ejb.ClosingEJB;
 import com.alodiga.cms.commons.ejb.ClosingEJBLocal;
-import com.alodiga.cms.commons.ejb.PersonEJB;
 import com.alodiga.cms.commons.ejb.PersonEJBLocal;
-import com.alodiga.cms.commons.ejb.UtilsEJB;
 import com.alodiga.cms.commons.ejb.UtilsEJBLocal;
 import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
@@ -16,7 +13,6 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
-import com.cms.commons.models.AccountProperties;
 import com.cms.commons.models.CalendarDays;
 import com.cms.commons.models.Card;
 import com.cms.commons.models.CardRenewalRequest;
@@ -30,10 +26,8 @@ import com.cms.commons.models.Transaction;
 import com.cms.commons.models.TotalTransactionsAmountByDailyClosing;
 import com.cms.commons.models.TransactionsManagement;
 import com.cms.commons.util.Constants;
-import com.cms.commons.util.EJBServiceLocator;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.EjbUtils;
-import com.cms.commons.util.QueryConstants;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,24 +83,24 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
                     int totalTrasactionsByTransactionType = TotalTransactionsCurrentDatebyTransactionType(oldClosingDate, closingDate, transaction.getId());  
                     Float transactionsAmountByTransactionType = TotalAmountCurrentDateByTransaction(oldClosingDate, closingDate, transaction.getId()).floatValue();
                     TotalTransactionsAmountByDailyClosing totalTransactionsAmountByDailyClosing = new TotalTransactionsAmountByDailyClosing();
-                    totalTransactionsAmountByDailyClosing.setCreateDate(new Date());
-                    totalTransactionsAmountByDailyClosing.setDailyClosingId(dailyClosing);
-                    totalTransactionsAmountByDailyClosing.setTotalTransactions(totalTrasactionsByTransactionType);
-                    totalTransactionsAmountByDailyClosing.setTransactionsAmount(transactionsAmountByTransactionType);
-                    totalTransactionsAmountByDailyClosing.setTransactionId(transaction);
-                    //Guarda TotalTransactionsAmountByDailyClosing
-                    totalTransactionsAmountByDailyClosing = saveTotalTransactionsAmountByDailyClosing(totalTransactionsAmountByDailyClosing);
-                    details.add(totalTransactionsAmountByDailyClosing);
+                    if (transactionsAmountByTransactionType>0f || totalTrasactionsByTransactionType>0){
+                        totalTransactionsAmountByDailyClosing.setCreateDate(new Date());
+                        totalTransactionsAmountByDailyClosing.setDailyClosingId(dailyClosing);
+                        totalTransactionsAmountByDailyClosing.setTotalTransactions(totalTrasactionsByTransactionType);
+                        totalTransactionsAmountByDailyClosing.setTransactionsAmount(transactionsAmountByTransactionType);
+                        totalTransactionsAmountByDailyClosing.setTransactionId(transaction);
+                        //Guarda TotalTransactionsAmountByDailyClosing
+                        totalTransactionsAmountByDailyClosing = saveTotalTransactionsAmountByDailyClosing(totalTransactionsAmountByDailyClosing);
+                        details.add(totalTransactionsAmountByDailyClosing);
+                    }
                 }
-                //obtener listado de TransactionsManagement
-                List<TransactionsManagement> transactionsManagements = getTransactionsManagementBetweenDate(oldClosingDate, closingDate);
-                for (TransactionsManagement management:transactionsManagements){
-                
-                }
+                //llamar a Procedimiento almacenado para pasar de TransactionsManagement a TransactionsManagementHistory
+                executeHistory(oldClosingDate, closingDate);
+                //Agregar dailyClosingId a las transacciones
                 addDailyClosingInTransaction(oldClosingDate, closingDate, dailyClosing);
                 dailyClosing.setClosingEndTime(new Date());// es la hora en que finaliza el proceso de cierre
                 dailyClosing = saveDailyClosing(dailyClosing);// actualizo el cierre con la hora de finalizacion
-                //faltan enviar correo de notificacion con la informacion del cierre
+                //faltan enviar correo de notificacion con la informacion del cierre no estaba en las especificaciones
                 // SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions,"", "", Constants.SEND_TYPE_EMAIL_DAILY_CLOSING_WALLET);
                 // sendMailTherad.run()
                 
@@ -122,7 +116,7 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
     
    
     private int TotalTransactionsCurrentDate(Date begginingDateTime, Date endingDateTime) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.creationDate between ?1 AND ?2 AND t.dailyClosingId IS NULL AND t.indClosed = 0");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.createDate between ?1 AND ?2 AND t.dailyClosingId IS NULL AND (t.indClosed IS NULL OR t.indClosed = 0)");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         query.setParameter("1", begginingDateTime);
         query.setParameter("2", endingDateTime);
@@ -130,18 +124,9 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         return result.size();
     }
     
-     private List<TransactionsManagement> getTransactionsManagementBetweenDate(Date begginingDateTime, Date endingDateTime) {
-        List<TransactionsManagement> transactionsManagements = null;
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.creationDate between ?1 AND ?2 AND t.dailyClosingId IS NULL AND t.indClosed = 0");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        query.setParameter("1", begginingDateTime);
-        query.setParameter("2", endingDateTime);
-        transactionsManagements =  query.setHint("toplink.refresh", "true").getResultList();
-        return transactionsManagements;
-    }
-     
+         
      private int TotalTransactionsCurrentDatebyTransactionType(Date begginingDateTime, Date endingDateTime, Integer transactionTypeId) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.creationDate between ?1 AND ?2 AND t.transactionTypeId=?3 AND t.dailyClosingId IS NULL AND t.indClosed = 0");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.createDate between ?1 AND ?2 AND t.transactionTypeId=?3 AND t.dailyClosingId IS NULL AND (t.indClosed IS NULL OR t.indClosed = 0)");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         query.setParameter("1", begginingDateTime);
         query.setParameter("2", endingDateTime);
@@ -150,9 +135,17 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         return result.size();
     }
 
+    private void executeHistory(Date begginingDateTime, Date endingDateTime) {
+        StringBuilder sqlBuilder = new StringBuilder("{call pasarTransactionesAHistoricos(?,?)}");
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
+        query.setParameter("1", begginingDateTime);
+        query.setParameter("2", endingDateTime);
+        query.executeUpdate();
+
+    }
 
     private Double TotalAmountCurrentDate(Date begginingDateTime, Date endingDateTime) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT SUM(t.settlementTransactionAmount) FROM transactionsManagement t WHERE t.creationDate between ?1 AND ?2 AND t.dailyClosingId IS NULL AND t.indClosed = 0");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT SUM(t.settlementTransactionAmount) FROM transactionsManagement t WHERE t.createDate between ?1 AND ?2 AND t.dailyClosingId IS NULL AND (t.indClosed IS NULL OR t.indClosed = 0)");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         query.setParameter("1", begginingDateTime);
         query.setParameter("2", endingDateTime);
@@ -161,7 +154,7 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
     }
     
     private Double TotalAmountCurrentDateByTransaction(Date begginingDateTime, Date endingDateTime,Integer transactionTypeId) {
-        StringBuilder sqlBuilder = new StringBuilder("SELECT SUM(t.settlementTransactionAmount) FROM transactionsManagement t WHERE t.creationDate between ?1 AND ?2 AND t.transactionTypeId = ?3 AND t.dailyClosingId IS NULL AND t.indClosed = 0");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT SUM(t.settlementTransactionAmount) FROM transactionsManagement t WHERE t.createDate between ?1 AND ?2 AND t.transactionTypeId = ?3 AND t.dailyClosingId IS NULL AND (t.indClosed IS NULL OR t.indClosed = 0)");
         Query query = entityManager.createNativeQuery(sqlBuilder.toString());
         query.setParameter("1", begginingDateTime);
         query.setParameter("2", endingDateTime);
@@ -213,7 +206,7 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         String begginingDate = formatter.format(begginingDateTime);
         String endingDate = formatter.format(endingDateTime);
         try {
-            StringBuilder sqlBuilder1 = new StringBuilder("UPDATE cardManagementSystem.transactionsManagement t SET t.dailyClosingId= "+dailyClosing.getId()+", t.indClosed = 1 WHERE t.creationDate between '"+begginingDate+"' AND '"+endingDate+"' AND t.dailyClosingId IS NULL AND t.indClosed = 0");
+            StringBuilder sqlBuilder1 = new StringBuilder("UPDATE cardManagementSystem.transactionsManagement t SET t.dailyClosingId= "+dailyClosing.getId()+", t.indClosed = 1 WHERE t.createDate between '"+begginingDate+"' AND '"+endingDate+"' AND t.dailyClosingId IS NULL AND (t.indClosed IS NULL OR t.indClosed = 0)");
             EntityTransaction transaction = entityManager.getTransaction();
             transaction.begin();
             Query query1 = entityManager.createNativeQuery(sqlBuilder1.toString());
@@ -239,24 +232,8 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         return (TotalTransactionsAmountByDailyClosing) saveEntity(totalTransactionsAmountByDailyClosing);
     }  
 
-    
-     public List<Card> getExpiredCards(Date closingDate) throws EmptyListException, GeneralException, NullParameterException {
-        List<Card> cards = null;
-        if (closingDate ==null) {
-            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
-        }
-        try {
-            Query query = createQuery("SELECT c FROM Card c WHERE c.automaticRenewalDate <= ?1 and c.indRenewal = 0 order by c.id desc");
-            query.setParameter("1", closingDate);
-            query.setMaxResults(1);
-            cards = query.setHint("toplink.refresh", "true").getResultList();
-        } catch (Exception ex) {
-           ex.printStackTrace();           
-        }
-        return cards;
-    }
-     
-     public List<CardRenewalRequest> createCardRenewalRequestByIssuer(Integer cardStatus) throws RegisterNotFoundException, EmptyListException, GeneralException, NullParameterException {
+   
+    public List<CardRenewalRequest> createCardRenewalRequestByIssuer(Integer cardStatus) throws RegisterNotFoundException, EmptyListException, GeneralException, NullParameterException {
         //Se declara la lista de solicitudes a retornar
         List<CardRenewalRequest> cardRenewalRequestList = new ArrayList<CardRenewalRequest>();
         int issuerId = 0;
@@ -300,7 +277,7 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
 
             //Consulta para obtener la lista de tarjetas por emisor cuya fecha de renovación es igual a la fecha actual y estén activas. 
             sqlBuilder = new StringBuilder("SELECT c.* FROM card c, issuer i, product p ");
-            sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND i.id = ?2 AND c.automaticRenewalDate = CURDATE()");
+            sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND i.id = ?2 AND c.automaticRenewalDate <= CURDATE() AND c.indRenewal = 0");
             query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
             query.setParameter("1", cardStatus);
             query.setParameter("2", issuerId);
@@ -313,6 +290,11 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
                 cardRenewalRequestHasCard.setCardRenewalRequestId(cardRenewalRequest);
                 cardRenewalRequestHasCard.setCreateDate(new Timestamp(new Date().getTime()));
                 cardRenewalRequestHasCard = cardEJB.saveCardRenewalRequestHasCard(cardRenewalRequestHasCard);
+                
+                //actualizar el campo indRenawel para indicar que la tarjeta sera renovada
+                c.setIndRenewal(true);
+                c.setUpdateDate(new Timestamp(new Date().getTime()));
+                cardEJB.saveCard(c);
             }
 
             //Agregas la solicitud a la lista que retorna el servicio
