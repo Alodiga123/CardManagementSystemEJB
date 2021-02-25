@@ -27,6 +27,7 @@ import com.cms.commons.models.TotalTransactionsAmountByDailyClosing;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.EjbUtils;
+import com.cms.commons.util.SendMailTherad;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         try {
             if (!isHoliday(closingDate) && !EjbUtils.isWeekEnd(closingDate)) {
                 dailyClosing.setClosingDate(new Date());// corresponde a la Fecha del Cierre
+                dailyClosing.setCreateDate(new Date());
                 dailyClosing.setClosingStartTime(new Date());// es la hora en que comienza el proceso de cierre.
                 EJBRequest request = new EJBRequest();
                 request.setParam(Constants.ORIGIN_APPLICATION_CMS_AUTHORIZE);
@@ -98,10 +100,11 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
                 //Agregar dailyClosingId a las transacciones
                 addDailyClosingInTransaction(oldClosingDate, closingDate, dailyClosing);
                 dailyClosing.setClosingEndTime(new Date());// es la hora en que finaliza el proceso de cierre
+                dailyClosing.setUpdateDate(new Date());
                 dailyClosing = saveDailyClosing(dailyClosing);// actualizo el cierre con la hora de finalizacion
-                //faltan enviar correo de notificacion con la informacion del cierre no estaba en las especificaciones
-                // SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions,"", "", Constants.SEND_TYPE_EMAIL_DAILY_CLOSING_WALLET);
-                // sendMailTherad.run()
+                //enviar correo de notificacion con la informacion del cierre no estaba en las especificaciones
+                SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions, Constants.NOTIFICATION_DAILY_CLOSING, details);
+                sendMailTherad.run();
                 
                 //llamar al metodo para generar solicitud de tarjetas vencidas
                 createCardRenewalRequestByIssuer(Constants.CARD_STATUS_ACTIVE);
@@ -142,7 +145,6 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         query.setParameter("2", endingDateTime);
         query.executeUpdate();
         entityManager.getTransaction().commit();
-        entityManager.close();
     }
 
     private Double TotalAmountCurrentDate(Date begginingDateTime, Date endingDateTime) {
@@ -208,11 +210,10 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         String endingDate = formatter.format(endingDateTime);
         try {
             StringBuilder sqlBuilder1 = new StringBuilder("UPDATE cardManagementSystem.transactionsManagement t SET t.dailyClosingId= "+dailyClosing.getId()+", t.indClosed = 1 WHERE t.createDate between '"+begginingDate+"' AND '"+endingDate+"' AND t.dailyClosingId IS NULL AND (t.indClosed IS NULL OR t.indClosed = 0)");
-            EntityTransaction transaction = entityManager.getTransaction();
-            transaction.begin();
+            entityManager.getTransaction().begin();
             Query query1 = entityManager.createNativeQuery(sqlBuilder1.toString());
             query1.executeUpdate();
-            transaction.commit();
+            entityManager.getTransaction().commit();
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), null);
