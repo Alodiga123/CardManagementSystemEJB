@@ -32,6 +32,7 @@ import com.cms.commons.models.EconomicActivity;
 import com.cms.commons.models.Issuer;
 import com.cms.commons.models.EdificationType;
 import com.cms.commons.models.KindCard;
+import com.cms.commons.models.KeyProperties;
 import com.cms.commons.models.Language;
 import com.cms.commons.models.LegalPerson;
 import com.cms.commons.models.LegalRepresentatives;
@@ -991,7 +992,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
     @Override
     public OriginApplication loadOriginApplication(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        OriginApplication originApplication = (OriginApplication) loadEntity(OriginApplication.class, request, logger, getMethodName());
+        return originApplication;
     }
 
     @Override
@@ -1429,5 +1431,90 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<Transaction> transactions = (List<Transaction>) listEntities(Transaction.class, request, logger, getMethodName());
         return transactions;
     }
+    
+    //KeyProperties
+    @Override
+    public List<KeyProperties> getKeyProperties(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<KeyProperties> keyPropertiesList = (List<KeyProperties>) listEntities(KeyProperties.class, request, logger, getMethodName());
+        return keyPropertiesList;
+    }
 
+    @Override
+    public KeyProperties saveKeyProperties(KeyProperties keyProperties) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (keyProperties == null) {
+            throw new NullParameterException("keyProperties", null);
+        }
+        return (KeyProperties) saveEntity(keyProperties);
+    }
+
+    @Override
+    public KeyProperties loadKeyProperties(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public List<KeyProperties> getKeyPropertiesByChannelAndProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<KeyProperties> keyPropertiesList= null; 
+               
+        Map<String, Object> params = request.getParams();       
+        if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
+        }  
+        
+        if (!params.containsKey(EjbConstants.PARAM_CHANNEL_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_NAME), null);
+        }  
+        
+          try {
+            StringBuilder sqlBuilder = new StringBuilder("select * from keyProperties where channelId =");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_CHANNEL_ID));
+            sqlBuilder.append(" AND productId =");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_PRODUCT_ID));
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), KeyProperties.class);
+            keyPropertiesList = (List<KeyProperties>) query.setHint("toplink.refresh", "true").getResultList();                 
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return keyPropertiesList;   
+    }
+    
+    @Override
+    public List<KeyProperties> getSearchKeyPropertiesByChannel(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<KeyProperties> keyProperties = null;
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }
+
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM keyProperties k ");
+            sqlBuilder.append("WHERE k.channelId IN (SELECT c.id FROM channel c WHERE c.name LIKE '").append(name).append("%')");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), KeyProperties.class);
+            keyProperties = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return keyProperties;
+    }
+    
+    public List<KeyProperties> getSearchKeyPropertiesByProduct(String name) throws EmptyListException, GeneralException, NullParameterException {
+        List<KeyProperties> keyProperties = null;
+        try {
+            if (name == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }
+
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM keyProperties k ");
+            sqlBuilder.append("WHERE k.productId IN (SELECT p.id FROM product p WHERE p.name LIKE '").append(name).append("%')");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), KeyProperties.class);
+            keyProperties = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return keyProperties;
+    }
 }
