@@ -21,6 +21,7 @@ import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
 import com.cms.commons.util.EjbConstants;
+import com.cms.commons.util.EjbUtils;
 
 @Interceptors({DistributionLoggerInterceptor.class, DistributionContextInterceptor.class})
 @Stateless(name = EjbConstants.CLOSING_TIMER_EJB, mappedName = EjbConstants.CLOSING_TIMER_EJB)
@@ -75,7 +76,7 @@ public class ClosingTimerEJBImp extends AbstractDistributionEJB implements Closi
 
         try {
         	EJBRequest request = new EJBRequest();
-        	closingEJBLocal.closingDailyTransactionWallet(new Date());
+        	closingEJBLocal.closingDailyTransactionWallet(EjbUtils.getEndingDate(new Date()));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
