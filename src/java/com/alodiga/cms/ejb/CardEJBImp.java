@@ -40,6 +40,7 @@ import com.cms.commons.models.SubAccountType;
 import com.cms.commons.models.SystemFuncionality;
 import com.cms.commons.models.SystemFuncionalityHasSecurityQuestion;
 import com.cms.commons.enumeraciones.StatusCardE;
+import com.cms.commons.models.BonusCard;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EJBServiceLocator;
 import java.util.Map;
@@ -1184,6 +1185,39 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
         }
         return cardList;
+    }
+    
+    @Override
+    public List<Card> getCardByPerson(Long personId) throws EmptyListException, GeneralException, NullParameterException {    
+        List<Card> cards = new ArrayList<Card>();        
+        if(personId == null){
+           throw new NullParameterException("personId", null); 
+        }         
+        try{            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
+            sqlBuilder.append("WHERE c.personCustomerId IN ");
+            sqlBuilder.append("(SELECT p.id FROM person p WHERE p.id = '").append(personId).append("')");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+            cards = query.setHint("toplink.refresh", "true").getResultList();
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+       return cards; 
+    }
+    
+    public BonusCard getBonusCard(Long cardId) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        BonusCard bonusCard = null;
+        try {
+            Query query = createQuery("SELECT b FROM BonusCard b WHERE b.cardId.id = :cardId");
+            query.setParameter("cardId", cardId);
+            bonusCard = (BonusCard) query.getSingleResult();
+        } catch (Exception ex) {
+            ex.getMessage();
+            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+        }
+        return bonusCard;
     }
 
 
