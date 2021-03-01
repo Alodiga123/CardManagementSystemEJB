@@ -56,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -1213,9 +1214,11 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             Query query = createQuery("SELECT b FROM BonusCard b WHERE b.cardId.id = :cardId");
             query.setParameter("cardId", cardId);
             bonusCard = (BonusCard) query.getSingleResult();
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            return bonusCard = null;
         } catch (Exception ex) {
-            ex.getMessage();
-            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+            return bonusCard = null;
         }
         return bonusCard;
     }
