@@ -39,6 +39,7 @@ import com.cms.commons.models.SegmentMarketing;
 import com.cms.commons.models.StatusProduct;
 import com.cms.commons.models.StorageMedio;
 import com.cms.commons.models.Transaction;
+import com.cms.commons.models.TransactionPoint;
 import com.cms.commons.models.TransactionsManagement;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.EjbUtils;
@@ -742,5 +743,46 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
             }
             return results;
     }
-        
+    
+    @Override
+    public List<TransactionPoint> getTransactionPoint(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<TransactionPoint> transactionPointList = (List<TransactionPoint>) listEntities(TransactionPoint.class, request, logger, getMethodName());
+        return transactionPointList;
+    }
+
+    @Override
+    public TransactionPoint loadTransactionPoint(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        TransactionPoint transactionPoint = (TransactionPoint) loadEntity(TransactionPoint.class, request, logger, getMethodName());
+        return transactionPoint;
+    }
+
+    @Override
+    public TransactionPoint saveTransactionPoint(TransactionPoint transactionPoint) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (transactionPoint == null) {
+            throw new NullParameterException("transactionsManagement", null);
+        }
+        return (TransactionPoint) saveEntity(transactionPoint);
+    }
+    
+    
+    @Override
+    public List<TransactionPoint> getTransactionPointByCard(Long cardId) throws EmptyListException, GeneralException, NullParameterException {    
+        List<TransactionPoint> transactionPoint = new ArrayList<TransactionPoint>();        
+        if(cardId == null){
+           throw new NullParameterException("cardId", null); 
+        }         
+        try{            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionPoint t ");
+            sqlBuilder.append("WHERE t.cardId = ").append(cardId);
+            sqlBuilder.append(" AND t.points IS NOT NULL AND t.points > 0");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), TransactionPoint.class);
+            transactionPoint = query.setHint("toplink.refresh", "true").getResultList();
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+        }
+       return transactionPoint; 
+    }
+
+    
 }

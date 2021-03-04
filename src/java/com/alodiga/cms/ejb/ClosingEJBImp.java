@@ -64,48 +64,48 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         DailyClosing dailyClosing = new DailyClosing();
         try {
             if (!isHoliday(closingDate) && !EjbUtils.isWeekEnd(closingDate)) {
-                dailyClosing.setClosingDate(new Date());// corresponde a la Fecha del Cierre
-                dailyClosing.setCreateDate(new Date());
-                dailyClosing.setClosingStartTime(new Date());// es la hora en que comienza el proceso de cierre.
-                EJBRequest request = new EJBRequest();
-                request.setParam(Constants.ORIGIN_APPLICATION_CMS_AUTHORIZE);
-                OriginApplication originApplicationId = utilsEJB.loadOriginApplication(request);
-                dailyClosing.setOriginApplicationId(originApplicationId);// Origen de Cierre: Billetera Móvil, Portal deNegocios, Alodiga Wallet Web
-                Date oldClosingDate = OldClosingDate(closingDate);
-                int totalTrasactions = TotalTransactionsCurrentDate(oldClosingDate, closingDate);
-                Float transactionsAmount = TotalAmountCurrentDate(oldClosingDate, closingDate).floatValue();
-                dailyClosing.setTotalTransactions(totalTrasactions);// cantidad total de transacciones del cierre diario
-                dailyClosing.setTransactionsAmount(transactionsAmount);// Monto Total de las transacciones del cierre diario
-                dailyClosing = saveDailyClosing(dailyClosing);
-                request = new EJBRequest();
-                List<Transaction> transactionTypes = utilsEJB.getTransaction(request);
-                List<TotalTransactionsAmountByDailyClosing> details = new ArrayList<TotalTransactionsAmountByDailyClosing>();
-                for (Transaction transaction : transactionTypes) {
-                    int totalTrasactionsByTransactionType = TotalTransactionsCurrentDatebyTransactionType(oldClosingDate, closingDate, transaction.getId());  
-                    Float transactionsAmountByTransactionType = TotalAmountCurrentDateByTransaction(oldClosingDate, closingDate, transaction.getId()).floatValue();
-                    TotalTransactionsAmountByDailyClosing totalTransactionsAmountByDailyClosing = new TotalTransactionsAmountByDailyClosing();
-                    if (transactionsAmountByTransactionType>0f || totalTrasactionsByTransactionType>0){
-                        totalTransactionsAmountByDailyClosing.setCreateDate(new Date());
-                        totalTransactionsAmountByDailyClosing.setDailyClosingId(dailyClosing);
-                        totalTransactionsAmountByDailyClosing.setTotalTransactions(totalTrasactionsByTransactionType);
-                        totalTransactionsAmountByDailyClosing.setTransactionsAmount(transactionsAmountByTransactionType);
-                        totalTransactionsAmountByDailyClosing.setTransactionId(transaction);
-                        //Guarda TotalTransactionsAmountByDailyClosing
-                        totalTransactionsAmountByDailyClosing = saveTotalTransactionsAmountByDailyClosing(totalTransactionsAmountByDailyClosing);
-                        details.add(totalTransactionsAmountByDailyClosing);
-                    }
-                }
-                //llamar a Procedimiento almacenado para pasar de TransactionsManagement a TransactionsManagementHistory
-                executeHistory(oldClosingDate, closingDate);
-                //Agregar dailyClosingId a las transacciones
-                addDailyClosingInTransaction(oldClosingDate, closingDate, dailyClosing);
-                dailyClosing.setClosingEndTime(new Date());// es la hora en que finaliza el proceso de cierre
-                dailyClosing.setUpdateDate(new Date());
-                dailyClosing = saveDailyClosing(dailyClosing);// actualizo el cierre con la hora de finalizacion
-                //enviar correo de notificacion con la informacion del cierre no estaba en las especificaciones
-                SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions, Constants.NOTIFICATION_DAILY_CLOSING, details);
-                sendMailTherad.run();
-                
+//                dailyClosing.setClosingDate(new Date());// corresponde a la Fecha del Cierre
+//                dailyClosing.setCreateDate(new Date());
+//                dailyClosing.setClosingStartTime(new Date());// es la hora en que comienza el proceso de cierre.
+//                EJBRequest request = new EJBRequest();
+//                request.setParam(Constants.ORIGIN_APPLICATION_CMS_AUTHORIZE);
+//                OriginApplication originApplicationId = utilsEJB.loadOriginApplication(request);
+//                dailyClosing.setOriginApplicationId(originApplicationId);// Origen de Cierre: Billetera Móvil, Portal deNegocios, Alodiga Wallet Web
+//                Date oldClosingDate = OldClosingDate(closingDate);
+//                int totalTrasactions = TotalTransactionsCurrentDate(oldClosingDate, closingDate);
+//                Float transactionsAmount = TotalAmountCurrentDate(oldClosingDate, closingDate).floatValue();
+//                dailyClosing.setTotalTransactions(totalTrasactions);// cantidad total de transacciones del cierre diario
+//                dailyClosing.setTransactionsAmount(transactionsAmount);// Monto Total de las transacciones del cierre diario
+//                dailyClosing = saveDailyClosing(dailyClosing);
+//                request = new EJBRequest();
+//                List<Transaction> transactionTypes = utilsEJB.getTransaction(request);
+//                List<TotalTransactionsAmountByDailyClosing> details = new ArrayList<TotalTransactionsAmountByDailyClosing>();
+//                for (Transaction transaction : transactionTypes) {
+//                    int totalTrasactionsByTransactionType = TotalTransactionsCurrentDatebyTransactionType(oldClosingDate, closingDate, transaction.getId());  
+//                    Float transactionsAmountByTransactionType = TotalAmountCurrentDateByTransaction(oldClosingDate, closingDate, transaction.getId()).floatValue();
+//                    TotalTransactionsAmountByDailyClosing totalTransactionsAmountByDailyClosing = new TotalTransactionsAmountByDailyClosing();
+//                    if (transactionsAmountByTransactionType>0f || totalTrasactionsByTransactionType>0){
+//                        totalTransactionsAmountByDailyClosing.setCreateDate(new Date());
+//                        totalTransactionsAmountByDailyClosing.setDailyClosingId(dailyClosing);
+//                        totalTransactionsAmountByDailyClosing.setTotalTransactions(totalTrasactionsByTransactionType);
+//                        totalTransactionsAmountByDailyClosing.setTransactionsAmount(transactionsAmountByTransactionType);
+//                        totalTransactionsAmountByDailyClosing.setTransactionId(transaction);
+//                        //Guarda TotalTransactionsAmountByDailyClosing
+//                        totalTransactionsAmountByDailyClosing = saveTotalTransactionsAmountByDailyClosing(totalTransactionsAmountByDailyClosing);
+//                        details.add(totalTransactionsAmountByDailyClosing);
+//                    }
+//                }
+//                //llamar a Procedimiento almacenado para pasar de TransactionsManagement a TransactionsManagementHistory
+//                executeHistory(oldClosingDate, closingDate);
+//                //Agregar dailyClosingId a las transacciones
+//                addDailyClosingInTransaction(oldClosingDate, closingDate, dailyClosing);
+//                dailyClosing.setClosingEndTime(new Date());// es la hora en que finaliza el proceso de cierre
+//                dailyClosing.setUpdateDate(new Date());
+//                dailyClosing = saveDailyClosing(dailyClosing);// actualizo el cierre con la hora de finalizacion
+//                //enviar correo de notificacion con la informacion del cierre no estaba en las especificaciones
+//                SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions, Constants.NOTIFICATION_DAILY_CLOSING, details);
+//                sendMailTherad.run();
+//                
                 //llamar al metodo para generar solicitud de tarjetas vencidas
                 createCardRenewalRequestByIssuer(Constants.CARD_STATUS_ACTIVE);
      
@@ -239,68 +239,73 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         //Se declara la lista de solicitudes a retornar
         List<CardRenewalRequest> cardRenewalRequestList = new ArrayList<CardRenewalRequest>();
         int issuerId = 0;
-
-        //Consulta para obtener el id del emisor para las tarjetas cuya fecha de renovación es igual a la fecha actual y estén activas
-        StringBuilder sqlBuilder = new StringBuilder("SELECT i.id FROM card c, issuer i, product p ");
-        sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND c.automaticRenewalDate <= CURDATE() AND c.indRenewal = 0 GROUP BY i.id");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString());
-        query.setParameter("1", cardStatus);
-        List result = (List) query.getResultList();
-
-        //Obtener el estatus de la solicitud PENDIENTE
-        EJBRequest request1 = new EJBRequest();
-        request1.setParam(Constants.STATUS_CARD_RENEWAL_REQUEST_PENDING);
-        StatusCardRenewalRequest statusCardRenewalRequest = cardEJB.loadStatusCardRenewalRequest(request1);
-
-        //Se crean automáticamente las solicitudes de renovación de tarjeta por emisor
-        for (int i = 0; i < result.size(); i++) {
-            //Obtener el emisor
-            request1 = new EJBRequest();
-            request1.setParam(result.get(i));
-            Issuer issuer = personEJB.loadIssuer(request1);
-            issuerId = issuer.getId();
-
-            //Obtiene el numero de secuencia para documento Request
-            request1 = new EJBRequest();
-            Map params = new HashMap();
-            params.put(Constants.DOCUMENT_TYPE_KEY, Constants.DOCUMENT_TYPE_RENEWAL_REQUEST);
-            request1.setParams(params);
-            List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
-            String numberRequest = utilsEJB.generateNumberSequence(sequence, Constants.ORIGIN_APPLICATION_CMS_ID);
-
-            //Se crea la solicitud de Renovación de Tarjeta y se guarda en BD
-            CardRenewalRequest cardRenewalRequest = new CardRenewalRequest();
-            cardRenewalRequest.setIssuerId(issuer);
-            cardRenewalRequest.setRequestNumber(numberRequest);
-            cardRenewalRequest.setCreateDate(new Timestamp(new Date().getTime()));
-            cardRenewalRequest.setRequestDate(new Date());
-            cardRenewalRequest.setStatusCardRenewalRequestId(statusCardRenewalRequest);
-            cardRenewalRequest = cardEJB.saveCardRenewalRequest(cardRenewalRequest);
-
-            //Consulta para obtener la lista de tarjetas por emisor cuya fecha de renovación es igual a la fecha actual y estén activas. 
-            sqlBuilder = new StringBuilder("SELECT c.* FROM card c, issuer i, product p ");
-            sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND i.id = ?2 AND c.automaticRenewalDate <= CURDATE() AND c.indRenewal = 0");
-            query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+        try {
+            //Consulta para obtener el id del emisor para las tarjetas cuya fecha de renovación es igual a la fecha actual y estén activas
+            StringBuilder sqlBuilder = new StringBuilder("SELECT i.id FROM card c, issuer i, product p ");
+            sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND c.automaticRenewalDate <= CURDATE() AND c.indRenewal = 0 GROUP BY i.id");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString());
             query.setParameter("1", cardStatus);
-            query.setParameter("2", issuerId);
-            List<Card> cardList = query.getResultList();
+            List result = (List) query.getResultList();
 
-            //Asocia las tarjetas a la solicitud
-            for (Card c : cardList) {
-                CardRenewalRequestHasCard cardRenewalRequestHasCard = new CardRenewalRequestHasCard();
-                cardRenewalRequestHasCard.setCardId(c);
-                cardRenewalRequestHasCard.setCardRenewalRequestId(cardRenewalRequest);
-                cardRenewalRequestHasCard.setCreateDate(new Timestamp(new Date().getTime()));
-                cardRenewalRequestHasCard = cardEJB.saveCardRenewalRequestHasCard(cardRenewalRequestHasCard);
-                
-                //actualizar el campo indRenawel para indicar que la tarjeta sera renovada
-                c.setIndRenewal(true);
-                c.setUpdateDate(new Timestamp(new Date().getTime()));
-                cardEJB.saveCard(c);
-            }
+            //Obtener el estatus de la solicitud PENDIENTE
+            EJBRequest request1 = new EJBRequest();
+            request1.setParam(Constants.STATUS_CARD_RENEWAL_REQUEST_PENDING);
+            StatusCardRenewalRequest statusCardRenewalRequest = cardEJB.loadStatusCardRenewalRequest(request1);
 
-            //Agregas la solicitud a la lista que retorna el servicio
-            cardRenewalRequestList.add(cardRenewalRequest);
+            //Se crean automáticamente las solicitudes de renovación de tarjeta por emisor
+            for (int i = 0; i < result.size(); i++) {
+                //Obtener el emisor
+                request1 = new EJBRequest();
+                request1.setParam(result.get(i));
+                Issuer issuer = personEJB.loadIssuer(request1);
+                issuerId = issuer.getId();
+
+                //Obtiene el numero de secuencia para documento Request
+                request1 = new EJBRequest();
+                Map params = new HashMap();
+                params.put(Constants.DOCUMENT_TYPE_KEY, Constants.DOCUMENT_TYPE_RENEWAL_REQUEST);
+                request1.setParams(params);
+                List<Sequences> sequence = utilsEJB.getSequencesByDocumentType(request1);
+                String numberRequest = utilsEJB.generateNumberSequence(sequence, Constants.ORIGIN_APPLICATION_CMS_ID);
+
+                //Se crea la solicitud de Renovación de Tarjeta y se guarda en BD
+                CardRenewalRequest cardRenewalRequest = new CardRenewalRequest();
+                cardRenewalRequest.setIssuerId(issuer);
+                cardRenewalRequest.setRequestNumber(numberRequest);
+                cardRenewalRequest.setCreateDate(new Timestamp(new Date().getTime()));
+                cardRenewalRequest.setRequestDate(new Date());
+                cardRenewalRequest.setStatusCardRenewalRequestId(statusCardRenewalRequest);
+                cardRenewalRequest = cardEJB.saveCardRenewalRequest(cardRenewalRequest);
+
+                //Consulta para obtener la lista de tarjetas por emisor cuya fecha de renovación es igual a la fecha actual y estén activas. 
+                sqlBuilder = new StringBuilder("SELECT c.* FROM card c, issuer i, product p ");
+                sqlBuilder.append("WHERE c.productId = p.id AND p.issuerId = i.id AND c.cardStatusId = ?1 AND i.id = ?2 AND c.automaticRenewalDate <= CURDATE() AND c.indRenewal = 0");
+                query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+                query.setParameter("1", cardStatus);
+                query.setParameter("2", issuerId);
+                List<Card> cardList = query.getResultList();
+
+                //Asocia las tarjetas a la solicitud
+                for (Card c : cardList) {
+                    CardRenewalRequestHasCard cardRenewalRequestHasCard = new CardRenewalRequestHasCard();
+                    cardRenewalRequestHasCard.setCardId(c);
+                    cardRenewalRequestHasCard.setCardRenewalRequestId(cardRenewalRequest);
+                    cardRenewalRequestHasCard.setCreateDate(new Timestamp(new Date().getTime()));
+                    cardRenewalRequestHasCard = cardEJB.saveCardRenewalRequestHasCard(cardRenewalRequestHasCard);
+
+                    //actualizar el campo indRenawel para indicar que la tarjeta sera renovada
+                    c.setIndRenewal(true);
+                    c.setUpdateDate(new Timestamp(new Date().getTime()));
+                    cardEJB.saveCard(c);
+                }
+
+                //Agregas la solicitud a la lista que retorna el servicio
+                cardRenewalRequestList.add(cardRenewalRequest);
+             }
+        } catch (NoResultException ex) {
+           ex.printStackTrace();
+        }  catch (Exception ex) {
+           ex.printStackTrace();           
         }
         return cardRenewalRequestList;
     }

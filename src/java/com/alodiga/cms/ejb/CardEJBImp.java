@@ -40,6 +40,8 @@ import com.cms.commons.models.SubAccountType;
 import com.cms.commons.models.SystemFuncionality;
 import com.cms.commons.models.SystemFuncionalityHasSecurityQuestion;
 import com.cms.commons.enumeraciones.StatusCardE;
+import com.cms.commons.models.BalanceHistoryCard;
+import com.cms.commons.models.BonusCard;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EJBServiceLocator;
 import java.util.Map;
@@ -55,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -554,6 +557,21 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         accountCardList = (List<AccountCard>) getNamedQueryResult(AccountCard.class, QueryConstants.ACCOUNT_CARD_BY_PRODUCT, request, getMethodName(), logger, "accountCardList");
         return accountCardList;
+    }
+    
+    public AccountCard getAccountCardByCard(Long cardId) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        AccountCard accountCard = null;
+        try {
+            Query query = createQuery("SELECT a FROM AccountCard a WHERE a.cardId.id = :cardId");
+            query.setParameter("cardId", cardId);
+            accountCard = (AccountCard) query.getSingleResult();
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            return accountCard = null;
+        } catch (Exception ex) {
+            return accountCard = null;
+        }
+        return accountCard;
     }
 
     //StatusAccount
@@ -1185,6 +1203,93 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return cardList;
     }
+    
+    @Override
+    public List<Card> getCardByPerson(Long personId) throws EmptyListException, GeneralException, NullParameterException {    
+        List<Card> cards = new ArrayList<Card>();        
+        if(personId == null){
+           throw new NullParameterException("personId", null); 
+        }         
+        try{            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
+            sqlBuilder.append("WHERE c.personCustomerId IN ");
+            sqlBuilder.append("(SELECT p.id FROM person p WHERE p.id = '").append(personId).append("')");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+            cards = query.setHint("toplink.refresh", "true").getResultList();
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+       return cards; 
+    }
+    
+    public List<BonusCard> getBonusCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<BonusCard> bonusCard = (List<BonusCard >) listEntities(BonusCard.class, request, logger, getMethodName());
+        return bonusCard;
+    }
 
+    public BonusCard loadBonusCard(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        BonusCard bonusCard = (BonusCard) loadEntity(BonusCard.class, request, logger, getMethodName());
+        return bonusCard;
+    }
+
+    public BonusCard saveBonusCard(BonusCard bonusCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (bonusCard == null) {
+            throw new NullParameterException("bonusCard", null);
+        }
+        return (BonusCard) saveEntity(bonusCard);
+    }
+    
+    
+    public BonusCard getBonusCardByCardId(Long cardId) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        BonusCard bonusCard = null;
+        try {
+            Query query = createQuery("SELECT b FROM BonusCard b WHERE b.cardId.id = :cardId");
+            query.setParameter("cardId", cardId);
+            bonusCard = (BonusCard) query.getSingleResult();
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            return bonusCard = null;
+        } catch (Exception ex) {
+            return bonusCard = null;
+        }
+        return bonusCard;
+    }
+    
+     @Override
+    public List<BalanceHistoryCard> getBalanceHistory(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<BalanceHistoryCard> balanceHistoryCard = (List<BalanceHistoryCard>) listEntities(BalanceHistoryCard.class, request, logger, getMethodName());
+        return balanceHistoryCard;
+    }
+
+    @Override
+    public BalanceHistoryCard loadBalanceHistory(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        BalanceHistoryCard balanceHistoryCard = (BalanceHistoryCard) loadEntity(BalanceHistoryCard.class, request, logger, getMethodName());
+        return balanceHistoryCard;
+    }
+
+    @Override
+    public BalanceHistoryCard saveBalanceHistoryCard(BalanceHistoryCard balanceHistoryCard) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        if (balanceHistoryCard == null) {
+            throw new NullParameterException("balanceHistoryCard", null);
+        }
+        return (BalanceHistoryCard) saveEntity(balanceHistoryCard);
+    }
+    
+    public BalanceHistoryCard getBalanceHistoryCardByCard(Long cardId) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        BalanceHistoryCard balanceHistoryCard = null;
+        try {
+            Query query = createQuery("SELECT b FROM BalanceHistoryCard b WHERE b.cardUserId.id = :cardId");
+            query.setParameter("cardId", cardId);
+            balanceHistoryCard = (BalanceHistoryCard) query.getSingleResult();
+        } catch (NoResultException e) {
+            e.printStackTrace();
+            return balanceHistoryCard = null;
+        } catch (Exception ex) {
+            return balanceHistoryCard = null;
+        }
+        return balanceHistoryCard;
+    }
 
 }
