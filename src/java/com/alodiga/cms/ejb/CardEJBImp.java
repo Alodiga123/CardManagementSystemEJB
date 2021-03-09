@@ -1224,6 +1224,28 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
        return cards; 
     }
     
+    @Override
+    public List<Card> getCardByPersonByStatusActive(Long personId) throws EmptyListException, GeneralException, NullParameterException {    
+        List<Card> cards = new ArrayList<Card>();        
+        if(personId == null){
+           throw new NullParameterException("personId", null); 
+        }         
+        try{            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
+            sqlBuilder.append("WHERE c.personCustomerId IN ");
+            sqlBuilder.append("(SELECT p.id FROM person p WHERE p.id = '").append(personId).append("')");
+            sqlBuilder.append("AND c.cardStatusId = 8");
+            System.out.println("sql " + sqlBuilder.toString());
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+            cards = query.setHint("toplink.refresh", "true").getResultList();
+        } catch (NoResultException ex) {
+            throw new EmptyListException("No distributions found");
+        } catch (Exception e) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+        }
+       return cards; 
+    }
+    
     public List<BonusCard> getBonusCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<BonusCard> bonusCard = (List<BonusCard >) listEntities(BonusCard.class, request, logger, getMethodName());
         return bonusCard;
