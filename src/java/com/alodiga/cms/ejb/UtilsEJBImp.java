@@ -50,6 +50,7 @@ import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StreetType;
 import com.cms.commons.models.Transaction;
+import com.cms.commons.models.TransactionsManagement;
 import com.cms.commons.models.User;
 import com.cms.commons.models.UserHasProfile;
 import com.cms.commons.models.ZipZone;
@@ -185,11 +186,11 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         Currency currency = (Currency) loadEntity(Currency.class, request, logger, getMethodName());
         return currency;
     }
-    
+
     @Override
     public Currency loadCurrencyByCountry(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         List<Currency> currencyList = null;
-        Currency currency = null;        
+        Currency currency = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
@@ -224,10 +225,10 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (PersonClassification) saveEntity(personclassification);
     }
-    
+
     @Override
     public List<LegalPerson> getLegalPersonByPersonClassification(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-        List<LegalPerson> legalPersonList = null;        
+        List<LegalPerson> legalPersonList = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_PERSON_CLASSIFICATION_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
@@ -523,7 +524,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         personTypes = (List<PersonType>) getNamedQueryResult(PersonType.class, QueryConstants.PERSON_TYPE_BY_COUNTRY, request, getMethodName(), logger, "personTypes");
         return personTypes;
     }
-    
+
     @Override
     public List<PersonType> getPersonTypeByCountryByOriginApplication(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<PersonType> personTypes = null;
@@ -534,7 +535,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         if (!params.containsKey(EjbConstants.PARAM_ORIGIN_APPLICATION_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_ORIGIN_APPLICATION_ID), null);
         }
-       
+
         personTypes = (List<PersonType>) getNamedQueryResult(PersonType.class, QueryConstants.PERSON_TYPE_BY_COUNTRY_BY_ORIGIN_APPLICATION, request, getMethodName(), logger, "personTypeByCountryByOriginApplication");
         return personTypes;
     }
@@ -618,7 +619,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (EconomicActivity) saveEntity(economicActivity);
     }
-    
+
     public List<EconomicActivity> SearchDescription(String description) throws EmptyListException, GeneralException, NullParameterException {
         List<EconomicActivity> economicList = null;
         if (description == null) {
@@ -638,8 +639,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return economicList;
     }
-    
-        public List<EconomicActivity> getSearchEconomicActivity(String name) throws EmptyListException, GeneralException, NullParameterException {
+
+    public List<EconomicActivity> getSearchEconomicActivity(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<EconomicActivity> economicActivityList = null;
         if (name == null) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
@@ -658,7 +659,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return economicActivityList;
     }
-        
+
     //Issuer
     @Override
     public List<Issuer> getIssuers(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -707,9 +708,9 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<Address> addresses = (List<Address>) listEntities(Address.class, request, logger, getMethodName());
         return addresses;
     }
-    
-    public List<Address> getAddressesById(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException{
-         List<Address> addressById = null;
+
+    public List<Address> getAddressesById(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Address> addressById = null;
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_ADDRESS_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_ADDRESS_ID), null);
@@ -784,7 +785,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (City) saveEntity(city);
     }
-    
+
     public List<City> getSearchCity(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<City> cityList = null;
         if (name == null) {
@@ -899,7 +900,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return (LegalRepresentatives) saveEntity(legalRepresentatives);
     }
-    
+
     @Override
     public List<LegalRepresentatives> getLegalRepresentativesByPerson(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<LegalRepresentatives> legalRepresentatives = null;
@@ -1191,7 +1192,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return country;
     }
-    
+
     @Override
     public List<Country> getSearchCountry(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<Country> countryList = null;
@@ -1296,7 +1297,6 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         return currency;
     }
 
-
     @Override
     public List<Currency> getSearchCurrency(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<Currency> currencyList = null;
@@ -1306,7 +1306,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         try {
             StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM currency c ");
             sqlBuilder.append("WHERE c.name LIKE '%").append(name).append("%'");
-            Query query = entityManager.createNativeQuery(sqlBuilder.toString(),Currency.class);
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Currency.class);
             currencyList = query.setHint("toplink.refresh", "true").getResultList();
 
         } catch (NoResultException ex) {
@@ -1390,8 +1390,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         List<PersonType> personTypeList = (List<PersonType>) listEntities(PersonType.class, request, logger, getMethodName());
         return personTypeList;
     }
-    
-    
+
     //DocumentsPersonType
     @Override
     public DocumentsPersonType searchDocumentsPersonType(String description) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -1420,18 +1419,33 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM documentsPersonType d ");
         sqlBuilder.append("WHERE d.description LIKE '%").append(description).append("%'");
-        Query query = entityManager.createNativeQuery(sqlBuilder.toString(),DocumentsPersonType.class);
+        Query query = entityManager.createNativeQuery(sqlBuilder.toString(), DocumentsPersonType.class);
         documentsPersonTypeList = (List<DocumentsPersonType>) query.setHint("toplink.refresh", "true").getResultList();
         return documentsPersonTypeList;
     }
-    
-     //Transaction
+
+    //Transaction
     @Override
     public List<Transaction> getTransaction(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Transaction> transactions = (List<Transaction>) listEntities(Transaction.class, request, logger, getMethodName());
         return transactions;
     }
-    
+
+    //TransactionsManagement
+    @Override
+    public List<TransactionsManagement> getTransactionsManagement(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<TransactionsManagement> transactionsManagements = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_TRANSACTION_TYPE_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_TRANSACTION_TYPE_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_CUSTOMER_IDENTIFICATION_NUMBER)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_CUSTOMER_IDENTIFICATION_NUMBER), null);
+        }       
+        transactionsManagements = (List<TransactionsManagement>) getNamedQueryResult(TransactionsManagement.class, QueryConstants.TRANSACTION_MANAGEMENT_BY_TRANSACTION, request, getMethodName(), logger, "transactionsManagementByTransaction");
+        return transactionsManagements;
+    }
+
     //KeyProperties
     @Override
     public List<KeyProperties> getKeyProperties(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
@@ -1451,32 +1465,32 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     public KeyProperties loadKeyProperties(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     public List<KeyProperties> getKeyPropertiesByChannelAndProduct(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
-         List<KeyProperties> keyPropertiesList= null; 
-               
-        Map<String, Object> params = request.getParams();       
+        List<KeyProperties> keyPropertiesList = null;
+
+        Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
-        }  
-        
+        }
+
         if (!params.containsKey(EjbConstants.PARAM_CHANNEL_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_NAME), null);
-        }  
-        
-          try {
+        }
+
+        try {
             StringBuilder sqlBuilder = new StringBuilder("select * from keyProperties where channelId =");
             sqlBuilder.append(params.get(EjbConstants.PARAM_CHANNEL_ID));
             sqlBuilder.append(" AND productId =");
             sqlBuilder.append(params.get(EjbConstants.PARAM_PRODUCT_ID));
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), KeyProperties.class);
-            keyPropertiesList = (List<KeyProperties>) query.setHint("toplink.refresh", "true").getResultList();                 
+            keyPropertiesList = (List<KeyProperties>) query.setHint("toplink.refresh", "true").getResultList();
         } catch (Exception ex) {
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
         }
-        return keyPropertiesList;   
+        return keyPropertiesList;
     }
-    
+
     @Override
     public List<KeyProperties> getSearchKeyPropertiesByChannel(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<KeyProperties> keyProperties = null;
@@ -1497,7 +1511,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return keyProperties;
     }
-    
+
     public List<KeyProperties> getSearchKeyPropertiesByProduct(String name) throws EmptyListException, GeneralException, NullParameterException {
         List<KeyProperties> keyProperties = null;
         try {
