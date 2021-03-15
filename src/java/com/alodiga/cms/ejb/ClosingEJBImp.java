@@ -64,47 +64,47 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
         DailyClosing dailyClosing = new DailyClosing();
         try {
             if (!isHoliday(closingDate) && !EjbUtils.isWeekEnd(closingDate)) {
-//                dailyClosing.setClosingDate(new Date());// corresponde a la Fecha del Cierre
-//                dailyClosing.setCreateDate(new Date());
-//                dailyClosing.setClosingStartTime(new Date());// es la hora en que comienza el proceso de cierre.
-//                EJBRequest request = new EJBRequest();
-//                request.setParam(Constants.ORIGIN_APPLICATION_CMS_AUTHORIZE);
-//                OriginApplication originApplicationId = utilsEJB.loadOriginApplication(request);
-//                dailyClosing.setOriginApplicationId(originApplicationId);// Origen de Cierre: Billetera Móvil, Portal deNegocios, Alodiga Wallet Web
-//                Date oldClosingDate = OldClosingDate(closingDate);
-//                int totalTrasactions = TotalTransactionsCurrentDate(oldClosingDate, closingDate);
-//                Float transactionsAmount = TotalAmountCurrentDate(oldClosingDate, closingDate).floatValue();
-//                dailyClosing.setTotalTransactions(totalTrasactions);// cantidad total de transacciones del cierre diario
-//                dailyClosing.setTransactionsAmount(transactionsAmount);// Monto Total de las transacciones del cierre diario
-//                dailyClosing = saveDailyClosing(dailyClosing);
-//                request = new EJBRequest();
-//                List<Transaction> transactionTypes = utilsEJB.getTransaction(request);
-//                List<TotalTransactionsAmountByDailyClosing> details = new ArrayList<TotalTransactionsAmountByDailyClosing>();
-//                for (Transaction transaction : transactionTypes) {
-//                    int totalTrasactionsByTransactionType = TotalTransactionsCurrentDatebyTransactionType(oldClosingDate, closingDate, transaction.getId());  
-//                    Float transactionsAmountByTransactionType = TotalAmountCurrentDateByTransaction(oldClosingDate, closingDate, transaction.getId()).floatValue();
-//                    TotalTransactionsAmountByDailyClosing totalTransactionsAmountByDailyClosing = new TotalTransactionsAmountByDailyClosing();
-//                    if (transactionsAmountByTransactionType>0f || totalTrasactionsByTransactionType>0){
-//                        totalTransactionsAmountByDailyClosing.setCreateDate(new Date());
-//                        totalTransactionsAmountByDailyClosing.setDailyClosingId(dailyClosing);
-//                        totalTransactionsAmountByDailyClosing.setTotalTransactions(totalTrasactionsByTransactionType);
-//                        totalTransactionsAmountByDailyClosing.setTransactionsAmount(transactionsAmountByTransactionType);
-//                        totalTransactionsAmountByDailyClosing.setTransactionId(transaction);
-//                        //Guarda TotalTransactionsAmountByDailyClosing
-//                        totalTransactionsAmountByDailyClosing = saveTotalTransactionsAmountByDailyClosing(totalTransactionsAmountByDailyClosing);
-//                        details.add(totalTransactionsAmountByDailyClosing);
-//                    }
-//                }
-//                //llamar a Procedimiento almacenado para pasar de TransactionsManagement a TransactionsManagementHistory
-//                executeHistory(oldClosingDate, closingDate);
-//                //Agregar dailyClosingId a las transacciones
-//                addDailyClosingInTransaction(oldClosingDate, closingDate, dailyClosing);
-//                dailyClosing.setClosingEndTime(new Date());// es la hora en que finaliza el proceso de cierre
-//                dailyClosing.setUpdateDate(new Date());
-//                dailyClosing = saveDailyClosing(dailyClosing);// actualizo el cierre con la hora de finalizacion
-//                //enviar correo de notificacion con la informacion del cierre no estaba en las especificaciones
-//                SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions, Constants.NOTIFICATION_DAILY_CLOSING, details);
-//                sendMailTherad.run();
+                dailyClosing.setClosingDate(new Date());// corresponde a la Fecha del Cierre
+                dailyClosing.setCreateDate(new Date());
+                dailyClosing.setClosingStartTime(new Date());// es la hora en que comienza el proceso de cierre.
+                EJBRequest request = new EJBRequest();
+                request.setParam(Constants.ORIGIN_APPLICATION_CMS_AUTHORIZE);
+                OriginApplication originApplicationId = utilsEJB.loadOriginApplication(request);
+                dailyClosing.setOriginApplicationId(originApplicationId);// Origen de Cierre: Billetera Móvil, Portal deNegocios, Alodiga Wallet Web
+                Date oldClosingDate = OldClosingDate(closingDate);
+                int totalTrasactions = TotalTransactionsCurrentDate(oldClosingDate, closingDate);
+                Float transactionsAmount = TotalAmountCurrentDate(oldClosingDate, closingDate).floatValue();
+                dailyClosing.setTotalTransactions(totalTrasactions);// cantidad total de transacciones del cierre diario
+                dailyClosing.setTransactionsAmount(transactionsAmount);// Monto Total de las transacciones del cierre diario
+                dailyClosing = saveDailyClosing(dailyClosing);
+                request = new EJBRequest();
+                List<Transaction> transactionTypes = utilsEJB.getTransaction(request);
+                List<TotalTransactionsAmountByDailyClosing> details = new ArrayList<TotalTransactionsAmountByDailyClosing>();
+                for (Transaction transaction : transactionTypes) {
+                    int totalTrasactionsByTransactionType = TotalTransactionsCurrentDatebyTransactionType(oldClosingDate, closingDate, transaction.getId());  
+                    Float transactionsAmountByTransactionType = TotalAmountCurrentDateByTransaction(oldClosingDate, closingDate, transaction.getId()).floatValue();
+                    TotalTransactionsAmountByDailyClosing totalTransactionsAmountByDailyClosing = new TotalTransactionsAmountByDailyClosing();
+                    if (transactionsAmountByTransactionType>0f || totalTrasactionsByTransactionType>0){
+                        totalTransactionsAmountByDailyClosing.setCreateDate(new Date());
+                        totalTransactionsAmountByDailyClosing.setDailyClosingId(dailyClosing);
+                        totalTransactionsAmountByDailyClosing.setTotalTransactions(totalTrasactionsByTransactionType);
+                        totalTransactionsAmountByDailyClosing.setTransactionsAmount(transactionsAmountByTransactionType);
+                        totalTransactionsAmountByDailyClosing.setTransactionId(transaction);
+                        //Guarda TotalTransactionsAmountByDailyClosing
+                        totalTransactionsAmountByDailyClosing = saveTotalTransactionsAmountByDailyClosing(totalTransactionsAmountByDailyClosing);
+                        details.add(totalTransactionsAmountByDailyClosing);
+                    }
+                }
+                //llamar a Procedimiento almacenado para pasar de TransactionsManagement a TransactionsManagementHistory
+                executeHistory(oldClosingDate, closingDate);
+                //Agregar dailyClosingId a las transacciones
+                addDailyClosingInTransaction(oldClosingDate, closingDate, dailyClosing);
+                dailyClosing.setClosingEndTime(new Date());// es la hora en que finaliza el proceso de cierre
+                dailyClosing.setUpdateDate(new Date());
+                dailyClosing = saveDailyClosing(dailyClosing);// actualizo el cierre con la hora de finalizacion
+                //enviar correo de notificacion con la informacion del cierre no estaba en las especificaciones
+                SendMailTherad sendMailTherad = new SendMailTherad("ES", transactionsAmount, totalTrasactions, Constants.NOTIFICATION_DAILY_CLOSING, details);
+                sendMailTherad.run();
 //                
                 //llamar al metodo para generar solicitud de tarjetas vencidas
                 createCardRenewalRequestByIssuer(Constants.CARD_STATUS_ACTIVE);
