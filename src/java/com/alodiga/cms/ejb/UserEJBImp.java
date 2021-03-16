@@ -313,7 +313,7 @@ public class UserEJBImp extends AbstractDistributionEJB implements UserEJB, User
         List<Permission> permissions = new ArrayList<Permission>();
         Query query = null;
         try {
-            query = createQuery("SELECT php.permission FROM PermissionHasProfile php WHERE php.profile.id = ?1");
+            query = createQuery("SELECT php.permissionId FROM PermissionHasProfile php WHERE php.profileId.id = ?1");
             query.setParameter("1", profileId);
             permissions = query.setHint("toplink.refresh", "true").getResultList();
         } catch (Exception e) {
