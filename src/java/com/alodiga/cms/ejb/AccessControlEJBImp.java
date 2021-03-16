@@ -21,6 +21,7 @@ import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.models.Profile;
 import com.cms.commons.models.User;
 import com.cms.commons.util.EjbConstants;
 import com.cms.commons.util.QueryConstants;
@@ -76,5 +77,11 @@ public class AccessControlEJBImp extends AbstractDistributionEJB implements Acce
             throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
         }
     }
+    
+    public List<Profile> getProfiles(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<Profile> profiles = (List<Profile>) listEntities(Profile.class, request, logger, getMethodName());
+        return profiles;
+    }
+
 
 }
