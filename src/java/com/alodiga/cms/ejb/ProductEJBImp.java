@@ -30,7 +30,6 @@ import com.cms.commons.models.ProductHasChannelHasTransaction;
 import com.cms.commons.models.ProductHasCommerceCategory;
 import com.cms.commons.models.ProductType;
 import com.cms.commons.models.ProductUse;
-import com.cms.commons.models.Program;
 import com.cms.commons.models.RateApplicationType;
 import com.cms.commons.models.RateByProduct;
 import com.cms.commons.models.RateByProgram;
@@ -783,6 +782,5 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         }
        return transactionPoint; 
     }
-
     
 }

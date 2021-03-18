@@ -1232,9 +1232,8 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }         
         try{            
             StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
-            sqlBuilder.append("WHERE c.personCustomerId IN ");
-            sqlBuilder.append("(SELECT p.id FROM person p WHERE p.id = '").append(personId).append("')");
-            sqlBuilder.append("AND c.cardStatusId = 8");
+            sqlBuilder.append("WHERE c.personCustomerId = ").append(personId);
+            sqlBuilder.append(" AND c.cardStatusId = 8");
             System.out.println("sql " + sqlBuilder.toString());
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
             cards = query.setHint("toplink.refresh", "true").getResultList();

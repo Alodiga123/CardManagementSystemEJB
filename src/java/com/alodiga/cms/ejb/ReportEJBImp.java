@@ -79,7 +79,6 @@ public class ReportEJBImp extends AbstractDistributionEJB implements ReportEJB, 
 
     public List<Report> getReport(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
         List<Report> reports = (List<Report>) listEntities(Report.class, request, logger, getMethodName());
-
         return reports;
     }
 
