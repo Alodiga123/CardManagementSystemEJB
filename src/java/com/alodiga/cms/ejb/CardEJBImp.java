@@ -1225,15 +1225,23 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
     }
     
     @Override
-    public List<Card> getCardByPersonByStatusActive(Long personId) throws EmptyListException, GeneralException, NullParameterException {    
+    public List<Card> getCardByPersonAssociateByFunctionality(Long personAssociateId, int indFunctionality) throws EmptyListException, GeneralException, NullParameterException {    
         List<Card> cards = new ArrayList<Card>();        
-        if(personId == null){
-           throw new NullParameterException("personId", null); 
+        if(personAssociateId == null){
+           throw new NullParameterException("personAssociateId", null); 
         }         
         try{            
             StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
-            sqlBuilder.append("WHERE c.personCustomerId = ").append(personId);
-            sqlBuilder.append(" AND c.cardStatusId = 8");
+            sqlBuilder.append("WHERE c.personCustomerId =").append(personAssociateId);
+            switch (indFunctionality){
+                case 1: // Registro de Claves
+                    sqlBuilder.append(" AND c.cardStatusId =").append(StatusCardE.ACTIVA.getId());
+                    break;
+                case 2: // Consulta y Conversión de Puntos
+                    sqlBuilder.append(" AND c.cardStatusId =").append(StatusCardE.ACTIVA.getId());
+                    sqlBuilder.append(" OR c.cardStatusId =").append(StatusCardE.BLOQUE.getId());
+                    break;
+            }
             System.out.println("sql " + sqlBuilder.toString());
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
             cards = query.setHint("toplink.refresh", "true").getResultList();
