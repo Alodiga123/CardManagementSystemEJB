@@ -808,6 +808,26 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return (NaturalCustomer) saveEntity(naturalCustomer);
     }
+    
+    @Override
+    public NaturalCustomer getNaturalCustomerByIdentificationNumber(Integer identificationNumber) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException { 
+        NaturalCustomer naturalCustomer = new NaturalCustomer();
+        try {
+            if (identificationNumber == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }
+            StringBuilder sqlBuilder = new StringBuilder("SELECT n FROM NaturalCustomer n ");
+            sqlBuilder.append("WHERE n.identificationNumber = '").append(identificationNumber).append("'");
+            naturalCustomer = (NaturalCustomer) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+            
+        } catch (NoResultException ex) {
+            return naturalCustomer = null;
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return naturalCustomer;
+        
+    }
 
     public NaturalCustomer validateQuestionNatural(Long personId, String identificationNumber, Date dateBirth) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException {
         try {
@@ -1065,6 +1085,25 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
         }
         return userList;
         
+    }
+    
+    public List<User> searchUserByIdentificationNumber(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+         List<User> userList= null; 
+               
+        Map<String, Object> params = request.getParams();       
+        if (!params.containsKey(EjbConstants.PARAM_IDENTIFICATION_NUMBER)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PERSON_CLASSIFICATION_ID), null);
+        }  
+        
+          try {
+            StringBuilder sqlBuilder = new StringBuilder("select * from user u where u.identificationNumber =");
+            sqlBuilder.append(params.get(EjbConstants.PARAM_IDENTIFICATION_NUMBER));
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Person.class);
+            userList = (List<User>) query.setHint("toplink.refresh", "true").getResultList();                      
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return userList;   
     }
 
     //Employee
