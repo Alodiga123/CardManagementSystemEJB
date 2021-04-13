@@ -1244,7 +1244,11 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
                 case 3: // Listado de tarjetas para Activar
                     sqlBuilder.append(" AND c.cardStatusId IN (").append(StatusCardE.SOLICI.getId()).append(",");
                     sqlBuilder.append(StatusCardE.ENTREG.getId()).append(")");
-                    break;   
+                    break;
+                case 4: // Listado de tarjetas para cambiar el estatus
+                    sqlBuilder.append(" AND c.cardStatusId IN (").append(StatusCardE.ACTIVA.getId()).append(",");
+                    sqlBuilder.append(StatusCardE.BLOQUE.getId()).append(",").append(StatusCardE.PERSON.getId()).append(")");
+                    break;
             }
             System.out.println("sql " + sqlBuilder.toString());
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
