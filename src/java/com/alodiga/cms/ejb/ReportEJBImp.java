@@ -187,4 +187,15 @@ public class ReportEJBImp extends AbstractDistributionEJB implements ReportEJB, 
         }
         return reportList;
     }
+
+    @Override
+    public List<ReportParameter> getReportParameterByReport(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<ReportParameter> reportParameterList = null;
+        Map<String, Object> params = request.getParams();
+        if (!params.containsKey(EjbConstants.PARAM_REPORT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_REPORT_ID), null);
+        }
+        reportParameterList = (List<ReportParameter>) getNamedQueryResult(ReportParameter.class, QueryConstants.PARAMETERS_BY_REPORT, request, getMethodName(), logger, "reportParameterList");
+        return reportParameterList;
+    }
 }
