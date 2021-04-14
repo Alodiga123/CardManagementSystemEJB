@@ -419,6 +419,9 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         if (!params.containsKey(EjbConstants.PARAM_PRODUCT_TYPE_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_TYPE_ID), null);
         }
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
+        }
         generalRateList = (List<GeneralRate>) getNamedQueryResult(GeneralRate.class, QueryConstants.GENERAL_RATE_BY_PRODUCT_TYPE, request, getMethodName(), logger, "generalRateList");
         return generalRateList;
     }
