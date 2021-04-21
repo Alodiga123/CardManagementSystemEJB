@@ -6,10 +6,12 @@ import com.alodiga.cms.commons.exception.EmptyListException;
 import com.alodiga.cms.commons.exception.GeneralException;
 import com.alodiga.cms.commons.exception.NullParameterException;
 import com.alodiga.cms.commons.exception.RegisterNotFoundException;
+import com.cms.commons.enumeraciones.ResponseCodeE;
 import com.cms.commons.genericEJB.AbstractDistributionEJB;
 import com.cms.commons.genericEJB.DistributionContextInterceptor;
 import com.cms.commons.genericEJB.DistributionLoggerInterceptor;
 import com.cms.commons.genericEJB.EJBRequest;
+import com.cms.commons.enumeraciones.TransactionE;
 import com.cms.commons.models.Address;
 import com.cms.commons.models.AddressType;
 import com.cms.commons.models.BinSponsor;
@@ -56,9 +58,12 @@ import com.cms.commons.models.UserHasProfile;
 import com.cms.commons.models.ZipZone;
 import com.cms.commons.util.Constants;
 import com.cms.commons.util.EjbConstants;
+import com.cms.commons.util.EjbUtils;
 import com.cms.commons.util.QueryConstants;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -1444,6 +1449,68 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }       
         transactionsManagements = (List<TransactionsManagement>) getNamedQueryResult(TransactionsManagement.class, QueryConstants.TRANSACTION_MANAGEMENT_BY_TRANSACTION, request, getMethodName(), logger, "transactionsManagementByTransaction");
         return transactionsManagements;
+    }
+    
+    //Transactions Management
+    @Override
+    public List<TransactionsManagement> getTransactionsManagementbyCardNumber(String cardNumber) throws EmptyListException, GeneralException, NullParameterException {
+        List<TransactionsManagement> transactionsManagement = null;
+        try {
+            if (cardNumber == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
+            }
+
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t ");
+            sqlBuilder.append("WHERE t.cardNumber = '").append(cardNumber).append("'");
+            sqlBuilder.append(" AND t.transactionTypeId =").append(TransactionE.CARD_RECHARGE.getId());
+            sqlBuilder.append(" AND t.responseCode = ").append(ResponseCodeE.SUCCESS.getCode());;
+            sqlBuilder.append(" ORDER BY t.transactionDateIssuer DESC");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), TransactionsManagement.class);
+            transactionsManagement = query.setHint("toplink.refresh", "true").getResultList();
+
+        } catch (NoResultException ex) {
+            return null;
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return transactionsManagement;
+    }
+    
+    @Override
+    public List<TransactionsManagement> searchTransactionsManagementTypeRechargeByParams(EJBRequest request) throws GeneralException, NullParameterException, EmptyListException {
+        List<TransactionsManagement> results = new ArrayList<TransactionsManagement>();
+        Map<String, Object> params = request.getParams();
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String strDate1 = (simpleDateFormat.format(EjbUtils.getBeginningDate((Date) params.get(QueryConstants.PARAM_BEGINNING_DATE))));
+        String strDate2 = (simpleDateFormat.format(EjbUtils.getBeginningDate((Date) params.get(QueryConstants.PARAM_ENDING_DATE))));
+         
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE t.transactionDateIssuer BETWEEN '");
+            sqlBuilder.append(strDate1);
+            sqlBuilder.append("' AND '");
+            sqlBuilder.append(strDate2);
+            sqlBuilder.append("'");
+            sqlBuilder.append(" AND t.cardNumber='").append(params.get(QueryConstants.PARAM_CARD_NUMBER)).append("'");;
+            sqlBuilder.append(" AND t.transactionTypeId='").append(TransactionE.CARD_RECHARGE.getId()).append("'");
+            sqlBuilder.append(" AND t.responseCode='").append(ResponseCodeE.SUCCESS.getCode()).append("'");
+            if (params.containsKey(QueryConstants.PARAM_AMOUNT)) {
+                sqlBuilder.append(" AND t.settlementTransactionAmount='").append(params.get(QueryConstants.PARAM_AMOUNT)).append("'");;
+            }
+       
+            Query query = null;
+            try {
+                System.out.println("query:********"+sqlBuilder.toString());
+                query = entityManager.createNativeQuery(sqlBuilder.toString(), TransactionsManagement.class);
+                results = (List<TransactionsManagement>) query.setHint("toplink.refresh", "true").getResultList();
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), e.getMessage()), null);
+            }
+            if (results.isEmpty()) {
+                results = null;
+            }
+            return results;
     }
 
     //KeyProperties
