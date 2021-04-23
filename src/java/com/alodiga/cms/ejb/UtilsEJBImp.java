@@ -1453,7 +1453,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     
     //Transactions Management
     @Override
-    public List<TransactionsManagement> getTransactionsManagementbyCardNumber(String cardNumber) throws EmptyListException, GeneralException, NullParameterException {
+    public List<TransactionsManagement> getTransactionsManagementbyCardNumber(String cardNumber, int indTransactionType) throws EmptyListException, GeneralException, NullParameterException {
         List<TransactionsManagement> transactionsManagement = null;
         try {
             if (cardNumber == null) {
@@ -1462,7 +1462,14 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
             StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t ");
             sqlBuilder.append("WHERE t.cardNumber = '").append(cardNumber).append("'");
-            sqlBuilder.append(" AND t.transactionTypeId =").append(TransactionE.CARD_RECHARGE.getId());
+            
+            if(indTransactionType == 1){
+                //Transacciones de Recarga
+                sqlBuilder.append(" AND t.transactionTypeId =").append(TransactionE.CARD_RECHARGE.getId());
+            } else if(indTransactionType == 2){
+                //Transacciones de Retiro
+                sqlBuilder.append(" AND t.transactionTypeId =").append(TransactionE.RETIRO_DOMESTICO.getId());
+            }
             sqlBuilder.append(" AND t.responseCode = ").append(ResponseCodeE.SUCCESS.getCode());;
             sqlBuilder.append(" ORDER BY t.transactionDateIssuer DESC");
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), TransactionsManagement.class);
@@ -1490,8 +1497,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             sqlBuilder.append("' AND '");
             sqlBuilder.append(strDate2);
             sqlBuilder.append("'");
-            sqlBuilder.append(" AND t.cardNumber='").append(params.get(QueryConstants.PARAM_CARD_NUMBER)).append("'");;
-            sqlBuilder.append(" AND t.transactionTypeId='").append(TransactionE.CARD_RECHARGE.getId()).append("'");
+            sqlBuilder.append(" AND t.cardNumber='").append(params.get(QueryConstants.PARAM_CARD_NUMBER)).append("'");
+            sqlBuilder.append(" AND t.transactionTypeId='").append(params.get(QueryConstants.PARAM_TRANSACTION_TYPE_ID)).append("'");
             sqlBuilder.append(" AND t.responseCode='").append(ResponseCodeE.SUCCESS.getCode()).append("'");
             if (params.containsKey(QueryConstants.PARAM_AMOUNT)) {
                 sqlBuilder.append(" AND t.settlementTransactionAmount='").append(params.get(QueryConstants.PARAM_AMOUNT)).append("'");;
