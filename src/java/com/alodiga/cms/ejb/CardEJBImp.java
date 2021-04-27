@@ -51,8 +51,10 @@ import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
 import com.cms.commons.util.EjbConstants;
+import com.cms.commons.util.EjbUtils;
 import com.cms.commons.util.QueryConstants;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -461,6 +463,34 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
         }
         return card;
+    }
+    
+    public Card getCardByCardNumberAndExpirationDateAndIdentificationNumber(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        Card results = new Card();
+        Map<String, Object> params = request.getParams();
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String strDate1 = (simpleDateFormat.format(EjbUtils.getBeginningDate((Date) params.get(QueryConstants.PARAM_EXPIRATION_DATE))));
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c WHERE c.expirationDate = '");
+            sqlBuilder.append(strDate1);
+            sqlBuilder.append("' AND ");
+            sqlBuilder.append("c.cardNumber = '").append(params.get(QueryConstants.PARAM_CARD_NUMBER)).append("'");
+            sqlBuilder.append(" AND c.personCustomerId IN (SELECT p.id FROM person p WHERE p.id IN(");
+            sqlBuilder.append("SELECT nc.personId FROM naturalCustomer nc WHERE nc.identificationNumber ='").append(params.get(QueryConstants.PARAM_CUSTOMER_IDENTIFICATION_NUMBER)).append("'");
+            sqlBuilder.append("))");
+            
+            Query query = null;
+            query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+            results = (Card) query.setHint("toplink.refresh", "true").getSingleResult();
+//            results = (Card) query.getSingleResult();
+        } catch (NoResultException ex) {
+           return null;
+        } catch (Exception ex) {
+            ex.getMessage();
+            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+        }
+        return results;
     }
 
     //CardNumberCredential
