@@ -1453,7 +1453,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     
     //Transactions Management
     @Override
-    public List<TransactionsManagement> getTransactionsManagementbyCardNumber(String cardNumber, int indTransactionType) throws EmptyListException, GeneralException, NullParameterException {
+    public List<TransactionsManagement> getTransactionsManagementbyCardNumber(String cardNumber, Integer transactionType) throws EmptyListException, GeneralException, NullParameterException {
         List<TransactionsManagement> transactionsManagement = null;
         try {
             if (cardNumber == null) {
@@ -1462,14 +1462,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
 
             StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t ");
             sqlBuilder.append("WHERE t.cardNumber = '").append(cardNumber).append("'");
-            
-            if(indTransactionType == 1){
-                //Transacciones de Recarga
-                sqlBuilder.append(" AND t.transactionTypeId =").append(TransactionE.CARD_RECHARGE.getId());
-            } else if(indTransactionType == 2){
-                //Transacciones de Retiro
-                sqlBuilder.append(" AND t.transactionTypeId =").append(TransactionE.RETIRO_DOMESTICO.getId());
-            }
+            sqlBuilder.append(" AND t.transactionTypeId =").append(transactionType);
             sqlBuilder.append(" AND t.responseCode = ").append(ResponseCodeE.SUCCESS.getCode());;
             sqlBuilder.append(" ORDER BY t.transactionDateIssuer DESC");
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), TransactionsManagement.class);
@@ -1484,7 +1477,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     }
     
     @Override
-    public List<TransactionsManagement> searchTransactionsManagementTypeRechargeByParams(EJBRequest request) throws GeneralException, NullParameterException, EmptyListException {
+    public List<TransactionsManagement> searchTransactionsManagementByTransactionTypeByParams(EJBRequest request) throws GeneralException, NullParameterException, EmptyListException {
         List<TransactionsManagement> results = new ArrayList<TransactionsManagement>();
         Map<String, Object> params = request.getParams();
         String pattern = "yyyy-MM-dd";
@@ -1497,7 +1490,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             sqlBuilder.append("' AND '");
             sqlBuilder.append(strDate2);
             sqlBuilder.append("'");
-            sqlBuilder.append(" AND t.cardNumber='").append(params.get(QueryConstants.PARAM_CARD_NUMBER)).append("'");
+            sqlBuilder.append(" AND t.cardNumber='").append(params.get(QueryConstants.PARAM_CARD_NUMBER)).append("'");;
             sqlBuilder.append(" AND t.transactionTypeId='").append(params.get(QueryConstants.PARAM_TRANSACTION_TYPE_ID)).append("'");
             sqlBuilder.append(" AND t.responseCode='").append(ResponseCodeE.SUCCESS.getCode()).append("'");
             if (params.containsKey(QueryConstants.PARAM_AMOUNT)) {
@@ -1518,6 +1511,24 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
                 results = null;
             }
             return results;
+    }
+    
+    @Override
+    public List<TransactionsManagement> getTransactionsManagementByTransactionTypeByCustomer(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        List<TransactionsManagement> results = new ArrayList<TransactionsManagement>();
+        Map<String, Object> params = request.getParams();
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t WHERE");
+        sqlBuilder.append(" t.transactionTypeId=").append(params.get(QueryConstants.PARAM_TRANSACTION_TYPE_ID)).append("");
+        sqlBuilder.append(" AND t.customerIdentificationNumber='").append(params.get(QueryConstants.PARAM_CUSTOMER_IDENTIFICATION_NUMBER)).append("'");
+        sqlBuilder.append(" AND t.responseCode='").append(ResponseCodeE.SUCCESS.getCode()).append("'");
+        Query query = null;
+        try {
+            query = entityManager.createNativeQuery(sqlBuilder.toString(), TransactionsManagement.class);
+            results = (List<TransactionsManagement>) query.setHint("toplink.refresh", "true").getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return results;
     }
 
     //KeyProperties
@@ -1605,4 +1616,5 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
         }
         return keyProperties;
     }
+
 }
