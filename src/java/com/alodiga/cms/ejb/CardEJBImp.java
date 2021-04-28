@@ -1264,7 +1264,7 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
             StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c ");
             sqlBuilder.append("WHERE c.personCustomerId =").append(personAssociateId);
             switch (indFunctionality){
-                case 1: // Registro de Claves
+                case 1: // Registro de Claves, Transferencia entre cuentas
                     sqlBuilder.append(" AND c.cardStatusId =").append(StatusCardE.ACTIVA.getId());
                     break;
                 case 2: // Consulta y Conversión de Puntos

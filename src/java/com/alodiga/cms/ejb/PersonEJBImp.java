@@ -810,7 +810,7 @@ public class PersonEJBImp extends AbstractDistributionEJB implements PersonEJB, 
     }
     
     @Override
-    public NaturalCustomer getNaturalCustomerByIdentificationNumber(Integer identificationNumber) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException { 
+    public NaturalCustomer getNaturalCustomerByIdentificationNumber(String identificationNumber) throws RegisterNotFoundException, NullParameterException, GeneralException, InvalidQuestionException { 
         NaturalCustomer naturalCustomer = new NaturalCustomer();
         try {
             if (identificationNumber == null) {
