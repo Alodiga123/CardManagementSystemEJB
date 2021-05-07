@@ -402,6 +402,25 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         Channel channel = (Channel) loadEntity(Channel.class, request, logger, getMethodName());
         return channel;
     }
+    
+    @Override
+    public Channel searchChannelById(Integer channelId) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        Channel channel = new Channel();
+        try {
+            if (channelId == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "description"), null);
+            }
+            StringBuilder sqlBuilder = new StringBuilder("SELECT c FROM Channel c ");
+            sqlBuilder.append("WHERE c.id ='").append(channelId).append("'");
+            channel = (Channel) createQuery(sqlBuilder.toString()).setHint("toplink.refresh", "true").getSingleResult();
+
+        } catch (NoResultException ex) {
+            return null;
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return channel;
+    }
 
     @Override
     public Channel saveChannel(Channel channel) throws RegisterNotFoundException, NullParameterException, GeneralException {
@@ -418,6 +437,9 @@ public class ProductEJBImp extends AbstractDistributionEJB implements ProductEJB
         Map<String, Object> params = request.getParams();
         if (!params.containsKey(EjbConstants.PARAM_PRODUCT_TYPE_ID)) {
             throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_TYPE_ID), null);
+        }
+        if (!params.containsKey(EjbConstants.PARAM_COUNTRY_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_COUNTRY_ID), null);
         }
         generalRateList = (List<GeneralRate>) getNamedQueryResult(GeneralRate.class, QueryConstants.GENERAL_RATE_BY_PRODUCT_TYPE, request, getMethodName(), logger, "generalRateList");
         return generalRateList;
