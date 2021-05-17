@@ -492,6 +492,24 @@ public class CardEJBImp extends AbstractDistributionEJB implements CardEJBLocal,
         }
         return results;
     }
+    
+    public Card validateCurrentPintOffsetInCard(EJBRequest request) throws EmptyListException, GeneralException, NullParameterException {
+        Card results = new Card();
+        Map<String, Object> params = request.getParams();
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM card c WHERE c.cardNumber = '").append(params.get(QueryConstants.PARAM_CARD_NUMBER)).append("'");
+            sqlBuilder.append(" AND c.pinOffset = '").append(params.get(QueryConstants.PARAM_PIN_OFFSET)).append("'");
+            Query query = null;
+            query = entityManager.createNativeQuery(sqlBuilder.toString(), Card.class);
+            results = (Card) query.setHint("toplink.refresh", "true").getSingleResult();
+        } catch (NoResultException ex) {
+           return null;
+        } catch (Exception ex) {
+            ex.getMessage();
+            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+        }
+        return results;
+    }
 
     //CardNumberCredential
     @Override
