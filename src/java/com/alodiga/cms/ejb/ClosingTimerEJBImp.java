@@ -75,7 +75,6 @@ public class ClosingTimerEJBImp extends AbstractDistributionEJB implements Closi
     private void executeBilling() throws Exception {
 
         try {
-        	EJBRequest request = new EJBRequest();
         	closingEJBLocal.closingDailyTransactionWallet(EjbUtils.getEndingDate(new Date()));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -84,15 +83,6 @@ public class ClosingTimerEJBImp extends AbstractDistributionEJB implements Closi
 
     public void forceExecution() throws Exception {
         logger.info("Ejecuta forceExecution!!!!!!!!");
-    }
-
-    public void forceTimeout() throws Exception {
-        logger.info("[ClosingTimerEJB] Forzando timeout para dentro de 1 minuto");
-        cancelTimers();
-        setTimeoutInterval();
-        initialExpiration = Calendar.getInstance();
-        initialExpiration.add(Calendar.MINUTE, 1);
-        createTimer();
     }
 
     public Date getNextExecutionDate() {
