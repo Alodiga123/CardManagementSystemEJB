@@ -194,7 +194,7 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
             query.setMaxResults(1);
             dailyClosing = (DailyClosing) query.setHint("toplink.refresh", "true").getSingleResult();
         } catch (NoResultException ex) {
-            return EjbUtils.getBeginningDate(new Date());     
+            return EjbUtils.getBeginningDate(closingDate);     
         } catch (Exception ex) {
            ex.printStackTrace();           
         }
