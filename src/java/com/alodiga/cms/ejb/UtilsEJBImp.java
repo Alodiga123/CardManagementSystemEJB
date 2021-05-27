@@ -1455,6 +1455,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     @Override
     public List<TransactionsManagement> getTransactionsManagementbyCardNumber(String cardNumber, Integer transactionType) throws EmptyListException, GeneralException, NullParameterException {
         List<TransactionsManagement> transactionsManagement = null;
+        int indReverseTransaction = 0;
         try {
             if (cardNumber == null) {
                 throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "name"), null);
@@ -1463,7 +1464,8 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM transactionsManagement t ");
             sqlBuilder.append("WHERE t.cardNumber = '").append(cardNumber).append("'");
             sqlBuilder.append(" AND t.transactionTypeId =").append(transactionType);
-            sqlBuilder.append(" AND t.responseCode = ").append(ResponseCodeE.SUCCESS.getCode());;
+            sqlBuilder.append(" AND t.indReverseTransaction =").append(indReverseTransaction);
+            sqlBuilder.append(" AND t.responseCode = ").append(ResponseCodeE.SUCCESS.getCode());
             sqlBuilder.append(" ORDER BY t.transactionDateIssuer DESC");
             Query query = entityManager.createNativeQuery(sqlBuilder.toString(), TransactionsManagement.class);
             transactionsManagement = query.setHint("toplink.refresh", "true").getResultList();
@@ -1479,6 +1481,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
     @Override
     public List<TransactionsManagement> searchTransactionsManagementByTransactionTypeByParams(EJBRequest request) throws GeneralException, NullParameterException, EmptyListException {
         List<TransactionsManagement> results = new ArrayList<TransactionsManagement>();
+        int indReverseTransaction = 0;
         Map<String, Object> params = request.getParams();
         String pattern = "yyyy-MM-dd";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -1492,6 +1495,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             sqlBuilder.append("'");
             sqlBuilder.append(" AND t.cardNumber='").append(params.get(QueryConstants.PARAM_CARD_NUMBER)).append("'");;
             sqlBuilder.append(" AND t.transactionTypeId='").append(params.get(QueryConstants.PARAM_TRANSACTION_TYPE_ID)).append("'");
+            sqlBuilder.append(" AND t.indReverseTransaction =").append(indReverseTransaction);
             sqlBuilder.append(" AND t.responseCode='").append(ResponseCodeE.SUCCESS.getCode()).append("'");
             if (params.containsKey(QueryConstants.PARAM_AMOUNT)) {
                 sqlBuilder.append(" AND t.settlementTransactionAmount='").append(params.get(QueryConstants.PARAM_AMOUNT)).append("'");;
@@ -1499,7 +1503,7 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
        
             Query query = null;
             try {
-                System.out.println("query:********"+sqlBuilder.toString());
+                                                                                                                                                                                                                                                                                                                  System.out.println("query:********"+sqlBuilder.toString());
                 query = entityManager.createNativeQuery(sqlBuilder.toString(), TransactionsManagement.class);
                 results = (List<TransactionsManagement>) query.setHint("toplink.refresh", "true").getResultList();
                 
