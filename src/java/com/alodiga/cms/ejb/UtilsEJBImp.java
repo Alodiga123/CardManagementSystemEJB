@@ -48,6 +48,7 @@ import com.cms.commons.models.ProductType;
 import com.cms.commons.models.Profile;
 import com.cms.commons.models.ProfileData;
 import com.cms.commons.models.ResponsibleNetworkReporting;
+import com.cms.commons.models.SecurityKeyType;
 import com.cms.commons.models.Sequences;
 import com.cms.commons.models.State;
 import com.cms.commons.models.StreetType;
@@ -1619,6 +1620,29 @@ public class UtilsEJBImp extends AbstractDistributionEJB implements UtilsEJBLoca
             throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
         }
         return keyProperties;
+    }
+
+    @Override
+    public SecurityKeyType loadSecurityKeyType(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        SecurityKeyType securityKeyType = (SecurityKeyType) loadEntity(SecurityKeyType.class, request, logger, getMethodName());
+        return securityKeyType;
+    }
+
+    @Override
+    public SecurityKeyType getSecurityKeyTypeById(Long securityKeyTypeId) throws GeneralException, NullParameterException {
+        SecurityKeyType securityKeyType = null;
+        try {
+            if (securityKeyTypeId == null) {
+                throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), "securityKeyTypeId"), null);
+            }
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM securityKeyType skt ");
+            sqlBuilder.append("WHERE skt.id = ").append(securityKeyTypeId).append("");
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), SecurityKeyType.class);
+            securityKeyType = (SecurityKeyType) query.setHint("toplink.refresh", "true").getSingleResult();        
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        return securityKeyType;    
     }
 
 }
