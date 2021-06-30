@@ -62,8 +62,10 @@ public class ClosingEJBImp extends AbstractDistributionEJB implements ClosingEJB
     @Override
     public DailyClosing closingDailyTransactionWallet(Date closingDate) throws GeneralException, NullParameterException {
         DailyClosing dailyClosing = new DailyClosing();
+        System.out.println("Entro al closingDailyTransactionWallet");
         try {
             if (!isHoliday(closingDate) && !EjbUtils.isWeekEnd(closingDate)) {
+                System.out.println("Dia valido y ejecuta el cierre");
                 dailyClosing.setClosingDate(new Date());// corresponde a la Fecha del Cierre
                 dailyClosing.setCreateDate(new Date());
                 dailyClosing.setClosingStartTime(new Date());// es la hora en que comienza el proceso de cierre.
