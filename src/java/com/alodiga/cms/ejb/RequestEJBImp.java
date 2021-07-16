@@ -186,6 +186,25 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
         
         return requestList;
     }
+    public Request getRequestByIdAndProgramId(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException{
+        Request results = new Request();
+        Map<String, Object> params = request.getParams();
+        try{
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM request r WHERE r.id = '").append(params.get(QueryConstants.PARAM_REQUEST_ID)).append("'");  
+            sqlBuilder.append(" AND r.programId = '").append(params.get(QueryConstants.PARAM_PROGRAM_ID)).append("'");
+            sqlBuilder.append(" AND r.statusRequestId = '").append(params.get(QueryConstants.PARAM_STATUS_REQUEST_ID)).append("'");
+            Query query = null;
+            query = entityManager.createNativeQuery(sqlBuilder.toString(), Request.class);
+            results = (Request) query.setHint("toplink.refresh", "true").getSingleResult();
+        } catch (NoResultException ex) {
+           return null;
+        } catch (Exception ex) {
+            ex.getMessage();
+            throw new GeneralException(com.cms.commons.util.Constants.GENERAL_EXCEPTION);
+        }
+        return results;
+    }
+    
 
     @Override
     public Long saveRequestPersonData(int countryId, String email, int documentPersonTypeId, String identificationNumber, Date dueDateIdentification,
@@ -778,6 +797,32 @@ public class RequestEJBImp extends AbstractDistributionEJB implements RequestEJB
             throw new NullParameterException("reviewRequest", null);
         }
         return (ReviewRequest) saveEntity(reviewRequest);
+    }
+    
+    public List<ReviewRequest> getReviewRequestByProductAndApproved(EJBRequest request) throws RegisterNotFoundException, NullParameterException, GeneralException {
+        List<ReviewRequest> reviewRequestList = new ArrayList<ReviewRequest>();
+        Boolean approved = true;
+        try{
+            Map<String, Object> params = request.getParams();
+            
+            if (!params.containsKey(EjbConstants.PARAM_PRODUCT_ID)) {
+            throw new NullParameterException(sysError.format(EjbConstants.ERR_NULL_PARAMETER, this.getClass(), getMethodName(), EjbConstants.PARAM_PRODUCT_ID), null);
+            }
+            
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM reviewRequest r WHERE r.productId = '").append(params.get(QueryConstants.PARAM_PRODUCT_ID)).append("'");
+            sqlBuilder.append(" AND r.indApproved = ").append(approved);
+            
+            Query query = entityManager.createNativeQuery(sqlBuilder.toString(), ReviewRequest.class);
+            reviewRequestList = (List<ReviewRequest>) query.setHint("toplink.refresh", "true").getResultList();
+        
+            
+        } catch (NoResultException ex) {
+            return null;
+        } catch (Exception ex) {
+            throw new GeneralException(logger, sysError.format(EjbConstants.ERR_GENERAL_EXCEPTION, this.getClass(), getMethodName(), ex.getMessage()), ex);
+        }
+        
+        return reviewRequestList;
     }
 
     @Override
