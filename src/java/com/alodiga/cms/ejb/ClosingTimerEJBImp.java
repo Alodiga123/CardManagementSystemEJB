@@ -63,9 +63,6 @@ public class ClosingTimerEJBImp extends AbstractDistributionEJB implements Closi
             logger.info("[ClosingTimerEJB] Ejecutando");
             System.out.println("[ClosingTimerEJB] Ejecutando");
             executeBilling();
-            stop();
-            start();
-
         } catch (Exception e) {
             logger.error("Error", e);
         }
@@ -76,6 +73,7 @@ public class ClosingTimerEJBImp extends AbstractDistributionEJB implements Closi
 
         try {
         	closingEJBLocal.closingDailyTransactionWallet(EjbUtils.getEndingDate(new Date()));
+                System.out.println("[ClosingTimerEJB] Ejecuto el cierre");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -111,7 +109,7 @@ public class ClosingTimerEJBImp extends AbstractDistributionEJB implements Closi
         initialExpiration = Calendar.getInstance();
         initialExpiration.set(Calendar.HOUR, 11);//Media entre zona horaria de California Y Florida - EN CA 12 am en FL seria las 4 am.
         initialExpiration.set(Calendar.MINUTE, 55);
-        initialExpiration.set(Calendar.SECOND, 0);;
+        initialExpiration.set(Calendar.SECOND, 0);
         initialExpiration.set(Calendar.MILLISECOND, 0);
         initialExpiration.set(Calendar.AM_PM, Calendar.PM);
         Long secondsInDay = 86400L;
